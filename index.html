@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v25-voz-eliel-e-trilha</title>
+<title>Grimório Mobile · v26-narra-habilidade-e-dano</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -254,7 +254,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v25-voz-eliel-e-trilha</span>
+    <span class="tag">BASE · v26-narra-habilidade-e-dano</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -437,7 +437,7 @@ async function ativa(c,l,grupo){if(!c||c.token)return;FONTE=c.hab;
  if(!KG)KG={entrar:KS(entrar),luta:new Set([...KS(luta),...KS(coluna),...KS(bate),...KS(P)]),morrer:KS(morrer),fim:KS(fimDoTurno)};
  const ks=c.e0||Object.keys(EF(c));if(!ks.some(k=>KG[grupo].has(k)))return;
  const tag=grupo+S.turn;if(c._nar===tag)return;c._nar=tag;
- await narrar(`${c.hab}! ${c.cls} ${SEU(l)}: ${c.fx}`,true);}
+ await narrar(`${c.hab}! ${l==='o'?'(do oponente) ':''}${c.fx}`,true);}
 // de onde vem cada ponto de poder da carta
 function origem(c,l,extra){const m=new Map();const add=(h,n)=>{if(!n)return;const k=h||'';m.set(k,(m.get(k)||0)+n);};let soma=0;
  (c.hist||[]).forEach(x=>{add(x.h,x.n);soma+=x.n;});add(null,c.pw-c.v-soma);add(c.hab,(P(c,l)-c.pw)+(extra||0));
@@ -526,7 +526,7 @@ async function entrar(c,l,i){
 async function morrer(l,i,killer){
  const F=FD(l),c=F[i];if(!c)return;const e=EF(c),ol=OL(l);
  cls(cardEl(l,i),'die',500);sfx('death');await w(440);
- if(!(e.returnHalf&&!c.voltou))narrar(`${c.cls} ${SEU(l)} cai!`);if(!c.token)await ativa(c,l,'morrer');
+ if(!c.token)await ativa(c,l,'morrer');
  if(e.returnHalf&&!c.voltou){const p=Math.max(1,Math.ceil(c.v/2));F[i]={...c,pw:p,voltou:true,stun:false,id:Math.random()};render();cls(cardEl(l,i),'rise',600);pop(l,i,'☠ volta com '+p);lg(`☠ ${c.n} voltou com ${p} de poder`);await w(400);return;}
  F[i]=null;
  if(e.deathToHand&&!c.token&&HD(l).length<7){HD(l).push(carta(c.code,c.v));lg(`📖 ${c.n} voltou para a mão`);}
@@ -553,7 +553,7 @@ async function bate(l,i){
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
  await dano(ol,d,R(el));
- await narrar(`${c.cls} ${SEU(l)} bate ${d} ${l==='m'?'no líder inimigo!':'no seu líder!'} ${l==='m'?'Vida dele':'Sua vida'}: ${Math.max(0,l==='m'?S.ol:S.ml)}.`,true);
+ await narrar(`Bate ${d} ${l==='m'?'no líder inimigo!':'no seu líder!'} ${l==='m'?'Vida dele':'Sua vida'}: ${Math.max(0,l==='m'?S.ol:S.ml)}.`,true);
  if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);await dano(ol,d,R(el));}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
  if(e.hitSteal&&HD(ol).length&&HD(l).length<7){const k=Math.floor(Math.random()*HD(ol).length);HD(l).push(HD(ol).splice(k,1)[0]);pop(l,i,'🪝 rouba 1');render();}
@@ -573,8 +573,9 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  forca(ra.cx,ra.cy,pa);forca(rb.cx,rb.cy,pb);cls(cardEl('m',i),'shake',320);cls(cardEl('o',i),'shake',320);
  lg(`Coluna ${i+1}: ${a.n} (${pa}) x ${b.n} (${pb})`);
  sfx('clash');burst((ra.cx+rb.cx)/2,(ra.y+rb.y+rb.h)/2,'#ffd27a',22);cls(cardEl('m',i),'flash',250);cls(cardEl('o',i),'flash',250);await w(80);
- {const base=c=>c.token?'Ficha':'carta '+c.v;
-  await narrar(`Coluna ${i+1}! ${a.cls} (seu): ${base(a)}${origem(a,'m',(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0))}. Poder ${pa}! Contra ${b.cls} (do oponente): ${base(b)}${origem(b,'o',(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0))}. Poder ${pb}! ${pa>pb?'Você vence a coluna!':pb>pa?'O oponente vence a coluna!':'Empate na coluna!'}`,true);
+ {const base=(c,o)=>o?(c.token?'Ficha':'carta '+c.v)+o+'. ':'';
+  const oa=origem(a,'m',(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0)),ob=origem(b,'o',(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0));
+  await narrar(`Coluna ${i+1}! ${base(a,oa)}Poder ${pa}! Contra: ${base(b,ob)}Poder ${pb}! ${pa>pb?'Você vence a coluna!':pb>pa?'O oponente vence a coluna!':'Empate na coluna!'}`,true);
   if(pa!==pb)sfx('win',.7);}
  await w(200);
  if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
@@ -731,11 +732,11 @@ async function revelar(){
  const tem=[...S.mine,...S.theirs].some(c=>c&&c.novo);if(!tem)return;
  const b=$('#dia');b.querySelector('b').textContent='Hora da Batalha!';b.querySelector('small').textContent='As cartas se mostram';narrar('Hora da batalha!');musica('batalha');sfx('day',.6);b.classList.remove('on');void b.offsetWidth;b.classList.add('on');await w(1100);
  for(let i=0;i<3;i++){
-   const a=S.mine[i];if(a&&a.novo){delete a.novo;render();cls(cardEl('m',i),'slam',400);lg(`Você revelou ${a.n} na coluna ${i+1}`);sfx('reveal');await narrar(`Você revela ${a.cls}. Coluna ${i+1}!`,true);await entrar(a,'m',i);await pedagio('m');if(S.ml<=0||S.ol<=0)return;}
+   const a=S.mine[i];if(a&&a.novo){delete a.novo;render();cls(cardEl('m',i),'slam',400);lg(`Você revelou ${a.n} na coluna ${i+1}`);sfx('reveal');await w(350);await entrar(a,'m',i);await pedagio('m');if(S.ml<=0||S.ol<=0)return;}
    const c=S.theirs[i];if(c&&c.novo){S.hide.add(c.id);delete c.novo;render();const ohEl=$('#oHand').lastElementChild||$('#oHand');const de=R(ohEl);
      await voo({...de,w:40,h:54,x:de.x},R(slotEl('o',i)),cardHTML(c),380);S.hide.delete(c.id);render();cls(cardEl('o',i),'flip',480);
      const r=R(slotEl('o',i));tmp(add('ring',r.x,r.y,null,{width:r.w+'px',height:r.h+'px'}),520);
-     lg(`Oponente revelou ${c.n} (poder ${c.pw}) na coluna ${i+1}`);sfx('reveal');await narrar(`Oponente revela ${c.cls}. Coluna ${i+1}!`,true);await entrar(c,'o',i);await pedagio('o');if(S.ml<=0||S.ol<=0)return;}
+     lg(`Oponente revelou ${c.n} (poder ${c.pw}) na coluna ${i+1}`);sfx('reveal');await w(350);await entrar(c,'o',i);await pedagio('o');if(S.ml<=0||S.ol<=0)return;}
  }
  await w(250);
 }
