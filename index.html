@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v23-online</title>
+<title>Grimório Mobile · v24-hora-da-batalha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -254,7 +254,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v23-online</span>
+    <span class="tag">BASE · v24-hora-da-batalha</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -704,7 +704,7 @@ async function pedagio(l){const n=FD(OL(l)).filter(x=>x&&EF(x).toll).length;if(n
 // revelação: as cartas preparadas no dia aparecem e ativam, coluna por coluna
 async function revelar(){
  const tem=[...S.mine,...S.theirs].some(c=>c&&c.novo);if(!tem)return;
- const b=$('#dia');b.querySelector('b').textContent='Revelação!';b.querySelector('small').textContent='As cartas se mostram';b.classList.remove('on');void b.offsetWidth;b.classList.add('on');await w(1100);
+ const b=$('#dia');b.querySelector('b').textContent='Hora da Batalha!';b.querySelector('small').textContent='As cartas se mostram';narrar('Hora da batalha!');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');await w(1100);
  for(let i=0;i<3;i++){
    const a=S.mine[i];if(a&&a.novo){delete a.novo;render();cls(cardEl('m',i),'slam',400);lg(`Você revelou ${a.n} na coluna ${i+1}`);await narrar(`Você revela ${a.cls}, poder ${a.pw}, na coluna ${i+1}.`,true);await entrar(a,'m',i);await pedagio('m');if(S.ml<=0||S.ol<=0)return;}
    const c=S.theirs[i];if(c&&c.novo){S.hide.add(c.id);delete c.novo;render();const ohEl=$('#oHand').lastElementChild||$('#oHand');const de=R(ohEl);
