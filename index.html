@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v26-narra-habilidade-e-dano</title>
+<title>Grimório Mobile · v27-narra-efeitos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -254,7 +254,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v26-narra-habilidade-e-dano</span>
+    <span class="tag">BASE · v27-narra-efeitos</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -437,11 +437,12 @@ async function ativa(c,l,grupo){if(!c||c.token)return;FONTE=c.hab;
  if(!KG)KG={entrar:KS(entrar),luta:new Set([...KS(luta),...KS(coluna),...KS(bate),...KS(P)]),morrer:KS(morrer),fim:KS(fimDoTurno)};
  const ks=c.e0||Object.keys(EF(c));if(!ks.some(k=>KG[grupo].has(k)))return;
  const tag=grupo+S.turn;if(c._nar===tag)return;c._nar=tag;
- await narrar(`${c.hab}! ${l==='o'?'(do oponente) ':''}${c.fx}`,true);}
+ await narrar(`${l==='o'?'(do oponente) ':''}${c.fx}`,true);}
 // de onde vem cada ponto de poder da carta
 function origem(c,l,extra){const m=new Map();const add=(h,n)=>{if(!n)return;const k=h||'';m.set(k,(m.get(k)||0)+n);};let soma=0;
  (c.hist||[]).forEach(x=>{add(x.h,x.n);soma+=x.n;});add(null,c.pw-c.v-soma);add(c.hab,(P(c,l)-c.pw)+(extra||0));
- return [...m].filter(([h,n])=>n).map(([h,n])=>`, ${n>0?'mais':'menos'} ${Math.abs(n)}, ${h||'efeitos'}`).join('');}
+ return [...m].filter(([h,n])=>n).map(([h,n])=>`, ${n>0?'mais':'menos'} ${Math.abs(n)}, ${FXDE(h)||'efeitos'}`).join('');}
+function FXDE(n){if(!n)return null;for(const c in CHAB)for(const h of CHAB[c])if(h.n===n)return h.fx.replace(/[.]$/,'');return null;}
 // poder efetivo (com bônus que dependem da mesa)
 function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)return p;
  const F=FD(l).filter(x=>x&&x!==c),O=FD(OL(l)).filter(Boolean),H=HD(l),HO=HD(OL(l)),vida=VID(l);
@@ -678,7 +679,7 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));}
 function fecharTudo(){['#zoom','#sheet','#dim','#pn'].forEach(k=>$(k).classList.remove('on'));}
 let zi=-1,ZT=0;
-function abrirZoom(c,i){zi=i;{const l=lado(c),p=l?P(c,l):c.pw;calar();narrar(c.token?'Ficha. Sem habilidade própria.':`${c.hab}! ${c.fx}`,false,true);$('#leg').classList.remove('on');}$('#zc').innerHTML=cardHTML(c);$('#zn').textContent=c.n;$('#zcl').textContent=`${c.pl} · ${NAIPES[NK[c.s]].nome} · custo ${c.cost} de mana`;$('#zp').innerHTML=`<b style="color:var(--gold2)"><span style="color:${NCOR[c.s]};vertical-align:-2px">${ico(catDe(c.e),16)}</span> ${c.hab}</b><br>${c.fx}${c.flav?`<br><i style="color:var(--mut);font-size:13px">${c.flav}</i>`:''}`;
+function abrirZoom(c,i){zi=i;{const l=lado(c),p=l?P(c,l):c.pw;calar();narrar(c.token?'Ficha. Sem habilidade própria.':`${c.fx}`,false,true);$('#leg').classList.remove('on');}$('#zc').innerHTML=cardHTML(c);$('#zn').textContent=c.n;$('#zcl').textContent=`${c.pl} · ${NAIPES[NK[c.s]].nome} · custo ${c.cost} de mana`;$('#zp').innerHTML=`<b style="color:var(--gold2)"><span style="color:${NCOR[c.s]};vertical-align:-2px">${ico(catDe(c.e),16)}</span> ${c.hab}</b><br>${c.fx}${c.flav?`<br><i style="color:var(--mut);font-size:13px">${c.flav}</i>`:''}`;
  const pb=$('#zPlay');pb.style.display=i>=0?'':'none';pb.disabled=c.cost>S.mana;pb.textContent=c.cost>S.mana?'Falta '+(c.cost-S.mana)+' de mana':'Escolher casa';$('#zoom').classList.add('on');ZT=Date.now();}
 function abrirMais(){$('#sheet').classList.add('on');$('#dim').classList.add('on');}
 
