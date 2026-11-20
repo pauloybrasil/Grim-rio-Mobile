@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v31-pausa-explica</title>
+<title>Grimório Mobile · v32-pausa-menu</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -243,6 +243,17 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 .life.baixa span{color:#ff6b66;animation:baixa 1s ease-in-out infinite}
 @keyframes baixa{50%{text-shadow:0 0 14px #ff3b36}}
 .dock{position:relative}.dock .hint{text-align:left;padding-left:14px;padding-right:128px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.expl{position:absolute;right:12px;top:-6px;z-index:30;height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--gold);background:rgba(20,14,32,.85);color:var(--gold2);font:700 12px Inter,sans-serif;letter-spacing:.02em;white-space:nowrap}.expl.tem{box-shadow:0 0 0 2px rgba(255,210,122,.35),0 0 14px rgba(255,210,122,.45)}.expl:disabled{opacity:.45}
+#pausa{position:fixed;inset:0;z-index:80;background:radial-gradient(ellipse at 50% 40%,rgba(40,24,70,.82),rgba(4,3,10,.92));display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.pz-box{width:min(340px,92vw);display:flex;flex-direction:column;align-items:center;gap:14px;padding:22px 18px;border-radius:22px;border:1px solid rgba(255,210,122,.35);background:linear-gradient(180deg,rgba(32,22,52,.95),rgba(14,10,24,.95));box-shadow:0 20px 60px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.06)}
+.pz-t{font:800 26px Cinzel,serif;color:var(--gold2);letter-spacing:.14em}
+.pz-s{font:600 13px Inter,sans-serif;color:#cbbfe0;letter-spacing:.06em;text-transform:uppercase;margin-top:-6px}
+.pz-cols{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;width:100%}
+.pz-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;width:100%}
+.pz-b{position:relative;border:1px solid rgba(255,210,122,.4);border-radius:14px;background:linear-gradient(180deg,rgba(60,40,96,.9),rgba(28,18,46,.95));color:#f2e7c9;padding:10px 6px;display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s,box-shadow .2s}
+.pz-b b{font:800 30px Cinzel,serif;color:var(--gold2);line-height:1}.pz-b small{font:600 10px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#bfb2d6}
+.pz-w{flex-direction:row;justify-content:flex-start;gap:10px;padding:12px}.pz-w i{font-style:normal;font-size:24px}.pz-w span{display:flex;flex-direction:column;align-items:flex-start;font:800 15px Cinzel,serif;color:var(--gold2)}.pz-w span small{text-align:left;text-transform:none;letter-spacing:0;font-size:10.5px;margin-top:2px}
+.pz-b:active{transform:scale(.96)}.pz-b.on{box-shadow:0 0 0 2px var(--gold),0 0 22px rgba(255,210,122,.5)}.pz-b.dot::after{content:'';position:absolute;top:7px;right:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 8px var(--gold)}
+.pz-txt{min-height:44px;text-align:center;color:#ece2f7;font:500 14px/1.45 Inter,sans-serif;padding:0 4px}
 .leg{position:absolute;left:12px;right:12px;top:calc(var(--sat) + 96px);z-index:24;text-align:center;pointer-events:none;font:600 13px/1.35 Inter,sans-serif;color:#fff;background:rgba(8,5,14,.82);border:1px solid var(--line);border-radius:12px;padding:7px 12px;opacity:0;transition:opacity .25s}
 .leg.on{opacity:1}
 .fxl .mini.hb svg{width:24px;height:24px}
@@ -255,7 +266,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v31-pausa-explica</span>
+    <span class="tag">BASE · v32-pausa-menu</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -287,10 +298,22 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
     </section>
 
     <!-- DUELO -->
-    <div id="pausa" style="position:fixed;inset:0;z-index:80;background:rgba(6,4,12,.72);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(3px)">
-      <div style="font:800 30px Cinzel,serif;color:var(--gold2);letter-spacing:.12em">⏸ PAUSADO</div>
-      <div id="pausaTxt" style="max-width:320px;text-align:center;color:#e8def5;font:500 15px/1.45 Inter,sans-serif;min-height:66px;padding:0 16px"></div>
-      <button class="primary" id="pausaOk" style="width:auto;min-width:220px;padding:0 34px">▶ CONTINUAR</button>
+    <div id="pausa">
+      <div class="pz-box">
+        <div class="pz-t">⏸ PAUSADO</div>
+        <div class="pz-s">Qual é a sua dúvida?</div>
+        <div class="pz-cols">
+          <button class="pz-b" data-q="0"><b>1</b><small>Coluna</small></button>
+          <button class="pz-b" data-q="1"><b>2</b><small>Coluna</small></button>
+          <button class="pz-b" data-q="2"><b>3</b><small>Coluna</small></button>
+        </div>
+        <div class="pz-row">
+          <button class="pz-b pz-w" data-q="batalha"><i>⚔</i><span>Batalha<small>habilidades e resultado</small></span></button>
+          <button class="pz-b pz-w" data-q="dano"><i>💥</i><span>Dano<small>golpes e vida dos líderes</small></span></button>
+        </div>
+        <div id="pausaTxt" class="pz-txt"></div>
+        <button class="primary" id="pausaOk" style="width:auto;min-width:220px;padding:0 34px;margin-top:4px">▶ CONTINUAR</button>
+      </div>
     </div>
     <section class="scr" id="online">
       <div class="topbar"><button class="ico" id="onBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Jogar online</h3><span style="width:44px"></span></div>
@@ -447,7 +470,7 @@ async function ativa(c,l){src(c,l);}
 const COLN=['um','dois','três'];
 function ator(c,l){const j=FD(l).indexOf(c);return (l==='m'?'Sua carta':'A carta inimiga')+(j>=0?' da coluna '+COLN[j]:'');}
 // guarda o que a habilidade da carta fez (uma vez por dia por carta)
-function registrar(){if(!FC||!S)return;const c=FC.c,f=FATO[c.hab];if(!f)return;if(c._ex===S.turn)return;c._ex=S.turn;guardaExp(`${ator(c,FC.l)}, ${f}.`);}
+function registrar(tipo){if(!FC||!S)return;const c=FC.c,f=FATO[c.hab];if(!f)return;if(c._ex===S.turn)return;c._ex=S.turn;const j=FD(FC.l).indexOf(c);guardaExp(`${ator(c,FC.l)}, ${f}.`,j>=0?j:null,tipo||'hab');}
 // de onde vem cada ponto de poder da carta
 function origem(c,l,extra){const m=new Map();const add=(h,n)=>{if(!n)return;const k=h||'';m.set(k,(m.get(k)||0)+n);};let soma=0;
  (c.hist||[]).forEach(x=>{add(x.h,x.n);soma+=x.n;});add(null,c.pw-c.v-soma);add(c.hab,(P(c,l)-c.pw)+(extra||0));
@@ -564,7 +587,7 @@ async function bate(l,i){
  const d=P(c,l)+(e.atkBonus||0);if(d<=0)return;
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
- {const f0=FONTE,f1=FC;FONTE=null;FC=null;await dano(ol,d,R(el));FONTE=f0;FC=f1;}
+ {const f0=FONTE,f1=FC;FONTE=null;FC=null;guardaExp(`${ator(c,l)}, bateu ${d} no líder rival.`,i,'dano');await dano(ol,d,R(el));FONTE=f0;FC=f1;}
  
  if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);{const f1=FC;FC=null;await dano(ol,d,R(el));FC=f1;}}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
@@ -590,7 +613,7 @@ async function luta(i,a,b){ // a = sua, b = inimiga
   if(P(a,'m')!==a.pw||ea.fightBonus||ea.barrier){src(a,'m');registrar();}
   if(P(b,'o')!==b.pw||eb.fightBonus||eb.barrier){src(b,'o');registrar();}
   src(null);
-  if(oa||ob)guardaExp(`Na coluna ${COLN[i]}, sua carta lutou com ${pa} contra ${pb} e ${pa>pb?'venceu':pa<pb?'perdeu':'empatou'}.`);
+  guardaExp(`Na coluna ${COLN[i]}, sua carta lutou com ${pa} contra ${pb} e ${pa>pb?'venceu':pa<pb?'perdeu':'empatou'}.`,i,'col',!!(oa||ob));
   if(pa!==pb)sfx('win',.7);}
  await w(200);
  if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;src(qc,ql);pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
@@ -705,10 +728,11 @@ try{speechSynthesis.onvoiceschanged=()=>{VPT=null;vozPT();};}catch(e){}
 const limpa=t=>String(t).replace(/[^\p{L}\p{N}\s.,:;!?()\-+%º]/gu,'').replace(/\s+/g,' ').replace(/\+(\d)/g,'mais $1').replace(/−|-(\d)/g,(m,d)=>d?'menos '+d:'menos').trim();
 let LGT=null;
 function legenda(t){const e=$('#leg');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(LGT);LGT=setTimeout(()=>e.classList.remove('on'),2600);}
-const EXP=[];function guardaExp(t){if(!S)return;EXP.push({t,d:S.turn});if(EXP.length>60)EXP.shift();const b=$('#expl');if(b)b.classList.add('tem');}
+const EXP=[];function guardaExp(t,col,tipo,mod){if(!S)return;if(typeof ONL!=='undefined'&&ONL.host)ONL.send('exp',{t,col,tipo,mod});EXP.push({t,d:S.turn,col:col==null?null:col,tipo:tipo||'hab',mod:!!mod});if(EXP.length>120)EXP.shift();const b=$('#expl');if(b&&(tipo!=='col'||mod))b.classList.add('tem');}
 function narrar(t,esperar,local){if(typeof ONL!=='undefined'&&ONL.host&&!local)ONL.send('nar',{t});if(!local){guardaExp(t);return Promise.resolve();}legenda(t);if(!VOZ||SPD>1)return Promise.resolve();
+ if(typeof SOM!=='undefined'&&!SOM.pronto&&SOM.carga){const p=Promise.race([SOM.carga,new Promise(r=>setTimeout(r,15000))]).then(()=>{const g=falarGravado(t,esperar);return g===false?undefined:g;});return esperar?p:Promise.resolve();}
  {const g=(typeof falarGravado==='function')?falarGravado(t,esperar):false;if(g!==false)return g;}
- if(!('speechSynthesis' in window))return Promise.resolve();
+ return Promise.resolve();
  return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(limpa(t));u.lang='pt-BR';const v=vozPT();if(v)u.voice=v;u.rate=1.12;u.pitch=1;
    let ok=false;const fim=()=>{if(!ok){ok=true;res();}};u.onend=fim;u.onerror=fim;
    if(!esperar&&speechSynthesis.pending)speechSynthesis.cancel();
@@ -717,12 +741,11 @@ function calar(){try{speechSynthesis.cancel();}catch(e){}try{calarGravado();}cat
 // a voz precisa ser "destravada" dentro de um toque; e alguns aplicativos não têm voz
 let VOZOK=('speechSynthesis' in window)&&typeof SpeechSynthesisUtterance!=='undefined',VOZDEST=false;
 function vozStatus(){if(!VOZOK)return 'indisponível';let n=0;try{n=speechSynthesis.getVoices().length;}catch(e){}return n?'ok':'sem vozes';}
-function destravarVoz(frase){try{somCtx();if(SOM.pronto&&VOZ&&falarGravado(frase||'Bem-vindo ao Grimório!')!==false)return;}catch(e){}if(!VOZOK||!VOZ)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(frase||'Bem-vindo ao Grimório');u.lang='pt-BR';const v=vozPT();if(v)u.voice=v;u.rate=1.1;speechSynthesis.speak(u);VOZDEST=true;}catch(e){}
- setTimeout(()=>{const st=vozStatus();const el=$('#vozT');if(el)el.textContent=!VOZ?'Desligada':st==='ok'?'Ligada':'Sem voz neste app';if(st!=='ok'&&VOZ)toast('Este aplicativo não tem voz. Abra o link no Chrome para ouvir a narração.');},1500);}
+function destravarVoz(frase){try{somCtx();}catch(e){}const el=$('#vozT');if(el)el.textContent=VOZ?'Ligada':'Desligada';}
 
 // ---------- vida ----------
 async function dano(lado,n,de){ // lado = líder que recebe ('m' ou 'o')
- if(n<=0)return;registrar();sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
+ if(n<=0)return;registrar('dano');sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
  if(de)await orb(de,ra);
  if(lado==='m')S.ml=Math.max(0,S.ml-n);else S.ol=Math.max(0,S.ol-n);
  $(lado==='m'?'#mLife span':'#oLife span').textContent=lado==='m'?S.ml:S.ol;
@@ -888,18 +911,25 @@ $('#nBack').onclick=()=>show('menu');
 <script src="som.js"></script>
 <script>
 // botão "Explique aí": conta em áudio o que de diferente aconteceu na última batalha
-// botão de pausa: congela a partida e o Eliel conta direto o que aconteceu na batalha
+// botão de pausa: congela a partida e abre o menu de dúvidas; o Eliel explica o que for escolhido
 let EXPLA=false;
+function diaExp(){return EXP.length?EXP[EXP.length-1].d:null;}
+function listaDuvida(q){const d=diaExp(),E=EXP.filter(x=>x.d===d);let L;
+ if(q==='batalha'){L=E.filter(x=>x.tipo==='hab'||(x.tipo==='col'&&x.mod)).map(x=>x.t);if(!L.length)L=['Nada de diferente aconteceu. Foi só a batalha normal.'];}
+ else if(q==='dano'){L=E.filter(x=>x.tipo==='dano').map(x=>x.t);if(!L.length)L=['Ninguém levou dano neste dia.'];L.push(`Seu líder está com ${Math.max(0,S.ml)} de vida.`,`O líder inimigo está com ${Math.max(0,S.ol)} de vida.`);}
+ else{const k=+q;L=E.filter(x=>x.col===k).map(x=>x.t);if(!L.length)L=['Nada aconteceu nesta coluna neste dia.'];}
+ return L;}
+function marcarPausa(){const d=diaExp(),E=EXP.filter(x=>x.d===d);document.querySelectorAll('#pausa .pz-b').forEach(b=>{const q=b.dataset.q;const tem=q==='batalha'?E.some(x=>x.tipo==='hab'||(x.tipo==='col'&&x.mod)):q==='dano'?E.some(x=>x.tipo==='dano'):E.some(x=>x.col===+q&&(x.tipo!=='col'||x.mod));b.classList.toggle('dot',tem);b.classList.remove('on');});}
+async function explicar(q,btn){EXPLA=false;calar();await new Promise(r=>setTimeout(r,60));
+ document.querySelectorAll('#pausa .pz-b').forEach(b=>b.classList.remove('on'));btn&&btn.classList.add('on');
+ const lista=listaDuvida(q);EXPLA=true;const vozAntes=VOZ,spdAntes=SPD;VOZ=true;SPD=1;const meu=Symbol();EXPLA=meu;
+ for(const t of lista){if(EXPLA!==meu)break;$('#pausaTxt').textContent=t;await narrar(t,true,true);}
+ VOZ=vozAntes;SPD=spdAntes;if(EXPLA===meu){EXPLA=false;btn&&btn.classList.remove('on');}}
 function continuar(){EXPLA=false;calar();PAUSA=false;$('#pausa').style.display='none';try{SOM.musica&&SOM.musica.play().catch(()=>{});}catch(e){}}
 $('#pausaOk').onclick=continuar;
-$('#expl').onclick=async()=>{if(PAUSA){continuar();return;}
- PAUSA=true;$('#pausa').style.display='flex';try{SOM.musica&&SOM.musica.pause();}catch(e){}
- const ult=EXP.length?EXP[EXP.length-1].d:null,lista=EXP.filter(x=>x.d===ult).map(x=>x.t);
- $('#expl').classList.remove('tem');
- if(!lista.length)lista.push('Nada de diferente aconteceu. Foi só a batalha normal.');
- EXPLA=true;const vozAntes=VOZ,spdAntes=SPD;VOZ=true;SPD=1;
- for(const t of lista){if(!EXPLA)break;$('#pausaTxt').textContent=t;await narrar(t,true,true);}
- VOZ=vozAntes;SPD=spdAntes;EXPLA=false;};
+document.querySelectorAll('#pausa .pz-b').forEach(b=>b.onclick=()=>explicar(b.dataset.q,b));
+$('#expl').onclick=()=>{if(PAUSA){continuar();return;}
+ PAUSA=true;$('#pausa').style.display='flex';$('#pausaTxt').textContent='Toque numa opção para ouvir a explicação.';marcarPausa();$('#expl').classList.remove('tem');try{SOM.musica&&SOM.musica.pause();}catch(e){}};
 </script>
 <script>
 try{if(localStorage.getItem('gm-mus')==='0'){SOM.musOn=false;SOM.on=false;}}catch(e){}
