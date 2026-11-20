@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v28-narra-so-o-diferente</title>
+<title>Grimório Mobile · v30-explique-ai-fatos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -242,6 +242,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 @keyframes flip{0%{transform:perspective(500px) rotateY(90deg) scale(1.1);filter:brightness(2)}100%{transform:none;filter:none}}
 .life.baixa span{color:#ff6b66;animation:baixa 1s ease-in-out infinite}
 @keyframes baixa{50%{text-shadow:0 0 14px #ff3b36}}
+.dock{position:relative}.dock .hint{text-align:left;padding-left:14px;padding-right:128px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.expl{position:absolute;right:12px;top:-6px;z-index:30;height:30px;padding:0 12px;border-radius:15px;border:1px solid var(--gold);background:rgba(20,14,32,.85);color:var(--gold2);font:700 12px Inter,sans-serif;letter-spacing:.02em;white-space:nowrap}.expl.tem{box-shadow:0 0 0 2px rgba(255,210,122,.35),0 0 14px rgba(255,210,122,.45)}.expl:disabled{opacity:.45}
 .leg{position:absolute;left:12px;right:12px;top:calc(var(--sat) + 96px);z-index:24;text-align:center;pointer-events:none;font:600 13px/1.35 Inter,sans-serif;color:#fff;background:rgba(8,5,14,.82);border:1px solid var(--line);border-radius:12px;padding:7px 12px;opacity:0;transition:opacity .25s}
 .leg.on{opacity:1}
 .fxl .mini.hb svg{width:24px;height:24px}
@@ -254,7 +255,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v28-narra-so-o-diferente</span>
+    <span class="tag">BASE · v30-explique-ai-fatos</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -320,7 +321,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
         <div class="row mine" id="mRow"></div>
       </div>
       <div class="dock">
-        <div class="hint" id="hint">Toque numa carta</div>
+        <div class="hint" id="hint">Toque numa carta</div><button class="expl" id="expl" aria-label="Explique aí">💬 Explique aí</button>
         <div class="hand" id="hand"></div>
         <div class="actions">
           <div class="hud me" style="padding:0;height:auto;gap:8px">
@@ -433,11 +434,14 @@ const KS=f=>new Set([...f.toString().matchAll(/\b(?:e|ea|eb|EF\([a-zA-Z]+\))\.(\
 function HABDE(k){for(const c in CHAB)for(const h of CHAB[c])if(h.e&&h.e[k]!==undefined)return h.n;return null;}
 const SEU=l=>l==='m'?'(seu)':'(do oponente)';
 // narra a habilidade quando ela entra em ação (uma vez por momento por dia)
-async function ativa(c,l,grupo){if(!c||c.token)return;FONTE=c.hab;
- if(!KG)KG={entrar:KS(entrar),luta:new Set([...KS(luta),...KS(coluna),...KS(bate),...KS(P)]),morrer:KS(morrer),fim:KS(fimDoTurno)};
- const ks=c.e0||Object.keys(EF(c));if(!ks.some(k=>KG[grupo].has(k)))return;
- const tag=grupo+S.turn;if(c._nar===tag)return;c._nar=tag;
- await narrar(`${l==='o'?'(do oponente) ':''}${c.fx}`,true);}
+const FATO={"Seiva da Árvore-Mãe": "entrou e curou 2 de vida do próprio líder", "Alcance de Espinhos": "segurou o voador e envenenou a rival, que perdeu 1 de poder", "Vínculo com a Vida": "bateu no líder rival e curou o próprio líder na mesma quantidade", "Retorno à Terra": "caiu, mas curou 3 de vida do próprio líder", "Crônica das Raízes": "curou o próprio líder no fim do dia, 1 de vida por aliada no campo", "Escudo da Luz": "perderia a luta, mas o escudo segurou e ela ficou com 1 de poder", "Corrente Negra": "puxou a carta da frente para o próprio lado", "Livro da Lei": "caiu e voltou para a mão do dono", "Lança da Aurora": "deu escudo para as aliadas", "A Queda": "derrubou 2 de poder de todas as cartas rivais", "Maré Vista": "entrou e o dono comprou 1 carta", "Âncora do Abismo": "prendeu a carta da frente, que não lutou neste dia", "Redemoinho": "mandou a carta da frente de volta para a mão", "Arrastar": "mandou a carta da frente para o fundo do baralho", "Maré Alta": "varreu as cartas rivais fracas de volta para a mão", "Nuvem de Esporos": "criou um esporo de poder 1 numa casa vazia", "Esporo Primordial": "caiu e deixou um esporo de poder 2 no lugar", "Infestação": "infectou a carta da frente, que vai perder 1 de poder a cada fim de dia", "Colônia": "criou um esporo de poder 2 no fim do dia", "Floresta de Fungos": "encheu as casas vazias de esporos de poder 2", "Iniciativa": "atacou primeiro e venceu o empate", "Lâmina do Duelista": "lutou com 2 de poder a mais", "Duelo": "entrou e já lutou na hora com a carta da frente, com 2 a mais", "Arena da Glória": "destruiu a rival e ganhou 1 de poder", "Estandarte do Brasão": "ganhou 2 de poder para cada aliada no campo", "Matilha": "ficou mais forte, 1 de poder para cada aliada no campo", "Chamado da Colmeia": "ganhou 2 de poder por ter uma aliada do mesmo naipe", "Couro Endurecido": "sobreviveu à luta e ganhou 2 de poder", "Presa do Primeiro Lobo": "destruiu a rival e ainda causou 3 de dano no líder rival", "Rei da Selva": "deu primeiro golpe para as aliadas", "Ataque Aéreo": "entrou e causou 2 de dano no líder rival", "Granada": "caiu e explodiu, causando 2 de dano no líder rival", "Ordem do General": "deu 1 de poder para cada aliada", "Campo Minado": "fez uma mina explodir quando uma carta caiu, causando 1 de dano no líder rival", "União das Nações": "ganhou 2 de poder para cada naipe diferente entre as aliadas", "Miragem": "enganou a rival: ninguém caiu e ela ganhou 2 de poder", "Pilhagem": "roubou uma carta da mão rival", "Pedágio": "cobrou pedágio: o líder rival perdeu vida pelas cartas reveladas", "Gancho do Saqueador": "bateu no líder rival e roubou uma carta da mão dele", "Saque do Deserto": "ficou mais forte porque o dono tem poucas cartas na mão", "Tomo Encantado": "ficou mais forte pelas cartas na mão do dono", "Caldeirão": "fez o rival descartar uma carta", "Inveja": "ficou mais forte pelas cartas na mão do rival", "Boneco de Vodu": "tirou poder da carta da frente, 1 por carta na mão rival", "Mau-Olhado": "causou dano no líder rival, 1 por carta na mão dele", "Sincronizar": "ganhou 1 de poder no fim do dia", "Peça Mutante": "deu 3 de poder para a aliada mais fraca", "Genes Invertidos": "trocou de poder com a carta da frente", "Ninho de Carne": "tirou 1 de poder de todas as cartas rivais no fim do dia", "Código-Fonte": "deu 1 de poder para todas as aliadas no fim do dia", "Bola de Fogo": "lançou uma bola de fogo de 2 de dano", "Corrosão": "corroeu a carta da frente, que perdeu 1 de poder antes da luta", "Voar": "voou por cima e as duas bateram direto nos líderes", "Coroa de Aurex": "bateu 3 a mais no líder rival", "Fúria de Aurex": "voou e bateu duas vezes no líder rival", "Tesouro": "deu 1 de mana a mais para o próximo dia", "Recompensa": "destruiu a rival e o dono comprou 2 cartas", "Pagamento Adiantado": "gastou a mana que sobrou e virou poder", "Soldo": "destruiu a rival e garantiu 2 de mana a mais no próximo dia", "Rota Comercial": "deu 1 de mana a mais neste dia", "Levantar": "caiu, mas voltou na mesma casa com metade do poder", "Colheita de Almas": "causou dano no líder rival pelas cartas no cemitério", "Coroa de Ossos": "destruiu a rival e levantou um morto-vivo de poder 2", "Marcha dos Mortos": "deu 2 de poder para as fichas aliadas", "Sacrifício": "sugou o poder da aliada mais fraca", "Erupção": "tirou 2 de poder da carta da frente", "Têmpera": "aguentou o empate com a armadura", "Barreira de Pedra": "segurou a luta com 3 de poder a mais, mas não bate no líder", "Armas Forjadas": "deu armadura para as aliadas", "Onda de Magma": "venceu e a onda de magma tirou 3 de poder das rivais vizinhas", "Barganha": "cobrou 2 de vida do próprio líder e ganhou 3 de poder", "Fúria do Condenado": "ficou mais forte pela vida que o próprio líder já perdeu", "Ira Infernal": "ganhou 3 de poder porque o próprio líder está com pouca vida", "Cidade de Ferro Negro": "fez o dono comprar 1 carta a mais por estar com pouca vida", "Colheita das Chamas": "ganhou 1 de poder porque uma carta caiu", "Naufrágio": "caiu e afundou quem a matou, que perdeu 3 de poder", "Abordagem": "venceu e o poder que sobrou foi para o líder rival", "Leviatã": "passou direto e as duas bateram nos líderes", "Barril de Pólvora": "caiu e explodiu, causando o próprio poder de dano no líder rival", "Tentáculos do Kraken": "prendeu duas cartas rivais neste dia"};
+let FC=null;
+function src(c,l){FONTE=c?c.hab:null;FC=c&&!c.token?{c,l}:null;}
+async function ativa(c,l){src(c,l);}
+const COLN=['um','dois','três'];
+function ator(c,l){const j=FD(l).indexOf(c);return (l==='m'?'Sua carta':'A carta inimiga')+(j>=0?' da coluna '+COLN[j]:'');}
+// guarda o que a habilidade da carta fez (uma vez por dia por carta)
+function registrar(){if(!FC||!S)return;const c=FC.c,f=FATO[c.hab];if(!f)return;if(c._ex===S.turn)return;c._ex=S.turn;guardaExp(`${ator(c,FC.l)}, ${f}.`);}
 // de onde vem cada ponto de poder da carta
 function origem(c,l,extra){const m=new Map();const add=(h,n)=>{if(!n)return;const k=h||'';m.set(k,(m.get(k)||0)+n);};let soma=0;
  (c.hist||[]).forEach(x=>{add(x.h,x.n);soma+=x.n;});add(null,c.pw-c.v-soma);add(c.hab,(P(c,l)-c.pw)+(extra||0));
@@ -464,8 +468,8 @@ function cardHTML(c,extra){const l=lado(c),p=l?P(c,l):c.pw,cor=p>c.pw?'style="co
  return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn">⚓</div>':''}</div>`;}
 function maisFraca(F,ex){let k=-1;F.forEach((x,j)=>{if(x&&j!==ex&&(k<0||x.pw<F[k].pw))k=j;});return k;}
 function vazia(l){return FD(l).findIndex(x=>!x);}
-async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
-async function criarFicha(l,code,pw,nm,j){if(j===undefined)j=vazia(l);if(j<0)return false;const f=ficha(code,pw,nm);FD(l)[j]=f;render();cls(cardEl(l,j),'rise',600);pop(l,j,nm+' '+pw);lg(`${nm} ${pw} entrou no campo ${l==='m'?'seu':'inimigo'}`);await w(380);return true;}
+async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
+async function criarFicha(l,code,pw,nm,j){registrar();if(j===undefined)j=vazia(l);if(j<0)return false;const f=ficha(code,pw,nm);FD(l)[j]=f;render();cls(cardEl(l,j),'rise',600);pop(l,j,nm+' '+pw);lg(`${nm} ${pw} entrou no campo ${l==='m'?'seu':'inimigo'}`);await w(380);return true;}
 const MAOMAX=7;
 const comprasDoDia=d=>1+Math.ceil((d-1)/2); // começa em 1; a cada dia ímpar que termina, +1
 async function comprar(l,n,inicio){let extra=0;for(let k=0;k<n;k++){const c=compra();if(!c)break;const H=HD(l);if(H.length<MAOMAX)H.push(c);else{S.cem.unshift({...c,lado:l,desc:1});extra++;}}
@@ -477,7 +481,7 @@ async function tiraFrente(l,i,n,txt){const ol=OL(l),a=FD(ol)[i];if(!a)return;con
 async function entrar(c,l,i){
  const e=EF(c),ol=OL(l),F=FD(l),O=FD(ol),H=HD(l),HO=HD(ol);
  if(!Object.keys(e).length)return;
- await ativa(c,l,'entrar');
+ src(c,l);
  const say=t=>{pop(l,i,c.tg+' '+t);lg(`${c.tg} ${c.n}: ${t}`);};
  if(e.pay){if(l==='m')S.ml=Math.max(0,S.ml-e.pay);else S.ol=Math.max(0,S.ol-e.pay);const ra=R($(l==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,e.pay);say('paga '+e.pay+' de vida');render();await w(400);}
  if(e.self){await buff(l,i,e.self,c.tg+' +'+e.self);}
@@ -521,13 +525,14 @@ async function entrar(c,l,i){
  if(e.drain){const k=maisFraca(F,i);if(k>=0&&F[k].pw>1){const g=F[k].pw-1;F[k].pw=1;render();cls(cardEl(l,k),'shake',400);say('suga '+g);await buff(l,i,g,'⛧ +'+g);}}
  if(e.stunTwo&&O.some(Boolean)){const alvos=[];if(O[i])alvos.push(i);for(const j of [i-1,i+1])if(alvos.length<2&&j>=0&&j<3&&O[j])alvos.push(j);if(alvos.length<2)for(let j=0;j<3&&alvos.length<2;j++)if(O[j]&&!alvos.includes(j))alvos.push(j);alvos.forEach(j=>O[j].stun=true);say(alvos.length+' presas');render();await w(400);}
  if(e.charge&&!O[i]&&F[i]===c){say('Investida!');await bate(l,i);}
- FONTE=null;
+ src(null);
 }
 // ---------- morte ----------
-async function morrer(l,i,killer){
+async function morrer(l,i,killer){const p0=FONTE,p1=FC;try{return await morrer0(l,i,killer);}finally{FONTE=p0;FC=p1;}}
+async function morrer0(l,i,killer){src(null);
  const F=FD(l),c=F[i];if(!c)return;const e=EF(c),ol=OL(l);
  cls(cardEl(l,i),'die',500);sfx('death');await w(440);
- if(!c.token)await ativa(c,l,'morrer');
+ if(!c.token)src(c,l);
  if(e.returnHalf&&!c.voltou){const p=Math.max(1,Math.ceil(c.v/2));F[i]={...c,pw:p,voltou:true,stun:false,id:Math.random()};render();cls(cardEl(l,i),'rise',600);pop(l,i,'☠ volta com '+p);lg(`☠ ${c.n} voltou com ${p} de poder`);await w(400);return;}
  F[i]=null;
  if(e.deathToHand&&!c.token&&HD(l).length<7){HD(l).push(carta(c.code,c.v));lg(`📖 ${c.n} voltou para a mão`);}
@@ -541,21 +546,21 @@ async function morrer(l,i,killer){
  if(e.deathToken&&!F[i])await criarFicha(l,c.code,e.deathToken[0],e.deathToken[1],i);
  // auras globais: Campo Minado e Coletar Alma
  for(const L of ['m','o'])for(let j=0;j<3;j++){const x=FD(L)[j];if(!x)continue;
-   if(EF(x).mines){lg(`☢ Campo Minado: 1 no líder ${L==='m'?'inimigo':'seu'}`);await dano(OL(L),1,R(slotEl(L,j)));}
-   if(EF(x).soulGrow&&(x.sg||0)<3){x.sg=(x.sg||0)+1;x.pw+=EF(x).soulGrow;(x.hist=x.hist||[]).push({h:x.hab,n:EF(x).soulGrow});render();cls(cardEl(L,j),'rise',500);pop(L,j,'🕯 +1');}}
+   if(EF(x).mines){src(x,L);lg(`☢ Campo Minado: 1 no líder ${L==='m'?'inimigo':'seu'}`);await dano(OL(L),1,R(slotEl(L,j)));}
+   if(EF(x).soulGrow&&(x.sg||0)<3){src(x,L);registrar();x.sg=(x.sg||0)+1;x.pw+=EF(x).soulGrow;(x.hist=x.hist||[]).push({h:x.hab,n:EF(x).soulGrow});render();cls(cardEl(L,j),'rise',500);pop(L,j,'🕯 +1');}}
 }
 // ---------- combate ----------
 async function bate(l,i){
  const c=FD(l)[i];if(!c)return;const e=EF(c),el=cardEl(l,i),ol=OL(l);
- if(c.stun){pop(l,i,'⚓ presa');await w(300);return;}
- if(e.barrier){pop(l,i,'🛡 barreira não ataca');await w(300);return;}
- await ativa(c,l,'luta');
+ src(null);if(c.stun){pop(l,i,'⚓ presa');await w(300);return;}
+ if(e.barrier){src(c,l);pop(l,i,'🛡 barreira não ataca');await w(300);return;}
+ src(c,l);if(e.atkBonus)registrar();
  const d=P(c,l)+(e.atkBonus||0);if(d<=0)return;
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
- await dano(ol,d,R(el));
+ {const f0=FONTE,f1=FC;FONTE=null;FC=null;await dano(ol,d,R(el));FONTE=f0;FC=f1;}
  
- if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);await dano(ol,d,R(el));}
+ if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);{const f1=FC;FC=null;await dano(ol,d,R(el));FC=f1;}}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
  if(e.hitSteal&&HD(ol).length&&HD(l).length<7){const k=Math.floor(Math.random()*HD(ol).length);HD(l).push(HD(ol).splice(k,1)[0]);pop(l,i,'🪝 rouba 1');render();}
  if(e.hitMana){S.pend[l]=(S.pend[l]||0)+e.hitMana;pop(l,i,'🪙 +1 mana');}
@@ -563,10 +568,10 @@ async function bate(l,i){
 }
 async function luta(i,a,b){ // a = sua, b = inimiga
  const ea=EF(a),eb=EF(b);
- await ativa(a,'m','luta');await ativa(b,'o','luta');
+ src(null);
  const ra=R(cardEl('m',i)),rb=R(cardEl('o',i)),gap=(ra.y-(rb.y+rb.h))/2+8;
- FONTE=a.hab;if(ea.corrode){await buff('o',i,-ea.corrode,'🧪 −'+ea.corrode);if(S.theirs[i]!==b)return;}
- FONTE=b.hab;if(eb.corrode){await buff('m',i,-eb.corrode,'🧪 −'+eb.corrode);if(S.mine[i]!==a)return;}
+ src(a,'m');if(ea.corrode){await buff('o',i,-ea.corrode,'🧪 −'+ea.corrode);if(S.theirs[i]!==b)return;}
+ src(b,'o');if(eb.corrode){await buff('m',i,-eb.corrode,'🧪 −'+eb.corrode);if(S.mine[i]!==a)return;}
  await Promise.all([investida(cardEl('m',i),-gap),investida(cardEl('o',i),gap)]);
  tmp(add('spark',(ra.cx+rb.cx)/2,(ra.y+rb.y+rb.h)/2),420);
  const pa=P(a,'m')+(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0),pb=P(b,'o')+(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0);
@@ -574,22 +579,25 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  forca(ra.cx,ra.cy,pa);forca(rb.cx,rb.cy,pb);cls(cardEl('m',i),'shake',320);cls(cardEl('o',i),'shake',320);
  lg(`Coluna ${i+1}: ${a.n} (${pa}) x ${b.n} (${pb})`);
  sfx('clash');burst((ra.cx+rb.cx)/2,(ra.y+rb.y+rb.h)/2,'#ffd27a',22);cls(cardEl('m',i),'flash',250);cls(cardEl('o',i),'flash',250);await w(80);
- {const base=(c,o)=>o?(c.token?'Ficha':'carta '+c.v)+o+'. ':'';
-  const oa=origem(a,'m',(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0)),ob=origem(b,'o',(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0));
-  if(oa||ob)await narrar(`Coluna ${i+1}! ${oa?base(a,oa)+'Poder '+pa+'! ':''}${ob?'Contra: '+base(b,ob)+'Poder '+pb+'!':''}`,true);
+ {const oa=origem(a,'m',(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0)),ob=origem(b,'o',(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0));
+  // bônus passivos que mudaram a luta
+  if(P(a,'m')!==a.pw||ea.fightBonus||ea.barrier){src(a,'m');registrar();}
+  if(P(b,'o')!==b.pw||eb.fightBonus||eb.barrier){src(b,'o');registrar();}
+  src(null);
+  if(oa||ob)guardaExp(`Na coluna ${COLN[i]}, sua carta lutou com ${pa} contra ${pb} e ${pa>pb?'venceu':pa<pb?'perdeu':'empatou'}.`);
   if(pa!==pb)sfx('win',.7);}
  await w(200);
- if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
+ if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;src(qc,ql);pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
  let ma=pa<pb,mb=pb<pa;
  if(pa===pb){
-   if(ea.first&&!eb.first){mb=true;pop('m',i,'⚡ primeiro golpe');}
-   else if(eb.first&&!ea.first){ma=true;pop('o',i,'⚡ primeiro golpe');}
-   else{ma=!ea.armor;mb=!eb.armor;if(ea.armor)pop('m',i,'🔨 Armadura');if(eb.armor)pop('o',i,'🔨 Armadura');}
+   if(ea.first&&!eb.first){mb=true;src(a,'m');pop('m',i,'⚡ primeiro golpe');}
+   else if(eb.first&&!ea.first){ma=true;src(b,'o');pop('o',i,'⚡ primeiro golpe');}
+   else{ma=!ea.armor;mb=!eb.armor;if(ea.armor){src(a,'m');pop('m',i,'🔨 Armadura');}if(eb.armor){src(b,'o');pop('o',i,'🔨 Armadura');}src(null);}
  }
- const perde=async(l,c,k)=>{if(EF(c).shield&&(c.esc||0)<EF(c).shield){c.esc=(c.esc||0)+1;c.pw=1;render();cls(cardEl(l,i),'rise',600);pop(l,i,'🛡 Escudo: fica com 1');lg(`🛡 ${c.n} sobreviveu`);await w(420);return false;}await morrer(l,i,k);return true;};
+ const perde=async(l,c,k)=>{if(EF(c).shield&&(c.esc||0)<EF(c).shield){src(c,l);c.esc=(c.esc||0)+1;c.pw=1;render();cls(cardEl(l,i),'rise',600);pop(l,i,'🛡 Escudo: fica com 1');lg(`🛡 ${c.n} sobreviveu`);await w(420);return false;}await morrer(l,i,k);return true;};
  const da=ma?await perde('m',a,b):false, db=mb?await perde('o',b,a):false;
  // vencedores
- const ganhou=async(l,c,pc,po,matou)=>{const e=EF(c),ol=OL(l);if(FD(l)[i]!==c)return;FONTE=c.hab;
+ const ganhou=async(l,c,pc,po,matou)=>{const e=EF(c),ol=OL(l);if(FD(l)[i]!==c)return;src(c,l);
    if(matou){
      if(e.trample&&pc>po){const x=pc-po;pop(l,i,'➹ atropela '+x);await dano(ol,x,R(slotEl(l,i)));}
      if(e.sweep){for(const j of [i-1,i+1])if(j>=0&&j<3&&FD(ol)[j])await buff(ol,j,-e.sweep,'⚔ −'+e.sweep);}
@@ -602,17 +610,17 @@ async function luta(i,a,b){ // a = sua, b = inimiga
    if(e.growSurvive)await buff(l,i,e.growSurvive,'💢 +'+e.growSurvive);
  };
  await ganhou('m',a,pa,pb,db);await ganhou('o',b,pb,pa,da);
- FONTE=b.hab;if(eb.poison&&S.mine[i]===a)await buff('m',i,-eb.poison,'☣ −'+eb.poison);
- FONTE=a.hab;if(ea.poison&&S.theirs[i]===b)await buff('o',i,-ea.poison,'☣ −'+ea.poison);
+ src(b,'o');if(eb.poison&&S.mine[i]===a)await buff('m',i,-eb.poison,'☣ −'+eb.poison);
+ src(a,'m');if(ea.poison&&S.theirs[i]===b)await buff('o',i,-ea.poison,'☣ −'+ea.poison);
 }
 async function coluna(i){
- let a=S.mine[i],b=S.theirs[i];
+ let a=S.mine[i],b=S.theirs[i];src(null);
  if(a&&a.stun)a=null;if(b&&b.stun)b=null;
  if(!a&&!b){S.mine[i]&&pop('m',i,'⚓ presa');S.theirs[i]&&pop('o',i,'⚓ presa');return;}
  S.lane=i;render();await w(150);
  const voa=c=>EF(c).fly||EF(c).flyDouble,bloq=c=>EF(c).fly||EF(c).flyDouble||EF(c).blockFly;
- if(a&&b&&(EF(a).bypass||EF(b).bypass)){pop(EF(a).bypass?'m':'o',i,'🌊 passa direto');await w(300);await bate('m',i);await bate('o',i);}
- else if(a&&b&&((voa(a)&&!bloq(b))||(voa(b)&&!bloq(a)))){pop(voa(a)?'m':'o',i,'🪽 voa por cima');await w(300);await bate('m',i);await bate('o',i);}
+ if(a&&b&&(EF(a).bypass||EF(b).bypass)){src(EF(a).bypass?a:b,EF(a).bypass?'m':'o');pop(EF(a).bypass?'m':'o',i,'🌊 passa direto');await w(300);await bate('m',i);await bate('o',i);}
+ else if(a&&b&&((voa(a)&&!bloq(b))||(voa(b)&&!bloq(a)))){src(voa(a)?a:b,voa(a)?'m':'o');pop(voa(a)?'m':'o',i,'🪽 voa por cima');await w(300);await bate('m',i);await bate('o',i);}
  else if(a&&b)await luta(i,a,b);
  else if(a)await bate('m',i);else await bate('o',i);
  await w(220);S.lane=-1;render();
@@ -620,13 +628,13 @@ async function coluna(i){
 // ---------- fim do turno ----------
 async function fimDoTurno(){
  for(const l of ['m','o'])for(let j=0;j<3;j++){const c=FD(l)[j];if(!c)continue;const e=EF(c);
-   await ativa(c,l,'fim');if(FD(l)[j]!==c)continue;
+   src(c,l);if(FD(l)[j]!==c)continue;
    if(e.grow)await buff(l,j,e.grow,'🔗 +'+e.grow);
    if(e.endBuffAll){for(let k=0;k<3;k++)if(FD(l)[k])await buff(l,k,e.endBuffAll,'+'+e.endBuffAll);}
    if(e.endDebuffAll){for(let k=0;k<3;k++)if(FD(OL(l))[k])await buff(OL(l),k,-e.endDebuffAll,'−'+e.endDebuffAll);}
    if(e.endHealPer){const n=FD(l).filter(Boolean).length*e.endHealPer;if(n){cura(l,n);pop(l,j,'🌳 +'+n+' vida');}}
    if(e.endToken)await criarFicha(l,c.code,e.endToken[0],e.endToken[1]);}
- FONTE=HABDE('infect');for(const l of ['m','o'])for(let j=0;j<3;j++){const c=FD(l)[j];if(c&&c.infect)await buff(l,j,-1,'🍄 −1');}FONTE=null;
+ FONTE=HABDE('infect');FC=null;for(const l of ['m','o'])for(let j=0;j<3;j++){const c=FD(l)[j];if(c&&c.infect)await buff(l,j,-1,'🍄 −1');}src(null);
  for(const l of ['m','o'])FD(l).forEach(c=>{if(c)c.stun=false;});
 }
 function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaAura:0),0);}
@@ -656,7 +664,7 @@ function slotEl(lado,i){return $(lado==='m'?'#mRow':'#oRow').children[i];}
 function cardEl(lado,i){const s=slotEl(lado,i);return s&&s.querySelector('.card');}
 function add(cls,x,y,txt,extra){const e=document.createElement('div');e.className=cls;e.style.left=x+'px';e.style.top=y+'px';if(txt!=null)e.textContent=txt;if(extra)Object.assign(e.style,extra);PH().appendChild(e);return e;}
 function tmp(e,ms){setTimeout(()=>e.remove(),ms/SPD+50);}
-function pop(lado,i,t){const s=slotEl(lado,i);if(!s)return;const r=R(s);tmp(add('pop',r.cx,r.y+r.h*.35,t),1300);}
+function pop(lado,i,t){registrar();const s=slotEl(lado,i);if(!s)return;const r=R(s);tmp(add('pop',r.cx,r.y+r.h*.35,t),1300);}
 function burst(x,y,cor,n){for(let k=0;k<(n||18);k++){const e=add('pt',x,y,null,{'--pc':cor});const a=Math.random()*Math.PI*2,d=30+Math.random()*60;e.animate([{transform:'translate(0,0) scale(1)',opacity:1},{transform:`translate(${Math.cos(a)*d}px,${Math.sin(a)*d}px) scale(.2)`,opacity:0}],{duration:(450+Math.random()*350)/SPD,easing:'cubic-bezier(.2,.7,.3,1)'}).finished.then(()=>e.remove());}}
 function forca(x,y,n){tmp(add('num forca',x,y,String(n)),1100);}
 function num(x,y,n,heal){tmp(add('num'+(heal?' heal':''),x,y,(heal?'+':'-')+n),900);}
@@ -691,7 +699,8 @@ try{speechSynthesis.onvoiceschanged=()=>{VPT=null;vozPT();};}catch(e){}
 const limpa=t=>String(t).replace(/[^\p{L}\p{N}\s.,:;!?()\-+%º]/gu,'').replace(/\s+/g,' ').replace(/\+(\d)/g,'mais $1').replace(/−|-(\d)/g,(m,d)=>d?'menos '+d:'menos').trim();
 let LGT=null;
 function legenda(t){const e=$('#leg');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(LGT);LGT=setTimeout(()=>e.classList.remove('on'),2600);}
-function narrar(t,esperar,local){if(typeof ONL!=='undefined'&&ONL.host&&!local)ONL.send('nar',{t});legenda(t);if(!VOZ||SPD>1)return Promise.resolve();
+const EXP=[];function guardaExp(t){if(!S)return;EXP.push({t,d:S.turn});if(EXP.length>60)EXP.shift();const b=$('#expl');if(b)b.classList.add('tem');}
+function narrar(t,esperar,local){if(typeof ONL!=='undefined'&&ONL.host&&!local)ONL.send('nar',{t});if(!local){guardaExp(t);return Promise.resolve();}legenda(t);if(!VOZ||SPD>1)return Promise.resolve();
  {const g=(typeof falarGravado==='function')?falarGravado(t,esperar):false;if(g!==false)return g;}
  if(!('speechSynthesis' in window))return Promise.resolve();
  return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(limpa(t));u.lang='pt-BR';const v=vozPT();if(v)u.voice=v;u.rate=1.12;u.pitch=1;
@@ -707,14 +716,14 @@ function destravarVoz(frase){try{somCtx();if(SOM.pronto&&VOZ&&falarGravado(frase
 
 // ---------- vida ----------
 async function dano(lado,n,de){ // lado = líder que recebe ('m' ou 'o')
- if(n<=0)return;sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
+ if(n<=0)return;registrar();sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
  if(de)await orb(de,ra);
  if(lado==='m')S.ml=Math.max(0,S.ml-n);else S.ol=Math.max(0,S.ol-n);
  $(lado==='m'?'#mLife span':'#oLife span').textContent=lado==='m'?S.ml:S.ol;
  cls(av,'hit',400);cls($(lado==='m'?'#mLife':'#oLife'),'dmg',500);num(ra.cx+34,ra.cy,n);burst(ra.cx,ra.cy,'#ff6b66',14);if(n>=4)quake();
  $('#mLife').classList.toggle('baixa',S.ml<=10);$('#oLife').classList.toggle('baixa',S.ol<=10);
 }
-function cura(lado,n){const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
+function cura(lado,n){registrar();const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
 
 // ---------- entrada de carta ----------
 async function baixar(lado,c,i,de,oculta){
@@ -727,7 +736,7 @@ async function baixar(lado,c,i,de,oculta){
  lg(`${lado==='m'?'Você baixou':'Oponente baixou'} ${c.n} (poder ${c.pw}) na coluna ${i+1}`);
  await w(180);await entrar(c,lado,i);
 }
-async function pedagio(l){const n=FD(OL(l)).filter(x=>x&&EF(x).toll).length;if(n){lg(`🪙 Pedágio: líder ${l==='m'?'seu':'inimigo'} perde ${n}`);await dano(l,n,null);}}
+async function pedagio(l){const n=FD(OL(l)).filter(x=>x&&EF(x).toll).length;if(n){const x=FD(OL(l)).find(x=>x&&EF(x).toll);src(x,OL(l));registrar();src(null);lg(`🪙 Pedágio: líder ${l==='m'?'seu':'inimigo'} perde ${n}`);await dano(l,n,null);}}
 // revelação: as cartas preparadas no dia aparecem e ativam, coluna por coluna
 async function revelar(){
  const tem=[...S.mine,...S.theirs].some(c=>c&&c.novo);if(!tem)return;
@@ -871,6 +880,18 @@ $('#nBack').onclick=()=>show('menu');
 
 <script src="online.js"></script>
 <script src="som.js"></script>
+<script>
+// botão "Explique aí": conta em áudio o que de diferente aconteceu na última batalha
+let EXPLA=false;
+$('#expl').onclick=async()=>{if(EXPLA){calar();EXPLA=false;return;}
+ const ult=EXP.length?EXP[EXP.length-1].d:null,lista=EXP.filter(x=>x.d===ult).map(x=>x.t);
+ $('#expl').classList.remove('tem');
+ if(!lista.length){narrar('Nada de diferente aconteceu. Foi só a batalha normal.',false,true);return;}
+ lista.unshift('Veja o que aconteceu.');
+ EXPLA=true;const vozAntes=VOZ;VOZ=true;
+ for(const t of lista){if(!EXPLA)break;await narrar(t,true,true);}
+ VOZ=vozAntes;EXPLA=false;};
+</script>
 <script>
 try{if(localStorage.getItem('gm-mus')==='0'){SOM.musOn=false;SOM.on=false;}}catch(e){}
 $('#musT').textContent=SOM.musOn?'Ligada':'Desligada';
