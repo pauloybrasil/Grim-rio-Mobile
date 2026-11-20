@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v22-voz</title>
+<title>Grimório Mobile · v23-online</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -254,7 +254,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v22-voz</span>
+    <span class="tag">BASE · v23-online</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -276,6 +276,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
       </div>
       <div>
         <button class="primary" id="jogar">JOGAR</button>
+        <button class="sec" id="jogarOn" style="width:100%;margin-top:10px;height:50px;border-color:var(--gold);color:var(--gold2);font-weight:700">⚔ JOGAR ONLINE COM UM AMIGO</button>
         <div class="secrow">
           <button class="sec" data-toast="Coleção">Coleção</button>
           <button class="sec" data-toast="Loja">Loja</button>
@@ -285,6 +286,20 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
     </section>
 
     <!-- DUELO -->
+    <section class="scr" id="online">
+      <div class="topbar"><button class="ico" id="onBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Jogar online</h3><span style="width:44px"></span></div>
+      <div id="onJoin" style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
+        <button class="primary" id="onCriar">CRIAR SALA</button>
+        <div style="text-align:center;color:var(--mut);font-size:13px">ou entre na sala do seu amigo</div>
+        <input id="onIn" maxlength="4" placeholder="CÓDIGO" autocomplete="off" style="height:60px;border-radius:14px;border:1.5px solid var(--line);background:rgba(20,14,32,.8);color:var(--gold2);font:800 28px Cinzel,serif;text-align:center;letter-spacing:.3em;text-transform:uppercase">
+        <button class="sec" id="onEntrar" style="height:54px">Entrar</button>
+      </div>
+      <div id="onWait" hidden style="text-align:center;margin-top:30px">
+        <div style="color:var(--mut);font-size:12px;letter-spacing:.2em;text-transform:uppercase">Código da sala</div>
+        <div id="onCode" style="font:800 56px Cinzel,serif;color:var(--gold2);letter-spacing:.2em;margin:10px 0 6px"></div>
+      </div>
+      <p id="onMsg" style="text-align:center;color:#d7cde6;margin-top:18px"></p>
+    </section>
     <section class="scr" id="escolha">
       <div class="topbar"><button class="ico" id="nBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Escolha as classes</h3><span style="width:44px"></span></div>
       <p class="escs">1 classe por naipe. São 2 baralhos de 36 cartas misturados (72), usados pelos dois jogadores.</p>
@@ -356,6 +371,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
   </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="classes.js"></script>
 <script src="hab.js"></script>
 <script>
@@ -379,7 +395,7 @@ let S,SPD=1;
 const PH=()=>$('#phone');
 const ORDS=['','Primeiro','Segundo','Terceiro','Quarto','Quinto','Sexto','Sétimo','Oitavo','Nono','Décimo','Décimo primeiro','Décimo segundo','Décimo terceiro','Décimo quarto','Décimo quinto','Décimo sexto','Décimo sétimo','Décimo oitavo','Décimo nono','Vigésimo'];
 function ORD(n,curto){return curto?n+'º dia':(ORDS[n]||n+'º')+' dia de batalha';}
-function banner(){const b=$('#dia');if(!b)return;narrar(ORD(S.turn)+'.');b.querySelector('b').textContent=ORD(S.turn);b.querySelector('small').textContent=S.turn===1?'Que comece o duelo':'Cada lado compra '+comprasDoDia(S.turn)+(comprasDoDia(S.turn)>1?' cartas':' carta');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');}
+function banner(silencio){const b=$('#dia');if(!b)return;if(!silencio)narrar(ORD(S.turn)+'.');if(typeof ONL!=='undefined'&&ONL.host)ONL.send('banner',{turn:S.turn});b.querySelector('b').textContent=ORD(S.turn);b.querySelector('small').textContent=S.turn===1?'Que comece o duelo':'Cada lado compra '+comprasDoDia(S.turn)+(comprasDoDia(S.turn)>1?' cartas':' carta');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');}
 const w=ms=>new Promise(r=>setTimeout(r,ms/SPD));
 // ================= MOTOR DE HABILIDADES (160 = 5 por classe × 32) =================
 const FAIXA=['','2 e 3','4 e 5','6 e 7','8 e 9','10'];
@@ -445,7 +461,7 @@ async function tiraFrente(l,i,n,txt){const ol=OL(l),a=FD(ol)[i];if(!a)return;con
 async function entrar(c,l,i){
  const e=EF(c),ol=OL(l),F=FD(l),O=FD(ol),H=HD(l),HO=HD(ol);
  if(!Object.keys(e).length)return;
- const say=t=>{pop(l,i,c.tg+' '+t);lg(`${c.tg} ${c.n}: ${t}`);narrar(`${c.hab}, ${l==='m'?'sua':'do oponente'}: ${t}`);};
+ const say=t=>{pop(l,i,c.tg+' '+t);lg(`${c.tg} ${c.n}: ${t}`);narrar(`${c.hab} ${l==='m'?'(seu)':'(do oponente)'}: ${t}`);};
  if(e.pay){if(l==='m')S.ml=Math.max(0,S.ml-e.pay);else S.ol=Math.max(0,S.ol-e.pay);const ra=R($(l==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,e.pay);say('paga '+e.pay+' de vida');render();await w(400);}
  if(e.self){await buff(l,i,e.self,c.tg+' +'+e.self);}
  if(e.heal){say('cura '+e.heal);cura(l,e.heal);await w(350);}
@@ -518,7 +534,7 @@ async function bate(l,i){
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
  await dano(ol,d,R(el));
- await narrar(`${l==='m'?'Seu':'O'} ${c.cls}${l==='m'?'':' do oponente'} bate ${d} no ${l==='m'?'líder inimigo':'seu líder'}. Vida ${l==='m'?'dele':'sua'}: ${l==='m'?S.ol:S.ml}.`,true);
+ await narrar(`${c.cls} ${l==='m'?'(seu)':'(do oponente)'} bate ${d} no ${l==='m'?'líder inimigo':'seu líder'}. ${l==='m'?'Vida dele':'Sua vida'}: ${l==='m'?S.ol:S.ml}.`,true);
  if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);await dano(ol,d,R(el));}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
  if(e.hitSteal&&HD(ol).length&&HD(l).length<7){const k=Math.floor(Math.random()*HD(ol).length);HD(l).push(HD(ol).splice(k,1)[0]);pop(l,i,'🪝 rouba 1');render();}
@@ -537,7 +553,7 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  forca(ra.cx,ra.cy,pa);forca(rb.cx,rb.cy,pb);cls(cardEl('m',i),'shake',320);cls(cardEl('o',i),'shake',320);
  lg(`Coluna ${i+1}: ${a.n} (${pa}) x ${b.n} (${pb})`);
  burst((ra.cx+rb.cx)/2,(ra.y+rb.y+rb.h)/2,'#ffd27a',22);cls(cardEl('m',i),'flash',250);cls(cardEl('o',i),'flash',250);await w(80);
- await narrar(`Coluna ${i+1}: seu ${a.cls}, poder ${pa}, contra ${b.cls} do oponente, poder ${pb}. ${pa>pb?'Você vence a coluna.':pb>pa?'O oponente vence a coluna.':'Empate.'}`,true);
+ await narrar(`Coluna ${i+1}: ${a.cls} (seu), poder ${pa}, contra ${b.cls} (do oponente), poder ${pb}. ${pa>pb?'Você vence a coluna.':pb>pa?'O oponente vence a coluna.':'Empate.'}`,true);
  await w(200);
  if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
  let ma=pa<pb,mb=pb<pa;
@@ -595,7 +611,7 @@ function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),hand:[],oh
  for(let k=0;k<5;k++){S.hand.push(compra());S.oh.push(compra());}lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
 function lg(t,tit){S.log.unshift({t,tit});if(S.log.length>150)S.log.pop();}
 function nome(c,me){return c.n+(me?' (sua)':' (inimiga)');}
-function render(){
+function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
  $('#mLife span').textContent=S.ml;$('#oLife span').textContent=S.ol;
  $('#oHand').innerHTML='<i></i>'.repeat(S.oh.length);
  $('#turn').textContent=(S.busy?'Batalha':ORD(S.turn,1))+' · 📚 '+S.deck.length+' · compra '+comprasDoDia(S.turn+1);
@@ -638,7 +654,7 @@ function toast(t){const e=$('#toast');e.textContent=t;e.classList.add('on');clea
 function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggle('on',s.id===id));}
 function fecharTudo(){['#zoom','#sheet','#dim','#pn'].forEach(k=>$(k).classList.remove('on'));}
 let zi=-1,ZT=0;
-function abrirZoom(c,i){zi=i;{const l=lado(c),p=l?P(c,l):c.pw;narrar(`${c.cls}, ${c.token?'ficha':'carta '+c.v} de ${NAIPES[NK[c.s]].nome}. Poder ${p}${c.token?'':', custo '+c.cost}.${c.hab&&!c.token?' Habilidade '+c.hab+': '+c.fx:''}`);$('#leg').classList.remove('on');}$('#zc').innerHTML=cardHTML(c);$('#zn').textContent=c.n;$('#zcl').textContent=`${c.pl} · ${NAIPES[NK[c.s]].nome} · custo ${c.cost} de mana`;$('#zp').innerHTML=`<b style="color:var(--gold2)"><span style="color:${NCOR[c.s]};vertical-align:-2px">${ico(catDe(c.e),16)}</span> ${c.hab}</b><br>${c.fx}${c.flav?`<br><i style="color:var(--mut);font-size:13px">${c.flav}</i>`:''}`;
+function abrirZoom(c,i){zi=i;{const l=lado(c),p=l?P(c,l):c.pw;narrar(`${c.cls}, ${c.token?'ficha':'carta '+c.v} de ${NAIPES[NK[c.s]].nome}. Poder ${p}${c.token?'':', custo '+c.cost}.${c.hab&&!c.token?' Habilidade '+c.hab+': '+c.fx:''}`,false,true);$('#leg').classList.remove('on');}$('#zc').innerHTML=cardHTML(c);$('#zn').textContent=c.n;$('#zcl').textContent=`${c.pl} · ${NAIPES[NK[c.s]].nome} · custo ${c.cost} de mana`;$('#zp').innerHTML=`<b style="color:var(--gold2)"><span style="color:${NCOR[c.s]};vertical-align:-2px">${ico(catDe(c.e),16)}</span> ${c.hab}</b><br>${c.fx}${c.flav?`<br><i style="color:var(--mut);font-size:13px">${c.flav}</i>`:''}`;
  const pb=$('#zPlay');pb.style.display=i>=0?'':'none';pb.disabled=c.cost>S.mana;pb.textContent=c.cost>S.mana?'Falta '+(c.cost-S.mana)+' de mana':'Escolher casa';$('#zoom').classList.add('on');ZT=Date.now();}
 function abrirMais(){$('#sheet').classList.add('on');$('#dim').classList.add('on');}
 
@@ -650,7 +666,7 @@ try{speechSynthesis.onvoiceschanged=()=>{VPT=null;vozPT();};}catch(e){}
 const limpa=t=>String(t).replace(/[^\p{L}\p{N}\s.,:;!?()\-+%º]/gu,'').replace(/\s+/g,' ').replace(/\+(\d)/g,'mais $1').replace(/−|-(\d)/g,(m,d)=>d?'menos '+d:'menos').trim();
 let LGT=null;
 function legenda(t){const e=$('#leg');if(!e)return;e.textContent=t;e.classList.add('on');clearTimeout(LGT);LGT=setTimeout(()=>e.classList.remove('on'),2600);}
-function narrar(t,esperar){legenda(t);if(!VOZ||SPD>1||!('speechSynthesis' in window))return Promise.resolve();
+function narrar(t,esperar,local){if(typeof ONL!=='undefined'&&ONL.host&&!local)ONL.send('nar',{t});legenda(t);if(!VOZ||SPD>1||!('speechSynthesis' in window))return Promise.resolve();
  return new Promise(res=>{try{const u=new SpeechSynthesisUtterance(limpa(t));u.lang='pt-BR';const v=vozPT();if(v)u.voice=v;u.rate=1.12;u.pitch=1;
    let ok=false;const fim=()=>{if(!ok){ok=true;res();}};u.onend=fim;u.onerror=fim;
    if(!esperar&&speechSynthesis.pending)speechSynthesis.cancel();
@@ -724,7 +740,7 @@ async function sair(lado,i){ // substituída: vai para o cemitério sem efeito d
  pop(lado,i,'⇄ substituída');cls(cardEl(lado,i),'die',500);await w(500);
  F[i]=null;S.cem.unshift({...c,lado,troca:true});render();lg(`⇄ ${nome(c,lado==='m')} foi substituída e foi para o cemitério`);
 }
-async function jogar(hi,slot,de){
+async function jogar(hi,slot,de){if(ONL.guest)return jogarConvidado(hi,slot);
  if(S.busy)return;const c=S.hand[hi];if(!c||c.cost>S.mana)return;
  if(S.mine[slot]&&S.trocou){toast('Você já trocou uma carta neste turno');return;}
  if(!de)de=R(hand.children[hi]);
@@ -748,7 +764,7 @@ let modos=['Limpa','Cinema','Completa'],mi=0;
 $('#voz').onclick=()=>{VOZ=!VOZ;try{localStorage.setItem('gm-voz',VOZ?'1':'0');}catch(e){}$('#vozT').textContent=VOZ?'Ligada':'Desligada';if(!VOZ)calar();else destravarVoz('Narração ligada');};
 $('#vozT')&&($('#vozT').textContent=VOZ?'Ligada':'Desligada');
 $('#modo').onclick=()=>{mi=(mi+1)%3;$('#modoT').textContent=modos[mi];document.body.classList.toggle('cinema',mi===1);toast('Interface '+modos[mi]);};
-$('#desistir').onclick=()=>{fecharTudo();fim(false,'Você desistiu.');};
+$('#desistir').onclick=()=>{fecharTudo();if(ONL.guest)ONL.send('desiste',{});fim(false,'Você desistiu.');};
 $('#jogar').onclick=()=>{destravarVoz('Bem-vindo ao Grimório');abrirEscolha();};
 $('#denovo').onclick=()=>{abrirEscolha();};
 $('#voltar').onclick=()=>show('menu');
@@ -789,11 +805,12 @@ async function jogaOponenteResto(mana){
    return jogaOponenteResto(mana);}
 }
 
-function fim(v,t){narrar((v?'Vitória! ':'Derrota. ')+t);$('#fimT').textContent=v?'Vitória':'Derrota';$('#fimS').textContent=t;show('fim');}
+function fim(v,t){narrar((v?'Vitória! ':'Derrota. ')+t,false,true);if(typeof ONL!=='undefined'&&ONL.host)ONL.send('fim',{v,tg:v?'Seu líder caiu.':'O líder inimigo caiu.'});$('#fimT').textContent=v?'Vitória':'Derrota';$('#fimS').textContent=t;show('fim');}
 $('#pass').onclick=async()=>{
+ if(ONL.guest)return batalhaConvidado();
  if(S.busy)return;S.sel=-1;S.busy=true;SPD=1;render();
  $('#turn').textContent='Oponente prepara em segredo · '+ORD(S.turn,1);
- await w(350);await jogaOponente();await w(300);await revelar();if(S.ml<=0||S.ol<=0){await w(500);S.ol<=0&&S.ml<=0?fim(false,'Os dois líderes caíram juntos. Empate.'):S.ol<=0?fim(true,'O líder inimigo caiu no '+ORD(S.turn)+'.'):fim(false,'Seu líder caiu no '+ORD(S.turn)+'.');return;}
+ if(ONL.host){if(!ONL.guestPlays){$('#turn').textContent='Esperando seu amigo preparar · '+ORD(S.turn,1);narrar('Esperando seu amigo.',false,true);ONL.esperando=true;ONL.snap();await new Promise(r=>ONL.ready=r);ONL.esperando=false;}await aplicarJogadasAmigo();}else{await w(350);await jogaOponente();}await w(300);await revelar();if(S.ml<=0||S.ol<=0){await w(500);S.ol<=0&&S.ml<=0?fim(false,'Os dois líderes caíram juntos. Empate.'):S.ol<=0?fim(true,'O líder inimigo caiu no '+ORD(S.turn)+'.'):fim(false,'Seu líder caiu no '+ORD(S.turn)+'.');return;}
  S.combate=true;$('#turn').textContent='Batalha · '+ORD(S.turn,1);$('#speed').classList.add('on');await w(400);
  for(let i=0;i<3;i++){await coluna(i);if(S.ml<=0||S.ol<=0)break;}
  if(S.ml>0&&S.ol>0)await fimDoTurno();
@@ -803,6 +820,7 @@ $('#pass').onclick=async()=>{
  const cres=[];
  S.turn++;S.max=Math.min(6,S.turn);S.mana=S.max+(S.pend.m||0)+auraMana('m');S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
  {const n=comprasDoDia(S.turn);await comprar('m',n+compraExtra('m'),true);await comprar('o',n+compraExtra('o'),true);if(n>1)lg(`📚 Neste dia cada lado compra ${n}`);}
+ if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.omanaExtra=0;}
  lg(ORD(S.turn),1);render();banner();
  cres.forEach(([l,i])=>{cls(cardEl(l,i),'rise',600);pop(l,i,'⚙ +1 de poder');});
  const nh=hand.lastElementChild;if(nh)nh.animate([{transform:'translateY(60px) scale(.8)',opacity:0},{transform:'none',opacity:1}],{duration:300,easing:'ease-out'});
@@ -819,10 +837,15 @@ function attEsc(){document.querySelectorAll('.ncl').forEach(b=>b.classList.toggl
  document.querySelectorAll('.nhab').forEach(d=>{const c=ESC[d.dataset.h];d.innerHTML=CHAB[c].map((H,t)=>`<span title="${H.fx}"><i>${FAIXA[t+1]}</i> <span style="color:${NCOR[NAIPES[CL[c].s].k]};vertical-align:-2px">${ico(catDe(H.e),12)}</span> ${H.n}</span>`).join('');});
  $('#nInfo').textContent='4 classes · 2 baralhos · 72 cartas · 20 habilidades nesta partida (80 no jogo)';}
 $('#nGrid').addEventListener('click',e=>{const b=e.target.closest('.ncl');if(!b)return;ESC[b.dataset.n]=b.dataset.c;attEsc();});
-$('#nGo').onclick=()=>{try{localStorage.setItem('gm-classes',JSON.stringify(ESC));}catch(e){}nova();show('duelo');};
+$('#nGo').onclick=()=>{try{localStorage.setItem('gm-classes',JSON.stringify(ESC));}catch(e){}if(ONL.host&&!ONL.partner){esperarAmigo();return;}nova();show('duelo');};
 $('#nBack').onclick=()=>show('menu');
 </script>
 
 
+<script src="online.js"></script>
+<script>
+$('#jogarOn').onclick=()=>{destravarVoz('Jogar online');ONL.on=false;ONL.host=ONL.guest=false;$('#onWait').hidden=true;$('#onJoin').hidden=false;$('#onMsg').textContent='';show('online');};
+$('#onBack').onclick=()=>show('menu');$('#onCriar').onclick=criarSala;$('#onEntrar').onclick=entrarSala;
+</script>
 </body>
 </html>
