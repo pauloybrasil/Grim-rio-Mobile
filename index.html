@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v30-explique-ai-fatos</title>
+<title>Grimório Mobile · v31-pausa-explica</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -255,7 +255,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v30-explique-ai-fatos</span>
+    <span class="tag">BASE · v31-pausa-explica</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -287,6 +287,11 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
     </section>
 
     <!-- DUELO -->
+    <div id="pausa" style="position:fixed;inset:0;z-index:80;background:rgba(6,4,12,.72);display:none;flex-direction:column;align-items:center;justify-content:center;gap:18px;backdrop-filter:blur(3px)">
+      <div style="font:800 30px Cinzel,serif;color:var(--gold2);letter-spacing:.12em">⏸ PAUSADO</div>
+      <div id="pausaTxt" style="max-width:320px;text-align:center;color:#e8def5;font:500 15px/1.45 Inter,sans-serif;min-height:66px;padding:0 16px"></div>
+      <button class="primary" id="pausaOk" style="width:auto;min-width:220px;padding:0 34px">▶ CONTINUAR</button>
+    </div>
     <section class="scr" id="online">
       <div class="topbar"><button class="ico" id="onBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Jogar online</h3><span style="width:44px"></span></div>
       <div id="onJoin" style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
@@ -321,7 +326,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
         <div class="row mine" id="mRow"></div>
       </div>
       <div class="dock">
-        <div class="hint" id="hint">Toque numa carta</div><button class="expl" id="expl" aria-label="Explique aí">💬 Explique aí</button>
+        <div class="hint" id="hint">Toque numa carta</div><button class="expl" id="expl" aria-label="Pausa">⏸ Pausa</button>
         <div class="hand" id="hand"></div>
         <div class="actions">
           <div class="hud me" style="padding:0;height:auto;gap:8px">
@@ -398,7 +403,8 @@ const PH=()=>$('#phone');
 const ORDS=['','Primeiro','Segundo','Terceiro','Quarto','Quinto','Sexto','Sétimo','Oitavo','Nono','Décimo','Décimo primeiro','Décimo segundo','Décimo terceiro','Décimo quarto','Décimo quinto','Décimo sexto','Décimo sétimo','Décimo oitavo','Décimo nono','Vigésimo'];
 function ORD(n,curto){return curto?n+'º dia':(ORDS[n]||n+'º')+' dia de batalha';}
 function banner(silencio){const b=$('#dia');if(!b)return;if(!silencio){sfx('day');musica('calma');}if(typeof ONL!=='undefined'&&ONL.host)ONL.send('banner',{turn:S.turn});b.querySelector('b').textContent=ORD(S.turn);b.querySelector('small').textContent=S.turn===1?'Que comece o duelo':'Cada lado compra '+comprasDoDia(S.turn)+(comprasDoDia(S.turn)>1?' cartas':' carta');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');}
-const w=ms=>new Promise(r=>setTimeout(r,ms/SPD));
+let PAUSA=false;
+const w=async ms=>{await new Promise(r=>setTimeout(r,ms/SPD));while(PAUSA)await new Promise(r=>setTimeout(r,120));};
 // ================= MOTOR DE HABILIDADES (160 = 5 por classe × 32) =================
 const FAIXA=['','2 e 3','4 e 5','6 e 7','8 e 9','10'];
 const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/><path d="M12 9v5M9.5 11.5h5"/>',
@@ -882,15 +888,18 @@ $('#nBack').onclick=()=>show('menu');
 <script src="som.js"></script>
 <script>
 // botão "Explique aí": conta em áudio o que de diferente aconteceu na última batalha
+// botão de pausa: congela a partida e o Eliel conta direto o que aconteceu na batalha
 let EXPLA=false;
-$('#expl').onclick=async()=>{if(EXPLA){calar();EXPLA=false;return;}
+function continuar(){EXPLA=false;calar();PAUSA=false;$('#pausa').style.display='none';try{SOM.musica&&SOM.musica.play().catch(()=>{});}catch(e){}}
+$('#pausaOk').onclick=continuar;
+$('#expl').onclick=async()=>{if(PAUSA){continuar();return;}
+ PAUSA=true;$('#pausa').style.display='flex';try{SOM.musica&&SOM.musica.pause();}catch(e){}
  const ult=EXP.length?EXP[EXP.length-1].d:null,lista=EXP.filter(x=>x.d===ult).map(x=>x.t);
  $('#expl').classList.remove('tem');
- if(!lista.length){narrar('Nada de diferente aconteceu. Foi só a batalha normal.',false,true);return;}
- lista.unshift('Veja o que aconteceu.');
- EXPLA=true;const vozAntes=VOZ;VOZ=true;
- for(const t of lista){if(!EXPLA)break;await narrar(t,true,true);}
- VOZ=vozAntes;EXPLA=false;};
+ if(!lista.length)lista.push('Nada de diferente aconteceu. Foi só a batalha normal.');
+ EXPLA=true;const vozAntes=VOZ,spdAntes=SPD;VOZ=true;SPD=1;
+ for(const t of lista){if(!EXPLA)break;$('#pausaTxt').textContent=t;await narrar(t,true,true);}
+ VOZ=vozAntes;SPD=spdAntes;EXPLA=false;};
 </script>
 <script>
 try{if(localStorage.getItem('gm-mus')==='0'){SOM.musOn=false;SOM.on=false;}}catch(e){}
