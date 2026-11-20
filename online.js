@@ -10,7 +10,7 @@ const ONL={on:false,host:false,guest:false,code:'',ch:null,plays:[],waiting:fals
    mine:S.mine,theirs:S.theirs,oh:S.oh,hn:S.hand.length,ml:S.ml,ol:S.ol,deck:S.deck.length,turn:S.turn,max:S.max,busy:!!S.busy&&!ONL.esperando,lane:S.lane,
    gmana:S.gmana||S.max,cem:S.cem.slice(0,40),log:S.log.slice(0,40),ESC});},60);}};
 // troca a perspectiva das frases da narração (o que é "seu" para um é "do oponente" para o outro)
-function inverter(t){const P=[['(seu)','(do oponente)'],['líder inimigo','seu líder'],['Vida dele','Sua vida'],['Você revela','Oponente revela'],['Você vence a coluna','O oponente vence a coluna']];
+function inverter(t){const P=[['(seu)','(do oponente)'],['líder inimigo','seu líder'],['Vida dele','Sua vida'],['Você revela','Oponente revela'],['Você vence a coluna','O oponente vence a coluna'],['Vitória! O líder inimigo caiu!','Derrota! Seu líder caiu!']];
  let s=t;P.forEach(([a,b],k)=>{s=s.split(a).join('§A'+k+'§').split(b).join('§B'+k+'§');});P.forEach(([a,b],k)=>{s=s.split('§A'+k+'§').join(b).split('§B'+k+'§').join(a);});return s;}
 // ---------- transporte: Supabase Realtime (ou BroadcastChannel para teste local com ?local=1) ----------
 function abrirCanal(code,papel,onMsg,onPresenca){
@@ -42,6 +42,7 @@ function entrarSala(){const code=($('#onIn').value||'').trim().toUpperCase();if(
  ONL.code=code;ONL.on=true;ONL.guest=true;ONL.host=false;$('#onMsg').textContent='Conectando à sala '+code+'…';
  ONL.ch=abrirCanal(code,'guest',guestMsg,ok=>{if(ok){$('#onMsg').textContent='Conectado! Esperando o anfitrião começar…';ONL.send('hello2',{});}});}
 function guestMsg(ev,d){
+ if(ev==='snap'&&typeof musica==='function')musica(d.busy?'batalha':'calma');
  if(ev==='start'){ESC=d.ESC;S=null;show('duelo');narrar('Você entrou na sala. Que comece o duelo.',false,true);}
  if(ev==='snap')aplicarSnap(d);
  if(ev==='nar'){narrar(inverter(d.t),false,true);}
