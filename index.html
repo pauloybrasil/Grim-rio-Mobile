@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v27-narra-efeitos</title>
+<title>Grimório Mobile · v28-narra-so-o-diferente</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -254,7 +254,7 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v27-narra-efeitos</span>
+    <span class="tag">BASE · v28-narra-so-o-diferente</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -396,7 +396,7 @@ let S,SPD=1;
 const PH=()=>$('#phone');
 const ORDS=['','Primeiro','Segundo','Terceiro','Quarto','Quinto','Sexto','Sétimo','Oitavo','Nono','Décimo','Décimo primeiro','Décimo segundo','Décimo terceiro','Décimo quarto','Décimo quinto','Décimo sexto','Décimo sétimo','Décimo oitavo','Décimo nono','Vigésimo'];
 function ORD(n,curto){return curto?n+'º dia':(ORDS[n]||n+'º')+' dia de batalha';}
-function banner(silencio){const b=$('#dia');if(!b)return;if(!silencio){narrar(ORD(S.turn)+'!');sfx('day');musica('calma');}if(typeof ONL!=='undefined'&&ONL.host)ONL.send('banner',{turn:S.turn});b.querySelector('b').textContent=ORD(S.turn);b.querySelector('small').textContent=S.turn===1?'Que comece o duelo':'Cada lado compra '+comprasDoDia(S.turn)+(comprasDoDia(S.turn)>1?' cartas':' carta');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');}
+function banner(silencio){const b=$('#dia');if(!b)return;if(!silencio){sfx('day');musica('calma');}if(typeof ONL!=='undefined'&&ONL.host)ONL.send('banner',{turn:S.turn});b.querySelector('b').textContent=ORD(S.turn);b.querySelector('small').textContent=S.turn===1?'Que comece o duelo':'Cada lado compra '+comprasDoDia(S.turn)+(comprasDoDia(S.turn)>1?' cartas':' carta');b.classList.remove('on');void b.offsetWidth;b.classList.add('on');}
 const w=ms=>new Promise(r=>setTimeout(r,ms/SPD));
 // ================= MOTOR DE HABILIDADES (160 = 5 por classe × 32) =================
 const FAIXA=['','2 e 3','4 e 5','6 e 7','8 e 9','10'];
@@ -554,7 +554,7 @@ async function bate(l,i){
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
  await dano(ol,d,R(el));
- await narrar(`Bate ${d} ${l==='m'?'no líder inimigo!':'no seu líder!'} ${l==='m'?'Vida dele':'Sua vida'}: ${Math.max(0,l==='m'?S.ol:S.ml)}.`,true);
+ 
  if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);await dano(ol,d,R(el));}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
  if(e.hitSteal&&HD(ol).length&&HD(l).length<7){const k=Math.floor(Math.random()*HD(ol).length);HD(l).push(HD(ol).splice(k,1)[0]);pop(l,i,'🪝 rouba 1');render();}
@@ -576,7 +576,7 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  sfx('clash');burst((ra.cx+rb.cx)/2,(ra.y+rb.y+rb.h)/2,'#ffd27a',22);cls(cardEl('m',i),'flash',250);cls(cardEl('o',i),'flash',250);await w(80);
  {const base=(c,o)=>o?(c.token?'Ficha':'carta '+c.v)+o+'. ':'';
   const oa=origem(a,'m',(ea.fightBonus||0)+(ea.barrier||0)+(a.tmp||0)),ob=origem(b,'o',(eb.fightBonus||0)+(eb.barrier||0)+(b.tmp||0));
-  await narrar(`Coluna ${i+1}! ${base(a,oa)}Poder ${pa}! Contra: ${base(b,ob)}Poder ${pb}! ${pa>pb?'Você vence a coluna!':pb>pa?'O oponente vence a coluna!':'Empate na coluna!'}`,true);
+  if(oa||ob)await narrar(`Coluna ${i+1}! ${oa?base(a,oa)+'Poder '+pa+'! ':''}${ob?'Contra: '+base(b,ob)+'Poder '+pb+'!':''}`,true);
   if(pa!==pb)sfx('win',.7);}
  await w(200);
  if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
@@ -731,7 +731,7 @@ async function pedagio(l){const n=FD(OL(l)).filter(x=>x&&EF(x).toll).length;if(n
 // revelação: as cartas preparadas no dia aparecem e ativam, coluna por coluna
 async function revelar(){
  const tem=[...S.mine,...S.theirs].some(c=>c&&c.novo);if(!tem)return;
- const b=$('#dia');b.querySelector('b').textContent='Hora da Batalha!';b.querySelector('small').textContent='As cartas se mostram';narrar('Hora da batalha!');musica('batalha');sfx('day',.6);b.classList.remove('on');void b.offsetWidth;b.classList.add('on');await w(1100);
+ const b=$('#dia');b.querySelector('b').textContent='Hora da Batalha!';b.querySelector('small').textContent='As cartas se mostram';musica('batalha');sfx('day',.6);b.classList.remove('on');void b.offsetWidth;b.classList.add('on');await w(1100);
  for(let i=0;i<3;i++){
    const a=S.mine[i];if(a&&a.novo){delete a.novo;render();cls(cardEl('m',i),'slam',400);lg(`Você revelou ${a.n} na coluna ${i+1}`);sfx('reveal');await w(350);await entrar(a,'m',i);await pedagio('m');if(S.ml<=0||S.ol<=0)return;}
    const c=S.theirs[i];if(c&&c.novo){S.hide.add(c.id);delete c.novo;render();const ohEl=$('#oHand').lastElementChild||$('#oHand');const de=R(ohEl);
