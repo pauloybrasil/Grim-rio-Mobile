@@ -11,6 +11,9 @@ ZFER:'7f7a28,d26c9a,e2382c,b9b5cd,35aca1,a050af,e695a8,c2a44f,4d173e',ZIGN:'a8e8
 ZMER:'1ea63c,69291a,346376,248e2a,737322,b27fbc,a601eb,e07158,ad17b5',ZMIC:'e9def1,abb342,48b8c9,31224a,9a0758,442201,ae865c,258674,1680e1',ZNEX:'4e2953,6a5577,c5a557,bfa4a9,cd67d2,0123d0,504ccc,bb7b84,33f288',
 ZOSS:'c47212,60389b,c02a3f,35d68c,dad600,4b28e6,f3bd4e,c7478e,db85e8',ZPEL:'c3bf25,2c5966,3a974c,3a4282,677945,1d567a,827bfc,7202d1,bd71c2',ZSAH:'44d667,e7c565,ebb4b6,eeba37,deeea2,3432fb,77b9db,11721e,406827',
 ZTER:'573e21,efbe25,66b62a,26e4b2,a42a8f,eb5b1c,d49d7a,802fae,6cbf33',ZVER:'8a9565,baf26e,499f69,666cf5,aca536,0c9c13,a0769d,bab937,1a9af6'};
-function hdURL(code,n){const h=ARTE_HD[code];if(!h||n<2||n>10)return null;const k=code.toLowerCase(),pasta=code[0]==='C'?k.slice(1):k;return ARTE_BASE+pasta+'/'+k+'-'+String(n).padStart(2,'0')+'-'+h.split(',')[n-2]+'.jpg';}
-// põe a arte em alta por cima de um elemento que já mostra o sprite
-function hdSobre(el,code,n,pos){if(!el)return;const u=hdURL(code,n);el.querySelectorAll(':scope>img.hd').forEach(x=>x.remove());if(!u)return;const im=new Image();im.className='hd';im.alt='';im.decoding='async';if(pos)im.style.objectPosition=pos;im.onload=()=>im.classList.add('ok');im.onerror=()=>im.remove();im.src=u;el.insertBefore(im,el.firstChild);}
+const ARTE_RENDER='https://jayfrrquibicrkhcezlk.supabase.co/storage/v1/render/image/public/gemini/';
+// w = largura pedida em pixels (o servidor redimensiona; a proporção das artes é 2:3)
+function hdURL(code,n,w){const h=ARTE_HD[code];if(!h||n<2||n>10)return null;const k=code.toLowerCase(),pasta=code[0]==='C'?k.slice(1):k,arq=pasta+'/'+k+'-'+String(n).padStart(2,'0')+'-'+h.split(',')[n-2]+'.jpg';
+ return w?ARTE_RENDER+arq+'?width='+w+'&height='+Math.round(w*1.5)+'&resize=cover&quality=82':ARTE_BASE+arq;}
+function hdSobre(el,code,n,w,pos){if(!el)return;const u=hdURL(code,n,w||700);const velho=el.querySelector(':scope>img.hd');if(velho&&velho.dataset.u===u)return;if(velho)velho.remove();if(!u)return;
+ const im=new Image();im.className='hd';im.alt='';im.decoding='async';im.dataset.u=u;if(pos)im.style.objectPosition=pos;im.onload=()=>im.classList.add('ok');im.onerror=()=>im.remove();im.src=u;el.insertBefore(im,el.firstChild);}
