@@ -929,6 +929,7 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 #hcena #hcLeg p::first-letter{font-size:54px}
 @media (max-height:720px){#hcena #hcLeg p{font-size:18px}#hcena #hcLeg p::first-letter{font-size:46px}.hc-im{max-height:60%}}
 </style>
+<style>.lbm{position:absolute;top:3px;right:3px;z-index:3;min-width:18px;padding:2px 3px;font:700 10px/1 system-ui,sans-serif;text-align:center;border-radius:3px;background:rgba(6,10,14,.82);pointer-events:none}.lbm.lp{color:#7dffa8;box-shadow:inset 0 0 0 1px #7dffa8}.lbm.ln{color:#ff8d8a;box-shadow:inset 0 0 0 1px #ff8d8a}</style>
 </head>
 <body>
 <div class="stage">
@@ -1184,7 +1185,7 @@ function carta(code,v){const C=CL[code],N=NAIPES[C.s],t=nivel(v),H=CHAB[code][t-
  return {code,cls:C.name,pl:C.pl,s:N.k,v,pw:v,cost:t,e:{...H.e},e0:Object.keys(H.e),esp:v===10?1:0,tg:H.tg,hab:H.n,fx:H.fx,n:C.name+' · '+v,flav:C.cr[String(v)]||'',ai:v,id:Math.random()};}
 function ficha(code,pw,nm){const C=CL[code];return {code,cls:C.name,pl:C.pl,s:NAIPES[C.s].k,v:pw,pw,cost:0,e:{},tg:'',hab:'Ficha',fx:'Ficha criada por habilidade. Sem habilidade própria.',n:nm,flav:'',ai:2,token:1,id:Math.random()};}
 function cardHTML(c,extra){const l=lado(c),p=l?P(c,l):c.pw,cor=p>c.pw?'style="color:#7dffa8"':p<c.v&&l?'style="color:#ff8d8a"':'';
- return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn"></div>':''}</div>`;}
+ return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn"></div>':''}${l&&LB(c,l)?`<div class="lbm ${LB(c,l)>0?'lp':'ln'}">${LB(c,l)>0?'+1':'−1'}</div>`:''}</div>`;}
 function maisFraca(F,ex){let k=-1;F.forEach((x,j)=>{if(x&&j!==ex&&(k<0||x.pw<F[k].pw))k=j;});return k;}
 function vazia(l){return FD(l).findIndex(x=>!x);}
 async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
