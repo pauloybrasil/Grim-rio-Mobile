@@ -117,11 +117,11 @@ async function animCompra(l,x,rapido){const c=x.c;
  const d=await mostrar(c,x.ok,rapido);
  if(x.ok){S.hide.delete(c.id);render();const k=S.hand.indexOf(c);const el=$('#hand').children[k];let pa=el?R(el):{x:innerWidth/2,y:innerHeight-120,w:60,h:80};
    if(el)el.style.visibility='hidden';d.remove();await voo(ce,pa,cardHTML(c),rapido?220:320);if(el){el.style.visibility='';cls(el,'drawn',420);}try{sfx('place',.5);}catch(e){}}
- else{d.classList.add('queima');await w(520);d.remove();const m=R($('#mana'));burst(m.x+20,m.cy,'#7fc4ff',14);num(m.x+30,m.cy-10,1,true);}}
+ else{d.classList.add('queima');await w(520);d.remove();}}
 const comprar0=comprar;
 comprar=async function(l,n,inicio){if(SPD>1||!S||!$('#duelo').classList.contains('on'))return comprar0(l,n,inicio);
- let extra=0;const novos=[];for(let k=0;k<n;k++){const c=compra();if(!c)break;const H=HD(l);if(H.length<MAOMAX){H.push(c);novos.push({c,ok:1});if(l==='m')S.hide.add(c.id);}else{S.cem.unshift({...c,lado:l,desc:1});extra++;novos.push({c,ok:0});}}
- if(extra){if(inicio){if(l==='m')S.mana+=extra;else S.omanaExtra=(S.omanaExtra||0)+extra;}else S.pend[l]=(S.pend[l]||0)+extra;lg(`🂠 Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} e ganhou +${extra} de mana${inicio?'':' no próximo dia'}`);}
+ let extra=0;const novos=[];for(let k=0;k<n;k++){const c=compra(l);if(!c)break;const H=HD(l);if(H.length<MAOMAX){H.push(c);novos.push({c,ok:1});if(l==='m')S.hide.add(c.id);}else{S.cem.unshift({...c,lado:l,desc:1});extra++;novos.push({c,ok:0});}}
+ if(extra){lg(`Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} carta${extra>1?'s':''}`);if(l==='m')toast(`Mão cheia: ${extra} carta${extra>1?'s':''} para o cemitério`);}
  render();for(const x of novos)await animCompra(l,x,novos.length>2);novos.forEach(x=>S.hide.delete(x.c.id));render();};
 // distribuição inicial: 5 cartas para cada lado saindo do baralho
 async function distribuir(){if(!S)return;const mh=S.hand.slice(),oh=S.oh.length;mh.forEach(c=>S.hide.add(c.id));S.oh=S.oh.slice();const ohc=S.oh.splice(0);render();
