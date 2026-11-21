@@ -7,7 +7,12 @@ const aplicarTema0=aplicarTema;aplicarTema=function(pl){aplicarTema0(pl);temaGlo
 const semEmoji=t=>typeof t==='string'?t.replace(/[\p{Extended_Pictographic}️‍]/gu,'').replace(/\s{2,}/g,' ').trim():t;
 const pop0=pop;pop=function(l,i,t){return pop0(l,i,semEmoji(t));};const lg0=lg;lg=function(t,x){return lg0(semEmoji(t),x);};const toast0=toast;toast=function(t){return toast0(semEmoji(t));};
 // arte em alta: menu, portas da história, zoom e cartão de baralho novo
-hdSobre($('.mA-art'),'CDRA',10,900);
+// tela inicial: a arte muda a cada vez que o jogo abre; o jogador pode fixar uma carta da coleção
+function capaAplica(){let c=null;try{c=JSON.parse(localStorage.getItem('gm-capa'));}catch(e){}
+ if(!c||!CL[c.code]||!hTem(c.code)){const L=HS.lib.filter(x=>CL[x]);c={code:L[Math.floor(Math.random()*L.length)],v:2+Math.floor(Math.random()*9)};}
+ const a=$('.mA-art');a.style.backgroundImage=`url(s/${c.code}.webp)`;a.style.backgroundPosition=`${(c.v-2)/18*100}% 20%`;hdSobre(a,c.code,c.v,900);}
+function capaFixa(code,v){try{if(code)localStorage.setItem('gm-capa',JSON.stringify({code,v}));else localStorage.removeItem('gm-capa');}catch(e){}capaAplica();}
+capaAplica();
 const hDesenha0=hDesenha;hDesenha=function(v){hDesenha0(v);document.querySelectorAll('#hCorpo .hp').forEach(b=>{const c=H_CAP[+b.dataset.i][3+ +b.dataset.j][1];hdSobre(b.querySelector('.a'),c,10,600);});};
 const abrirZoom0=abrirZoom;abrirZoom=function(c,i){abrirZoom0(c,i);if(!c.token)hdSobre($('#zc .card'),c.code,c.ai,800);};
 const fimTela0=fimTela;fimTela=function(v,x){fimTela0(v,x);const i=$('#fimX .fnv i');if(i){const m=/s\/(\w+)\.webp/.exec(i.getAttribute('style')||'');if(m)hdSobre(i,m[1],10,240);}};
@@ -17,7 +22,9 @@ function galAbrir(code,de){const c=CL[code],N=hNaipe(code);GAL.code=code;GAL.de=
  $('#gGrid').innerHTML=[2,3,4,5,6,7,8,9,10].map(v=>{const k=carta(code,v);return `<button class="gc" data-v="${v}"><div class="gcf">${cardHTML(k)}</div><b>${k.hab}</b><small>custo ${k.cost}</small></button>`}).join('');
  $('#galV').classList.remove('on');show('galeria');document.querySelectorAll('#gGrid .gc').forEach(b=>hdSobre(b.querySelector('.card'),code,+b.dataset.v,300));}
 function galVer(v){GAL.k=v;const k=carta(GAL.code,v),f=$('#gvF');f.innerHTML=`<div style="background-image:url(s/${k.code}.webp);background-position:${(v-2)/18*100}% 0"></div><span class="gvn">${v}</span>`;hdSobre(f.firstElementChild,k.code,v,900);
- $('#gvT').innerHTML=`<b>${k.hab}</b><span>${k.fx}</span>${k.flav?`<em>“${k.flav}”</em>`:''}`;$('#galV').classList.add('on');}
+ let cp=null;try{cp=JSON.parse(localStorage.getItem('gm-capa'));}catch(e){}const eh=cp&&cp.code===k.code&&cp.v===v;
+ $('#gvT').innerHTML=`<b>${k.hab}</b><span>${k.fx}</span>${k.flav?`<em>“${k.flav}”</em>`:''}<button class="gcapa ${eh?'on':''}" id="gCapa">${eh?'Na tela inicial · tocar para voltar a sortear':'Usar na tela inicial'}</button>`;
+ $('#gCapa').onclick=e=>{e.stopPropagation();if(eh){capaFixa(null);toast('A tela inicial volta a sortear');}else{capaFixa(k.code,v);toast('Carta colocada na tela inicial');}galVer(v);};$('#galV').classList.add('on');}
 $('#gGrid').addEventListener('click',e=>{const b=e.target.closest('.gc');if(b)galVer(+b.dataset.v);});
 $('#galV').addEventListener('click',e=>{if(e.target.closest('.gnav'))return;$('#galV').classList.remove('on');});
 $('#gPrev').onclick=()=>galVer(GAL.k<=2?10:GAL.k-1);$('#gNext').onclick=()=>galVer(GAL.k>=10?2:GAL.k+1);

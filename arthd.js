@@ -15,5 +15,5 @@ const ARTE_RENDER='https://jayfrrquibicrkhcezlk.supabase.co/storage/v1/render/im
 // w = largura pedida em pixels (o servidor redimensiona; a proporção das artes é 2:3)
 function hdURL(code,n,w){const h=ARTE_HD[code];if(!h||n<2||n>10)return null;const k=code.toLowerCase(),pasta=code[0]==='C'?k.slice(1):k,arq=pasta+'/'+k+'-'+String(n).padStart(2,'0')+'-'+h.split(',')[n-2]+'.jpg';
  return w?ARTE_RENDER+arq+'?width='+w+'&height='+Math.round(w*1.5)+'&resize=cover&quality=82':ARTE_BASE+arq;}
-function hdSobre(el,code,n,w,pos){if(!el)return;const u=hdURL(code,n,w||700);const velho=el.querySelector(':scope>img.hd');if(velho&&velho.dataset.u===u)return;if(velho)velho.remove();if(!u)return;
- const im=new Image();im.className='hd';im.alt='';im.decoding='async';im.dataset.u=u;if(pos)im.style.objectPosition=pos;im.onload=()=>im.classList.add('ok');im.onerror=()=>im.remove();im.src=u;el.insertBefore(im,el.firstChild);}
+function hdSobre(el,code,n,w,pos){if(!el)return;const u=hdURL(code,n,w||700);const velho=el.querySelector(':scope>img.ahd');if(velho&&velho.dataset.u===u)return;if(velho)velho.remove();if(!u)return;
+ const im=new Image();im.className='ahd';im.alt='';im.decoding='async';im.dataset.u=u;if(pos)im.style.objectPosition=pos;im.onload=()=>im.classList.add('ok');im.onerror=()=>im.remove();im.src=u;el.insertBefore(im,el.firstChild);}

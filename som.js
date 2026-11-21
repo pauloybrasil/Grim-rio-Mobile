@@ -5,14 +5,15 @@ const NUMW=['zero','um','dois','três','quatro','cinco','seis','sete','oito','no
 for(let i=21;i<=40;i++)NUMW[i]=(i<30?'vinte':i<40?'trinta':'quarenta')+(i%10?' e '+NUMW[i%10]:'');NUMW[30]='trinta';NUMW[40]='quarenta';
 const normS=t=>String(t).toLowerCase().replace(/−/g,'-').replace(/\+(\d+)/g,' mais $1 ').replace(/-(\d+)/g,' menos $1 ').replace(/\d+/g,d=>{const n=+d;return ' '+(NUMW[n]||d)+' ';}).replace(/[^\p{L}\s]/gu,' ').replace(/\s+/g,' ').trim();
 function somCtx(){if(!SOM.ctx){try{SOM.ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(SOM.ctx&&SOM.ctx.state==='suspended')SOM.ctx.resume();return SOM.ctx;}
-async function carregarSom(){try{const r=await fetch('audio/indice.json?v=61');if(!r.ok)return;const ix=await r.json();
+async function carregarSom(){try{const r=await fetch('audio/indice.json?v=64');if(!r.ok)return;const ix=await r.json();
  const ctx=somCtx();if(!ctx)return;
- // lotes de narração: um mp3 por lote + trechos (início, fim) de cada fala
- await Promise.all((ix.lotes||[]).map(async L=>{try{const b=await fetch(AUD_BASE+L.arq).then(x=>x.arrayBuffer());const buf=await ctx.decodeAudioData(b);SOM.lotes[L.arq]=buf;
-   L.itens.forEach(it=>{SOM.clips[normS(it.t)]={buf,a:it.a,b:it.b};});}catch(e){}}));
+ // primeiro os efeitos e a trilha (leves), para o jogo já ter som; a narração (pesada) carrega depois
  await Promise.all(Object.entries(ix.sfx||{}).map(async([k,arq])=>{try{const b=await fetch(AUD_BASE+arq).then(x=>x.arrayBuffer());SOM.sfx[k]=await ctx.decodeAudioData(b);}catch(e){}}));
- SOM.mus=ix.musica||{};SOM.pronto=true;SOM.maxW=Math.max(...Object.keys(SOM.clips).map(k=>k.split(' ').length));
- if(SOM.musPend)musica(SOM.musPend);}catch(e){}}
+ SOM.mus=ix.musica||{};SOM.pronto=true;if(SOM.musPend)musica(SOM.musPend);
+ await Promise.all((ix.lotes||[]).map(async L=>{try{const b=await fetch(AUD_BASE+L.arq).then(x=>x.arrayBuffer());const buf=await ctx.decodeAudioData(b);SOM.lotes[L.arq]=buf;
+   L.itens.forEach(it=>{SOM.clips[normS(it.t)]={buf,a:it.a,b:it.b};});SOM.maxW=Math.max(...Object.keys(SOM.clips).map(k=>k.split(' ').length));}catch(e){}}));
+ SOM.vozOk=true;
+ }catch(e){}}
 // quebra o texto em falas gravadas (o maior pedaço possível primeiro)
 function fatiar(t){const w=normS(t).split(' ').filter(Boolean),out=[];let i=0;
  while(i<w.length){let ok=0;for(let n=Math.min(SOM.maxW||1,w.length-i);n>0;n--){const k=w.slice(i,i+n).join(' ');if(SOM.clips[k]){out.push(SOM.clips[k]);i+=n;ok=1;break;}}if(!ok)return null;}
@@ -31,3 +32,7 @@ function musica(k){if(!SOM.pronto){SOM.musPend=k;return;}if(SOM.musAtual===k)ret
  if(!arq||!SOM.musOn||!k){SOM.musica=null;return;}const a=new Audio(AUD_BASE+arq);a.loop=true;a.volume=0;a.crossOrigin='anonymous';SOM.musica=a;a.play().catch(()=>{});
  let x=0;const t=setInterval(()=>{x+=.03;if(x>=SOM.vol.mus){clearInterval(t);x=SOM.vol.mus;}a.volume=x;},60);}
 SOM.carga=carregarSom();
+
+// destrava o áudio no primeiro toque (o navegador só deixa tocar depois de um gesto) e retoma a trilha se ela foi barrada
+function somDestrava(){const c=somCtx();try{if(c&&c.state!=='running')c.resume();}catch(e){}try{if(SOM.musica&&SOM.musica.paused&&SOM.musOn)SOM.musica.play().catch(()=>{});}catch(e){}}
+['pointerdown','keydown','touchend'].forEach(ev=>window.addEventListener(ev,somDestrava,{passive:true}));
