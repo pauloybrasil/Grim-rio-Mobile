@@ -78,7 +78,7 @@ async function hvPrep(c){if(!c.voz||(typeof VOZ!=='undefined'&&!VOZ)||(typeof SO
  const b=Math.min(T[T.length-1].e+.5,i1+1<d.T.length?d.T[i1+1].s-.04:1e9);
  if(!HV.a){HV.a=new Audio();HV.a.preload='auto';}const A=HV.a,u=AUD_BASE+'hist/'+k+'.mp3';if(HV.src!==u){HV.src=u;A.src=u;A.load();}
  await new Promise(r=>{if(A.readyState>=1)return r();const f=()=>r();A.addEventListener('loadedmetadata',f,{once:true});A.addEventListener('error',f,{once:true});setTimeout(f,4000);});
- if(A.readyState<1||A.error)return;c.v={T,a:Math.max(0,T[0].s-.12),b};}
+ if(A.readyState<1||A.error)return;c.v={T,a:Math.max(i0?d.T[i0-1].e+.02:0,T[0].s-.12),b};}
 const HC={c:null,ix:0,pal:0,tm:null,par:false,lado:0,im:'',rf:0};
 function hcCena(c){HC.c=c;HC.ix=-1;HC.par=false;HC.im='';c.v=null;$('#hcPP').classList.remove('pa');$('#hcena').style.setProperty('--nc',c.cor);
  let acc=0;c.p.forEach(s=>{s.i0=acc;acc+=hTok(s.t).length;});
