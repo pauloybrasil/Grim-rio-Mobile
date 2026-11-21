@@ -116,7 +116,7 @@ const L={"trilhas": [{"id": "guerreiro", "nome": "A Muralha", "classe": "Guerrei
 const COD={"Anões e Elfas": "CELF", "Orcs": "ZVER", "Anjos": "CANJ", "Caídos": "ZAUR", "Oceânicos": "COCE", "Profundos": "ZPEL", "Micélio": "CMIC", "Parasitas": "ZMIC", "Guerreiros": "CGUE", "Bárbaros": "ZBRA", "Animais": "CFER", "Insetoides": "ZFER", "Humanos": "CHUM", "Rebeldes": "ZTER", "Nômades da Areia": "CSAH", "Saqueadores": "ZSAH", "Magos": "CMAG", "Bruxos": "ZARC", "Ciborgues": "CCIB", "Mutantes": "ZNEX", "Dracônicos": "CDRA", "Serpes": "ZDRA", "Mercadores": "CMER", "Mercenários": "ZMER", "Necromantes": "CNEC", "Cultistas": "ZOSS", "Elementais": "CELE", "Forjadores": "ZIGN", "Infernais": "CINF", "Condenados": "ZINF", "Piratas": "CPIR", "Leviatãs": "ZCOR"};
 const NA={espadas:'--s',ouros:'--d',paus:'--p',copas:'--h'},ROM=['I','II','III','IV'];
 const ALI={Nexo:'CCIB','Brasão':'CGUE','Verdélia':'CELF','Ossário':'CNEC'};
-const $=id=>document.getElementById(id);
+const $=id=>document.getElementById(id);const cap=x=>x[0].toUpperCase()+x.slice(1);
 const E={tr:null,h:0,v:{}}; // v[trilha]=[batalhas vencidas por história]
 function ir(t){document.querySelectorAll('.tela').forEach(x=>x.classList.toggle('on',x.id===t));}
 function codDe(op){const a=op.match(/aliança de (.+)$/);if(a)return ALI[a[1]];return COD[op.split(' · ')[0]]||'CGUE';}
@@ -131,7 +131,7 @@ function cenaIntro(){const p=passos(L.intro,[['CMAG',10],['CGUE',6],['CELF',10]]
 function cenaAbre(t,i){const h=t.hist[i];return {sm:h.pl+' · história '+ROM[i],nm:h.t,ro:ROM[i],ts:t.classe+' · '+h.pl,th:h.t,p:passos(h.x,[2,4,6,8,10].map(n=>[h.code,n])),cor:NA[t.naipe],fim:()=>trilha()};}
 function cenaBat(t,i,j,rever){const h=t.hist[i],c=codDe(h.op[j]),ult=i===3&&j===7;
  const imgs=ult?[[c,9],[t.hist[3].code,10],[t.code,10],[t.code,9]]:[[c,2+((j*2+i)%9)]];
- return {sm:h.pl+' · batalha '+(j+1)+' de 8',nm:h.op[j].split(' · ').pop(),p:passos(h.b[j],imgs),cor:NA[t.naipe],ro:ult?'F':'',ts:ult?t.desfecho:'',th:ult?'A Batalha entre Planetas':'',fim:()=>rever?trilha():depois(t,i,j)};}
+ return {sm:h.pl+' · batalha '+(j+1)+' de 8',nm:cap(h.op[j].split(' · ').pop()),p:passos(h.b[j],imgs),cor:NA[t.naipe],ro:ult?'F':'',ts:ult?t.desfecho:'',th:ult?'A Batalha entre Planetas':'',fim:()=>rever?trilha():depois(t,i,j)};}
 function cenaGancho(){return {sm:'Cena final',nm:'O Devorador',ro:'D',ts:'Depois da batalha',th:'O chão treme',p:passos(L.gancho,[['ZCOR',9],['CMAG',10],['ZPEL',9],['CNEC',10]]),cor:'--g',fim:()=>{$('fC').classList.remove('v');$('fH').textContent='Vire a carta';$('fB').textContent='Virar a carta';$('fB').onclick=vira;ir('fimc');}};}
 
 let C=null,ix=0,pal=0,tm=null,parado=false,lado=0;
@@ -144,12 +144,12 @@ function cena(c){C=c;ix=-1;parado=false;$('cPP').classList.remove('pa');$('app')
 let imAt='';
 function mostraImg(im){const k=im.join();if(k===imAt)return;imAt=k;lado^=1;const a=document.querySelector('#cena .art.a'),b=document.querySelector('#cena .art.b');
  if(lado){arte(b,im[0],im[1],900);b.classList.add('on');}else{arte(a,im[0],im[1],900);b.classList.remove('on');}}
-function passo(d){clearTimeout(tm);$('cTit').classList.remove('on');ix+=d;if(ix<0)ix=0;if(ix>=C.p.length)return cenaFim();
+function passo(d){if(!C)return;clearTimeout(tm);$('cTit').classList.remove('on');ix+=d;if(ix<0)ix=0;if(ix>=C.p.length)return cenaFim();
  const s=C.p[ix];mostraImg(s.im);$('leg').classList.add('sai');
- setTimeout(()=>{$('legP').innerHTML=s.t.split(' ').map(w=>'<w>'+w+'</w>').join(' ');$('leg').classList.remove('sai');pal=0;
+ setTimeout(()=>{if(!C)return;$('legP').innerHTML=s.t.split(' ').map(w=>'<w>'+w+'</w>').join(' ');$('leg').classList.remove('sai');pal=0;
   [...$('cPg').children].forEach((e,k)=>{e.classList.toggle('f',k<ix);e.firstChild.style.width=k<ix?'100%':'0';});
   $('cInf').textContent=(ix+1)+' de '+C.p.length+' · toque para avançar';if(!parado)anda();},d?280:0);}
-function anda(){const ws=$('legP').children;if(pal>=ws.length){tm=setTimeout(()=>passo(1),1100);return;}
+function anda(){if(!C)return;const ws=$('legP').children;if(pal>=ws.length){tm=setTimeout(()=>passo(1),1100);return;}
  if(pal)ws[pal-1].classList.remove('ag');ws[pal].classList.add('on','ag');pal++;
  const b=$('cPg').children[ix];if(b)b.firstChild.style.width=(pal/ws.length*100)+'%';
  const w=ws[pal-1].textContent;tm=setTimeout(anda,MS+(/[.,:;!?]/.test(w)?260:0)+Math.max(0,w.length-6)*22);}
@@ -170,7 +170,7 @@ function trilha(){const t=E.tr,h=t.hist[E.h],v=E.v[t.id][E.h];$('app').style.set
  $('tRom').textContent=ROM[E.h];$('tSub').textContent=t.classe+' · '+h.pl+' · história '+(E.h+1)+' de 4';$('tTit').textContent=h.t;
  $('tDk').innerHTML=h.deck.map((x,j)=>'<span class="'+(E.h&&j===h.deck.length-1?'n':'')+'">'+x+'</span>').join('');
  $('tBt').innerHTML=h.op.map((o,j)=>{const p=o.split(' · '),st=j<v?'ok':j===v?'at':'fe';let sub=j===3?'libera '+h.l4:j===7?(E.h<3?'libera '+h.l8:'batalha final'):'';
-  return '<button class="bn '+st+'" '+(st==='fe'?'disabled':'onclick="'+(st==='ok'?'cena(cenaBat(E.tr,E.h,'+j+',1))':'luta('+j+')')+'"')+'><span class="lz"><b>'+(j+1)+'</b></span><span class="hx"><span class="art" id="bh'+j+'"></span></span><span class="nm"><b>'+(p[1]||p[0])+'</b><span>'+(p[1]?p[0]+(sub?' · ':''):'')+sub+'</span></span><i class="ac">'+(st==='ok'?'Rever':st==='at'?'Lutar':'')+'</i></button>';}).join('');
+  return '<button class="bn '+st+'" '+(st==='fe'?'disabled':'onclick="'+(st==='ok'?'cena(cenaBat(E.tr,E.h,'+j+',1))':'luta('+j+')')+'"')+'><span class="lz"><b>'+(j+1)+'</b></span><span class="hx"><span class="art" id="bh'+j+'"></span></span><span class="nm"><b>'+cap(p[1]||p[0])+'</b><span>'+(p[1]?p[0]+(sub?' · ':''):'')+sub+'</span></span><i class="ac">'+(st==='ok'?'Rever':st==='at'?'Lutar':'')+'</i></button>';}).join('');
  h.op.forEach((o,j)=>arte($('bh'+j),codDe(o),10,120));
  $('tPul').innerHTML=ROM.map((r,i)=>'<button onclick="pula('+i+')">História '+r+'</button>').join('')+'<button onclick="E.v[E.tr.id][E.h]=7;trilha()">Ir à 8ª</button><button onclick="cena(cenaAbre(E.tr,E.h))">Rever abertura</button>';
  ir('tril');const at=document.querySelector('.bn.at');if(at)at.scrollIntoView({block:'center'});}
