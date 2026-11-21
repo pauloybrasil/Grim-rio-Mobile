@@ -5,7 +5,7 @@ const NUMW=['zero','um','dois','três','quatro','cinco','seis','sete','oito','no
 for(let i=21;i<=40;i++)NUMW[i]=(i<30?'vinte':i<40?'trinta':'quarenta')+(i%10?' e '+NUMW[i%10]:'');NUMW[30]='trinta';NUMW[40]='quarenta';
 const normS=t=>String(t).toLowerCase().replace(/−/g,'-').replace(/\+(\d+)/g,' mais $1 ').replace(/-(\d+)/g,' menos $1 ').replace(/\d+/g,d=>{const n=+d;return ' '+(NUMW[n]||d)+' ';}).replace(/[^\p{L}\s]/gu,' ').replace(/\s+/g,' ').trim();
 function somCtx(){if(!SOM.ctx){try{SOM.ctx=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}if(SOM.ctx&&SOM.ctx.state==='suspended')SOM.ctx.resume();return SOM.ctx;}
-async function carregarSom(){try{const r=await fetch('audio/indice.json?v=32');if(!r.ok)return;const ix=await r.json();
+async function carregarSom(){try{const r=await fetch('audio/indice.json?v=61');if(!r.ok)return;const ix=await r.json();
  const ctx=somCtx();if(!ctx)return;
  // lotes de narração: um mp3 por lote + trechos (início, fim) de cada fala
  await Promise.all((ix.lotes||[]).map(async L=>{try{const b=await fetch(AUD_BASE+L.arq).then(x=>x.arrayBuffer());const buf=await ctx.decodeAudioData(b);SOM.lotes[L.arq]=buf;

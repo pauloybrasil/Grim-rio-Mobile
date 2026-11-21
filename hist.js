@@ -40,16 +40,25 @@ function hDesenha(v){const at=hAtual();if(v==null)v=Math.min(at,H_CAP.length);HV
   h+=v>at?`<div class="htrv">Vença o capítulo ${at+1} para abrir este.</div>`:`<div class="hps">${hPorta(v,0)}${hPorta(v,1)}</div>`;
  }else{h+=`<div class="hcab"><div class="hato">Epílogo</div><div class="hk"><i><b>★</b></i><div><small>Depois do capítulo 14</small><h2>Os quatro finais</h2></div></div><div class="hnar">No centro da galáxia, o coração está guardado. São quatro finais, um por naipe.</div></div>`;
   if(at<H_CAP.length)h+=`<div class="htrv">Feche os 14 capítulos para chegar aqui.</div>`;
-  else h+=`<div class="hfs">`+H_FIM.map(([s,t,f],k)=>{const N=NAIPES[s]||Object.values(NAIPES)[k];return `<button class="hf ${HS.fim[k]?'ok':''}" data-f="${k}" style="--nc:${N.cor}"><span class="hd"><b>${N.sym}</b></span><div><b>${t}</b><span>${HS.fim[k]?'Vencido':'Líder com 40 de vida'}</span></div></button>`}).join('')+`</div>`;}
+  else h+=`<div class="hfs">`+H_FIM.map(([s,t,f],k)=>{const N=NAIPES[s]||Object.values(NAIPES)[k];return `<button class="hf ${HS.fim[k]?'ok':''}" data-f="${k}" style="--nc:${N.cor}"><span class="hd"><b>${N.sym}</b></span><div><b>${t}</b><span>${HS.fim[k]?'Vencido':H_REGRA[k]}</span></div></button>`}).join('')+`</div>`;}
  $('#hCorpo').innerHTML=h;
  $('#hTira').innerHTML=H_R.map((r,i)=>`<button class="${i===v?'on':''} ${hCapOk(i)?'ok':i>at?'tr':''} ${i%4===0||i===12?'ia':''}" data-v="${i}"><b>${i+1}</b></button>`).join('')+`<button class="${v===14?'on':''} ${at<14?'tr':''} ia" data-v="14"><b>★</b></button>`;
  const on=$('#hTira .on');if(on&&on.scrollIntoView)on.scrollIntoView({inline:'center',block:'nearest'});}
 function hAbrir(){HB=null;musica('calma');hAjustaEsc();hDesenha();show('historia');}
 function hLutar(b){hAjustaEsc();HB=b;HB.esc=Object.assign({},ESC);try{HB.tema=localStorage.getItem('gm-tema');}catch(e){}
  if(b.code){ESC[hChaveNaipe(b.code)]=b.code;}
+ if(b.fim===0){Object.keys(ESC).forEach(k=>{const cs=CLASSES.filter(x=>hChaveNaipe(x.code)===k);ESC[k]=cs[Math.floor(Math.random()*cs.length)].code;});}
  nova();if(b.vida){S.ol+=b.vida;}
  if(b.code){try{aplicarTema(CL[b.code].pl);}catch(e){}const o=$('#oAv');o.style.backgroundImage=`url(s/${b.code}.webp)`;o.style.backgroundSize='1900% auto';o.style.backgroundPosition='100% 18%';}
  render();show('duelo');toast(b.nome);}
+// ---------- regras especiais dos 4 chefes ----------
+const H_REGRA=['O campo muda de planeta a cada dia e o baralho mistura classes de vários planetas.','No começo de cada dia, o Devorador come a carta mais fraca da mesa.','As cartas do oponente lutam com +1 de poder.','Líder com 50 de vida, e as cartas do oponente lutam com +1 de poder.'];
+const P0h=P;P=function(c,l){let p=P0h(c,l);if(HB&&(HB.fim===2||HB.fim===3)&&c&&(l||lado(c))==='o')p+=1;return p;};
+function hDiaChefe(){if(!HB||HB.fim==null||!S)return;if(HB.dia===S.turn)return;HB.dia=S.turn;if(S.turn<2)return;
+ if(HB.fim===0){const ps=PLANETAS.filter(p=>p!==TEMA);try{aplicarTema(ps[Math.floor(Math.random()*ps.length)]);}catch(e){}}
+ if(HB.fim===1){let alvo=null;[['m',S.mine],['o',S.theirs]].forEach(([l,F])=>F.forEach((c,i)=>{if(c&&!c.novo){const p=P0h(c,l);if(!alvo||p<alvo.p)alvo={l,i,c,p};}}));
+  if(alvo){(alvo.l==='m'?S.mine:S.theirs)[alvo.i]=null;if(!alvo.c.token)S.cem.unshift({...alvo.c,lado:alvo.l});lg('O Devorador comeu '+alvo.c.n);toast('O Devorador comeu '+alvo.c.n);}}}
+const render0h=render;render=function(){try{hDiaChefe();}catch(e){}return render0h();};
 function hSaiDaLuta(){if(!HB)return;Object.assign(ESC,HB.esc);try{HB.tema?localStorage.setItem('gm-tema',HB.tema):localStorage.removeItem('gm-tema');}catch(e){}const o=$('#oAv');o.style.backgroundImage='url(art/necromante2.webp)';o.style.backgroundSize='';o.style.backgroundPosition='';}
 const fim0=fim;
 function fimTela(v,x){const f=$('#fim');f.classList.toggle('der',!v);$('#fimX').innerHTML=x||'';}
@@ -67,7 +76,7 @@ $('#jogar').addEventListener('click',()=>{HB=null;hAjustaEsc();},true);
 $('#histBtn').onclick=()=>{destravarVoz('');hAbrir();};$('#hBack').onclick=()=>show('menu');
 $('#hCorpo').addEventListener('click',e=>{const p=e.target.closest('.hp');if(p){const i=+p.dataset.i,j=+p.dataset.j,[t,code]=H_CAP[i][3+j];if(hTem(code)){toast('Esta porta já foi vencida');return;}
   if(HS.pri[i]==null){HS.pri[i]=j;hSalva();}hLutar({code,nec:hNec(i),vida:HS.pri[i]!==j?5:0,nome:t});return;}
- const f=e.target.closest('.hf');if(f){const k=+f.dataset.f;hLutar({fim:k,vida:10,nome:H_FIM[k][1]});}});
+ const f=e.target.closest('.hf');if(f){const k=+f.dataset.f;if(HS.fim[k]){toast('Este final já foi vencido');return;}hLutar({fim:k,vida:k===3?20:10,nome:H_FIM[k][1]});}});
 $('#hTira').addEventListener('click',e=>{const b=e.target.closest('button');if(b)hDesenha(+b.dataset.v);});
 // ---------- coleção ----------
 function cDesenha(){const at=hAtual(),nf=Object.keys(HS.fim).length;
