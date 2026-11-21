@@ -1,0 +1,30 @@
+// ===== v62: tema global, galeria de cartas, mão do oponente, sem emojis, diagnóstico de som =====
+function temaGlobal(pl){const r=RG[pl];if(!r)return;const d=document.documentElement.style;d.setProperty('--tb',r[0]);d.setProperty('--ts',r[1]);d.setProperty('--tg',r[1]+'55');d.setProperty('--ta',`url(s/${r[2]}.webp)`);
+ document.querySelectorAll('.gly').forEach(p=>p.setAttribute('d',GLIFO[pl]||''));document.querySelectorAll('.plnm').forEach(e=>e.textContent=pl);}
+const aplicarTema0=aplicarTema;aplicarTema=function(pl){aplicarTema0(pl);temaGlobal(pl);};
+(function(){let pl=null;try{pl=localStorage.getItem('gm-tema');}catch(e){}if(!pl||!RG[pl]||!temaLivre(pl))pl=CL[Object.values(ESC)[0]].pl;temaGlobal(pl);})();
+// textos de aviso sem emojis
+const semEmoji=t=>typeof t==='string'?t.replace(/[\p{Extended_Pictographic}️‍]/gu,'').replace(/\s{2,}/g,' ').trim():t;
+const pop0=pop;pop=function(l,i,t){return pop0(l,i,semEmoji(t));};const lg0=lg;lg=function(t,x){return lg0(semEmoji(t),x);};const toast0=toast;toast=function(t){return toast0(semEmoji(t));};
+// arte em alta: menu, portas da história, zoom e cartão de baralho novo
+hdSobre($('.mA-art'),'CDRA',10);
+const hDesenha0=hDesenha;hDesenha=function(v){hDesenha0(v);document.querySelectorAll('#hCorpo .hp').forEach(b=>{const c=H_CAP[+b.dataset.i][3+ +b.dataset.j][1];hdSobre(b.querySelector('.a'),c,10);});};
+const abrirZoom0=abrirZoom;abrirZoom=function(c,i){abrirZoom0(c,i);if(!c.token)hdSobre($('#zc .card'),c.code,c.ai);};
+const fimTela0=fimTela;fimTela=function(v,x){fimTela0(v,x);const i=$('#fimX .fnv i');if(i){const m=/s\/(\w+)\.webp/.exec(i.getAttribute('style')||'');if(m)hdSobre(i,m[1],10);}};
+// galeria: todas as cartas da classe, toque para ampliar
+const GAL={code:null,k:0,de:'colecao'};
+function galAbrir(code,de){const c=CL[code],N=hNaipe(code);GAL.code=code;GAL.de=de||'colecao';$('#gT').textContent=c.name;$('#gS').textContent=c.pl+' · '+N.nome;$('#galeria').style.setProperty('--nc',N.cor);
+ $('#gGrid').innerHTML=[2,3,4,5,6,7,8,9,10].map(v=>{const k=carta(code,v);return `<button class="gc" data-v="${v}"><div class="gcf">${cardHTML(k)}</div><b>${k.hab}</b><small>custo ${k.cost}</small></button>`}).join('');
+ $('#galV').classList.remove('on');show('galeria');}
+function galVer(v){GAL.k=v;const k=carta(GAL.code,v),f=$('#gvF');f.innerHTML=`<div style="background-image:url(s/${k.code}.webp);background-position:${(v-2)/18*100}% 0"></div><span class="gvn">${v}</span>`;hdSobre(f.firstElementChild,k.code,v);
+ $('#gvT').innerHTML=`<b>${k.hab}</b><span>${k.fx}</span>${k.flav?`<em>“${k.flav}”</em>`:''}`;$('#galV').classList.add('on');}
+$('#gGrid').addEventListener('click',e=>{const b=e.target.closest('.gc');if(b)galVer(+b.dataset.v);});
+$('#galV').addEventListener('click',e=>{if(e.target.closest('.gnav'))return;$('#galV').classList.remove('on');});
+$('#gPrev').onclick=()=>galVer(GAL.k<=2?10:GAL.k-1);$('#gNext').onclick=()=>galVer(GAL.k>=10?2:GAL.k+1);
+$('#gBack').onclick=()=>{if(GAL.de==='escolha'){desenhaEsc();show('escolha');}else{cDesenha();show('colecao');}};
+$('#cGrade').addEventListener('click',e=>{const c=e.target.closest('.cc');if(!c)return;if(c.classList.contains('tr')){toast('Libere este baralho na História');return;}galAbrir(c.dataset.c,'colecao');});
+// mão do oponente: abre um painel com as cartas viradas
+$('#oMaoIt').onclick=()=>{if(!S)return;fecharTudo();const n=S.oh.length;$('#pnT').textContent='Mão do oponente';
+ $('#pnB').innerHTML=`<div class="omao">${Array.from({length:n},(_,i)=>`<i style="--k:${i-(n-1)/2}"></i>`).join('')||'<p class="vazio" style="margin:0">Sem cartas na mão.</p>'}</div><ul><li>O oponente tem <b>${n} ${n===1?'carta':'cartas'}</b> na mão (o máximo é 7).</li><li>Restam <b>${S.deck.length}</b> cartas no baralho, que é comum aos dois.</li><li>Há <b>${S.cem.length}</b> ${S.cem.length===1?'carta':'cartas'} no cemitério.</li></ul>`;$('#pn').classList.add('on');};
+// diagnóstico de som (abra o site com ?diag para ver)
+if(/[?&]diag/.test(location.search)){const d=document.createElement('pre');d.id='diag';document.body.appendChild(d);let n=0;const t=setInterval(()=>{n++;d.textContent=`som pronto:${SOM.pronto} falas:${Object.keys(SOM.clips).length} efeitos:${Object.keys(SOM.sfx).length} trilhas:${Object.keys(SOM.mus||{}).length} ctx:${SOM.ctx?SOM.ctx.state:'-'}`;if(n>40)clearInterval(t);},1000);}

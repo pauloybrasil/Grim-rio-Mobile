@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v61-chefes</title>
+<title>Grimório Mobile · v62-padrao-regras</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Marcellus&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -734,12 +734,58 @@ body:not(:has(#duelo.on)) #leg{display:none}
 .rln span{grid-area:p;font:400 18px Marcellus,serif;color:#c8aa6e;text-align:center}.rln b{grid-area:n;font:400 17px Marcellus,serif;color:#f0e6d2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rln small{grid-area:d;font:400 10.5px Inter,sans-serif;color:#c9d3d6}.rln strong{grid-area:s;font:400 22px Marcellus,serif;color:#c8aa6e}
 .rln.eu{box-shadow:inset 0 0 0 1.5px #c8aa6e;background:rgba(200,170,110,.12)}.rcar{padding:30px 0;text-align:center;color:#c9d3d6}
 #rLista{margin-top:14px}.reu>i{background-size:cover;background-position:center}
+/* ===== v62: PADRÃO ÚNICO (o da tela de Regras) ===== */
+*{scrollbar-width:thin;scrollbar-color:rgba(200,170,110,.45) transparent}
+*::-webkit-scrollbar{width:5px;height:5px}*::-webkit-scrollbar-thumb{background:rgba(200,170,110,.45)}*::-webkit-scrollbar-track{background:transparent}
+.scr:not(#menu):not(#duelo):not(#fim){background:linear-gradient(180deg,color-mix(in srgb,var(--ts,#c8aa6e) 16%,var(--tb,#0b1a20)),var(--tb,#0b1a20) 190px)!important;padding-top:calc(var(--sat) + 8px)}
+.scr:not(#menu):not(#duelo):not(#fim)::before{content:'';position:absolute;inset:0 0 auto 0;height:150px;background:var(--ta,none) 100% 20%/1900% auto;opacity:.3;-webkit-mask:linear-gradient(90deg,transparent 30%,#000);mask:linear-gradient(90deg,transparent 30%,#000);pointer-events:none}
+.scr:not(#menu):not(#duelo):not(#fim)>*{position:relative}
+.ph2{flex:none;padding:0 14px!important;gap:6px}.ph2 .sh-tt h3{font:400 28px/1.05 Marcellus,serif;color:#f0e6d2;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.ph2l{flex:none;margin:2px 14px 10px!important}
+.ph2 .sh-tt small:empty{display:none}
+#fim{background:radial-gradient(90% 46% at 50% 36%,color-mix(in srgb,var(--ts,#c8aa6e) 22%,transparent),transparent 70%),var(--tb,#0b1a20)}
+.escs{margin:0 16px 10px;font:400 13px/1.4 Inter,sans-serif;color:#c9d3d6;text-align:center}
+.hcorpo,.ngrid{scrollbar-width:none}.hcorpo::-webkit-scrollbar,.ngrid::-webkit-scrollbar,.pnb::-webkit-scrollbar,.tm-g::-webkit-scrollbar,.sheet::-webkit-scrollbar{display:none}.pnb,.tm-g,.sheet{scrollbar-width:none}
+.rs,.cres div,.rnum div,.rln,.htrv,.ctm,.cteste{background:color-mix(in srgb,var(--ts,#c8aa6e) 7%,var(--tb,#0b1a20))!important}
+.cres div,.rnum div,.rln,.cteste{box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--ts,#c8aa6e) 28%,transparent)!important}
+.cres b,.rnum b{font-family:Marcellus,serif}.hato,.hk small,.htit small,.cres b,.reu strong,.rln span,.rln strong,.reu .rpos{color:var(--ts,#c8aa6e)!important}
+.hnar{border-color:var(--ts,#c8aa6e);background:color-mix(in srgb,var(--ts,#c8aa6e) 8%,transparent)}
+.pemb{color:var(--ts,#c8aa6e)}
+/* cadeado desenhado, sem emoji */
+.rhx.tr::after,.tm-b.tr::after{content:''!important;width:16px;height:16px;background:var(--ts,#c8aa6e);opacity:.9;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Crect x='5' y='11' width='14' height='9'/%3E%3Cpath d='M8 11V8a4 4 0 0 1 8 0v3'/%3E%3C/svg%3E") center/contain no-repeat}
+.rhx.tr::after{top:26px}
+.stn{width:26px;height:26px;transform:rotate(45deg);background:rgba(8,18,22,.85);box-shadow:inset 0 0 0 1.5px #c8aa6e}
+/* arte em alta por cima do sprite */
+img.hd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .35s;pointer-events:none}img.hd.ok{opacity:1}
+.mA-art img.hd{object-position:50% 12%}.hp .a{overflow:hidden}.hp .a img.hd{object-position:50% 20%}
+.fnv i{position:relative;overflow:hidden}
+/* escolha de classes */
+.rver{display:flex;align-items:center;justify-content:center;gap:10px;width:calc(100% - 20px);height:42px;margin:12px 10px;font:400 15px Marcellus,serif;color:var(--nc);box-shadow:inset 0 0 0 1px color-mix(in srgb,var(--nc) 55%,transparent);background:color-mix(in srgb,var(--nc) 8%,transparent)}
+.rver i{width:8px;height:8px;transform:rotate(45deg);background:var(--nc)}
+/* galeria de cartas */
+.ggrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px 10px;padding-top:6px}
+.gc{display:flex;flex-direction:column;gap:5px;min-width:0;text-align:center}.gc .gcf{position:relative;aspect-ratio:3/4;padding:1.5px;background:linear-gradient(180deg,var(--nc),color-mix(in srgb,var(--nc) 30%,transparent));clip-path:polygon(10% 0,90% 0,100% 8%,100% 92%,90% 100%,10% 100%,0 92%,0 8%)}
+.gc .card{position:absolute;inset:1.5px;border:0;border-radius:0;clip-path:polygon(10% 0,90% 0,100% 8%,100% 92%,90% 100%,10% 100%,0 92%,0 8%)}.gc .card .hn{display:none}
+.gc b{font:400 12.5px/1.15 Marcellus,serif;color:#f0e6d2}.gc small{font:600 9px Inter,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:var(--nc)}
+#galV{position:absolute!important;inset:0;z-index:40;display:none;align-items:center;justify-content:center;background:rgba(4,10,13,.94);padding:0 4px}#galV.on{display:flex}
+.gvc{flex:1;min-width:0;display:flex;flex-direction:column;align-items:center}.gnav{flex:none;width:34px;height:70px;font:400 34px Marcellus,serif;color:var(--nc,#c8aa6e)}
+.gvf{position:relative;width:100%;max-width:300px;aspect-ratio:2/3;padding:2px;background:linear-gradient(180deg,var(--nc),color-mix(in srgb,var(--nc) 30%,#0b1a20));clip-path:polygon(8% 0,92% 0,100% 6%,100% 94%,92% 100%,8% 100%,0 94%,0 6%)}
+.gvf>div{position:absolute;inset:2px;overflow:hidden;background-size:1900% 100%;clip-path:polygon(8% 0,92% 0,100% 6%,100% 94%,92% 100%,8% 100%,0 94%,0 6%)}
+.gvf .gvn{position:absolute;left:12px;top:12px;z-index:2;min-width:44px;padding:5px 6px 7px;text-align:center;font:400 28px/1 Marcellus,serif;color:#f0e6d2;background:rgba(8,18,22,.82);box-shadow:inset 0 0 0 1.5px var(--nc)}
+.gvt{margin-top:12px;text-align:center;max-width:320px;padding:0 4px}.gvt b{display:block;font:400 22px/1.1 Marcellus,serif;color:var(--nc)}.gvt span{display:block;margin-top:6px;font:400 15.5px/1.4 Inter,sans-serif;color:#f0e6d2}.gvt em{display:block;margin-top:8px;font:400 13px/1.4 Marcellus,serif;font-style:italic;color:#9fb0b4}
+.cc:not(.tr){cursor:pointer}
+/* mão do oponente no painel */
+.omao{display:flex;justify-content:center;padding:26px 0 18px}.omao i{width:44px;height:62px;margin:0 -8px;background:url(art/costa.webp) center/cover;box-shadow:0 0 0 1px var(--ts,#c8aa6e),0 4px 10px rgba(0,0,0,.6);transform:rotate(calc(var(--k)*7deg)) translateY(calc(var(--k)*var(--k)*2px))}
+#diag{position:fixed;left:0;bottom:0;z-index:99;margin:0;padding:4px 8px;font:11px monospace;background:#000;color:#0f0}
+.hv4 .hps{flex:none}.hv4 .hp{height:min(56vh,430px);min-height:0}.hp .a{background-size:cover!important;background-position:100% 0;-webkit-mask:linear-gradient(180deg,#000 55%,transparent 96%);mask:linear-gradient(180deg,#000 55%,transparent 96%)}
+.hp .a{background-size:auto 100%!important}
+.ph2 .sh-tt small{white-space:nowrap;letter-spacing:.2em}
 </style>
 </head>
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v61-chefes</span>
+    <span class="tag">BASE · v62-padrao-regras</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 4 campos feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -769,7 +815,7 @@ body:not(:has(#duelo.on)) #leg{display:none}
     </section>
 
     <!-- DUELO -->
-    <div id="temaSheet"><div class="tm-box"><div class="tm-t">Campos de batalha</div><div class="tm-s">16 planetas · toque para testar</div><div class="tm-g" id="temaGrade"></div><button class="sec" id="temaFechar" style="width:100%;margin-top:10px">Fechar</button></div></div>
+    <div id="temaSheet"><div class="tm-box"><div class="tm-t">Campos de batalha</div><div class="tm-s">Liberados conforme você avança na História</div><div class="tm-g" id="temaGrade"></div><button class="sec" id="temaFechar" style="width:100%;margin-top:10px">Fechar</button></div></div>
     <div id="pausa">
       <div class="pz-box">
         <span class="rg-emb pz-emb"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path id="pzGly" d=""/></svg></span><div class="pz-t">Pausado</div><div class="pz-p" id="pzPl"></div>
@@ -784,7 +830,7 @@ body:not(:has(#duelo.on)) #leg{display:none}
       </div>
     </div>
     <section class="scr" id="online">
-      <div class="topbar"><button class="ico" id="onBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Jogar online</h3><span style="width:44px"></span></div>
+      <div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Jogar online</h3></div><button class="ico" id="onBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div>
       <div id="onJoin" style="display:flex;flex-direction:column;gap:14px;margin-top:20px">
         <button class="primary" id="onCriar">CRIAR SALA</button>
         <div style="text-align:center;color:var(--mut);font-size:13px">ou entre na sala do seu amigo</div>
@@ -798,7 +844,7 @@ body:not(:has(#duelo.on)) #leg{display:none}
       <p id="onMsg" style="text-align:center;color:#c9d3d6;margin-top:18px"></p>
     </section>
     <section class="scr" id="escolha">
-      <div class="topbar"><button class="ico" id="nBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Escolha as classes</h3><span style="width:44px"></span></div>
+      <div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Suas classes</h3></div><button class="ico" id="nBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div>
       <p class="escs">1 classe por naipe. São 2 baralhos de 36 cartas misturados (72), usados pelos dois jogadores.</p>
       <div class="ngrid" id="nGrid"></div>
       <div class="escf"><div class="ninfo" id="nInfo"></div><button class="primary" id="nGo">COMEÇAR BATALHA</button></div>
@@ -831,13 +877,15 @@ body:not(:has(#duelo.on)) #leg{display:none}
     <div id="casaSheet"><div class="cs-box"><div class="cs-h"><small>Casas dos campos</small><b>Escolha o estilo</b></div><div id="casaGrid"></div><button class="primary" id="casaOk" style="width:auto;min-width:200px;padding:0 30px;height:48px;font-size:18px;align-self:center">Pronto</button></div></div></section>
 
     <!-- FIM -->
-    <section class="scr" id="historia"><div class="topbar"><button class="ico" id="hBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><div class="htit"><h3 class="esct">História</h3><small id="hProg"></small></div><button class="ico" id="hI" aria-label="Como funciona"><i style="font:400 20px Marcellus,serif;font-style:italic">i</i></button></div><div class="htira" id="hTira"></div><div class="hcorpo" id="hCorpo"></div><div class="hvis" id="hVis"><small>Visual</small><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button></div>
+    <section class="scr" id="historia"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small id="hProg"></small><h3>História</h3></div><button class="ico" id="hI" aria-label="Como funciona"><i style="font:400 20px Marcellus,serif;font-style:italic">i</i></button><button class="ico" id="hBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="htira" id="hTira"></div><div class="hcorpo" id="hCorpo"></div><div class="hvis" id="hVis"><small>Visual</small><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button></div>
      <div id="hInfo"><div class="hib"><b>Como funciona</b><ul><li>Cada capítulo tem duas portas. Vença as duas para avançar.</li><li>Cada porta vencida libera um baralho novo.</li><li>Os losangos mostram quantas vitórias a porta pede.</li><li>A porta que você deixa para depois dá 5 de vida a mais ao líder inimigo.</li><li>A batalha usa o seu baralho, com a classe da porta no naipe dela.</li></ul><em>Toque para fechar</em></div></div></section>
-    <section class="scr" id="colecao"><div class="topbar"><button class="ico" id="cBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Coleção</h3><span style="width:44px"></span></div><div class="hcorpo"><div class="cres" id="cRes"></div><div class="cbar" id="cBar"><i></i></div><div id="cGrade"></div><div class="cteste"><small>Só para testar o mockup</small><button class="sec" id="cTudo">Liberar tudo</button><button class="sec" id="cZera">Recomeçar história</button></div></div></section>
-    <section class="scr" id="ranking"><div class="topbar"><button class="ico" id="rBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Ranking</h3><span style="width:44px"></span></div>
+    <section class="scr" id="colecao"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Coleção</h3></div><button class="ico" id="cBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="hcorpo"><div class="cres" id="cRes"></div><div class="cbar" id="cBar"><i></i></div><div id="cGrade"></div><div class="cteste"><small>Só para testar o mockup</small><button class="sec" id="cTudo">Liberar tudo</button><button class="sec" id="cZera">Recomeçar história</button></div></div></section>
+    <section class="scr" id="ranking"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Ranking</h3></div><button class="ico" id="rBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div>
       <div class="hcorpo"><div class="rabas" id="rAbas"><button class="on">Geral</button><button>Semana</button><button>Amigos</button></div>
       <div class="reu" id="rEu"></div><div class="rnum" id="rNum"></div>
       <div id="rLista"></div><div class="rvaz" id="rVaz"><span class="femb"><i></i></span><b>Entre para aparecer no ranking</b><p>Com a conta Google, seus pontos e o progresso da História ficam salvos e você vê a sua posição entre os outros jogadores.</p><button class="primary" id="rEntrar" style="max-width:300px;height:50px;font-size:17px">ENTRAR COM GOOGLE</button></div></div></section>
+    <section class="scr" id="galeria"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small id="gS"></small><h3><span id="gT"></span></h3></div><button class="ico" id="gBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="hcorpo"><div class="ggrid" id="gGrid"></div></div>
+      <div id="galV"><button class="gnav" id="gPrev" aria-label="Anterior">‹</button><div class="gvc"><div class="gvf" id="gvF"></div><div class="gvt" id="gvT"></div></div><button class="gnav" id="gNext" aria-label="Próxima">›</button></div></section>
     <section class="scr" id="fim">
       <span class="femb"><i></i></span><h2 id="fimT">Vitória</h2><div class="pn-l fl"><i></i></div><p id="fimS"></p><div id="fimX"></div>
       <button class="primary" id="denovo" style="max-width:280px">JOGAR DE NOVO</button>
@@ -865,7 +913,7 @@ body:not(:has(#duelo.on)) #leg{display:none}
       <button class="it" id="voz"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9v6h4l5 4V5L8 9z"/><path d="M16 9a4 4 0 0 1 0 6M18.5 6.5a8 8 0 0 1 0 11"/></svg></span>Narração<b class="val" id="vozT">Ligada</b></button>
       <button class="it" id="mus"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg></span>Música e efeitos<b class="val" id="musT">Ligada</b></button>
       <button class="it" id="modo"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="2.8"/></svg></span>Interface<b class="val" id="modoT">Limpa</b></button>
-      <button class="it" type="button" style="cursor:default"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="9" height="13" rx="1.5" transform="rotate(-8 8 12)"/><rect x="11" y="6" width="9" height="13" rx="1.5" transform="rotate(8 16 12)"/></svg></span>Mão do oponente<b class="val" id="oMaoN">0 cartas</b></button>
+      <button class="it" type="button" id="oMaoIt"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="9" height="13" rx="1.5" transform="rotate(-8 8 12)"/><rect x="11" y="6" width="9" height="13" rx="1.5" transform="rotate(8 16 12)"/></svg></span>Mão do oponente<b class="val" id="oMaoN">0 cartas</b></button>
       <div class="sep"></div>
       <button class="it danger" id="desistir"><span class="ic"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5.5 21V3.5"/><path d="M5.5 4h11.5l-2.5 4.25L17 12.5H5.5"/></svg></span>Desistir da partida</button>
     </div>
@@ -974,7 +1022,7 @@ function carta(code,v){const C=CL[code],N=NAIPES[C.s],t=nivel(v),H=CHAB[code][t-
  return {code,cls:C.name,pl:C.pl,s:N.k,v,pw:v,cost:t,e:{...H.e},e0:Object.keys(H.e),esp:v===10?1:0,tg:H.tg,hab:H.n,fx:H.fx,n:C.name+' · '+v,flav:C.cr[String(v)]||'',ai:v,id:Math.random()};}
 function ficha(code,pw,nm){const C=CL[code];return {code,cls:C.name,pl:C.pl,s:NAIPES[C.s].k,v:pw,pw,cost:0,e:{},tg:'',hab:'Ficha',fx:'Ficha criada por habilidade. Sem habilidade própria.',n:nm,flav:'',ai:2,token:1,id:Math.random()};}
 function cardHTML(c,extra){const l=lado(c),p=l?P(c,l):c.pw,cor=p>c.pw?'style="color:#7dffa8"':p<c.v&&l?'style="color:#ff8d8a"':'';
- return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn">⚓</div>':''}</div>`;}
+ return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn"></div>':''}</div>`;}
 function maisFraca(F,ex){let k=-1;F.forEach((x,j)=>{if(x&&j!==ex&&(k<0||x.pw<F[k].pw))k=j;});return k;}
 function vazia(l){return FD(l).findIndex(x=>!x);}
 async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
@@ -1323,9 +1371,9 @@ function painel(q){
  $('#sheet').classList.remove('on');$('#dim').classList.remove('on');
  let t='',h='';
  if(q==='regras'){t='Regras';h=`<p class="lema">Derrube o líder inimigo de <b>${VIDA}</b> para <b>0</b>.</p>
- <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Os dois jogadores compram do mesmo baralho. 📚 mostra quantas restam.</li></ul>
+ <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Os dois jogadores compram do mesmo baralho. A pilha ao lado do campo mostra quantas restam.</li></ul>
  <h4>Cartas</h4><ul><li>Número no canto: o <b>poder</b> (ataque e defesa).</li><li>Diamante azul: o <b>custo de mana</b>. 2 e 3 custam 1, 4 e 5 custam 2, 6 e 7 custam 3, 8 e 9 custam 4, o 10 custa 5.</li><li>Toda carta tem habilidade. Cada <b>planeta</b> tem 5 habilidades, uma por dupla de números e uma para o 10, e elas valem para as duas classes do planeta. São 80 no jogo e nenhuma se repete entre planetas.</li><li>Número verde: poder aumentado por habilidade. Vermelho: poder reduzido.</li></ul>
- <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por turno, até 6.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo 👁 oculta) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>No começo de cada dia, cada lado compra cartas. A cada dia ímpar que termina, a compra sobe 1: 2 cartas no 2º e no 3º dia, 3 no 4º e no 5º, 4 no 6º e no 7º, e assim por diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério e vira <b>+1 de mana</b> (no mesmo dia; se for comprada por efeito durante a batalha, vale no próximo dia).</li></ul>
+ <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por turno, até 6.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>No começo de cada dia, cada lado compra cartas. A cada dia ímpar que termina, a compra sobe 1: 2 cartas no 2º e no 3º dia, 3 no 4º e no 5º, 4 no 6º e no 7º, e assim por diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério e vira <b>+1 de mana</b> (no mesmo dia; se for comprada por efeito durante a batalha, vale no próximo dia).</li></ul>
  <h4>Troca (⇄)</h4><ul><li>1 vez por turno, baixe em cima de uma carta sua. A nova paga a mana inteira; a que sai vai para o cemitério sem ativar efeito de morrer.</li></ul>
  <h4>Campos e rivalidade</h4><div class="rv4">${LN.map(k=>`<span style="--c:${NKY[k].cor}">${NKY[k].sym}\uFE0E<small>${NKY[k].nome}</small></span>`).join('')}</div><ul><li>São <b>4 campos de batalha</b>, um de cada naipe: Copas, Espadas, Ouros e Paus.</li><li>Carta no campo do <b>próprio naipe</b> ganha <b>+1</b> de poder.</li><li>Carta no campo do <b>naipe rival</b> perde <b>1</b> de poder.</li><li>Nos outros dois campos nada muda.</li></ul><div class="rvs">${[['h','s'],['d','c']].map(([x,y])=>`<div><span style="--c:${NKY[x].cor}">${NKY[x].sym}\uFE0E ${NKY[x].nome}</span><i>rivais</i><span style="--c:${NKY[y].cor}">${NKY[y].sym}\uFE0E ${NKY[y].nome}</span></div>`).join('')}</div>
  <h4>Combate (campo por campo)</h4><ul><li>Frente a frente: o maior poder destrói o outro. Empate: as duas morrem.</li><li>Carta sozinha no campo bate no líder inimigo com o poder dela.</li><li>Toque na mesa para acelerar.</li></ul>
@@ -1376,17 +1424,17 @@ $('#pass').onclick=async()=>{
 <script>
 // ---------- escolha de naipes ----------
 function abrirEscolha(){musica('calma');
- if(!window.ABR)window.ABR=Object.keys(NAIPES)[0];desenhaEsc();
+ window.ABR=null;desenhaEsc();
  attEsc();show('escolha');
 }
 function desenhaEsc(){
  $('#nGrid').innerHTML=Object.entries(NAIPES).map(([k,N])=>{const c=CL[ESC[k]],on=ABR===k;
   return `<section class="rs ${on?'on':''}" style="--nc:${N.cor}"><button class="rsh" data-ab="${k}"><i class="rsa" style="background-image:url(s/${c.code}.webp)"></i><span class="rsd"><span>${N.sym}</span></span><span class="rsx"><small>${N.nome}</small><b>${c.name}</b><em>${c.pl}</em></span></button>
   ${on?`<div class="rsl">${CLASSES.filter(x=>x.s===k).map(x=>`<button class="rhx ${x.code===c.code?'on':''} ${typeof hTem==='function'&&!hTem(x.code)?'tr':''}" data-n="${k}" data-c="${x.code}" aria-label="${x.name}"><i style="background-image:url(s/${x.code}.webp)"></i><b>${x.name}</b></button>`).join('')}</div>
-  <small class="nh-d">Segure o dedo numa classe para ver os poderes</small>`:''}</section>`}).join('');
+  <button class="rver" data-c="${c.code}"><i></i>Ver as cartas de ${c.name}</button>`:''}</section>`}).join('');
  $('#nInfo').textContent='4 classes · 2 baralhos · 72 cartas';}
 function attEsc(){desenhaEsc();}
-$('#nGrid').addEventListener('click',e=>{const a=e.target.closest('.rsh');if(a){ABR=a.dataset.ab;desenhaEsc();return;}const b=e.target.closest('.rhx');if(!b)return;if(b.classList.contains('tr')){toast('Libere este baralho no modo História');return;}ESC[b.dataset.n]=b.dataset.c;desenhaEsc();});
+$('#nGrid').addEventListener('click',e=>{const a=e.target.closest('.rsh');if(a){ABR=ABR===a.dataset.ab?null:a.dataset.ab;desenhaEsc();return;}const vc=e.target.closest('.rver');if(vc){galAbrir(vc.dataset.c,'escolha');return;}const b=e.target.closest('.rhx');if(!b)return;if(b.classList.contains('tr')){toast('Libere este baralho no modo História');return;}ESC[b.dataset.n]=b.dataset.c;desenhaEsc();});
 // escolha de classes: segurar o dedo numa classe mostra os 5 poderes dela
 let NHT=0,NHS=false;
 function nhAbrir(b){const k=b.dataset.n,c=CL[b.dataset.c],N=NAIPES[k],o=$('#nhPop');o.style.setProperty('--nc',N.cor);
@@ -1446,7 +1494,9 @@ $('#casaGrid').innerHTML=SLN.slice(1).map((n,i)=>{const N=NKY[LN[i%4]];return `<
 document.querySelectorAll('#casaGrid .cs-b').forEach(b=>b.onclick=()=>casas(+b.dataset.sl));
 $('#casasIt').onclick=()=>{fecharTudo();$('#casaSheet').classList.add('on');};$('#casaOk').onclick=()=>$('#casaSheet').classList.remove('on');$('#shX').onclick=fecharTudo;casas(SLK);
 </script>
+<script src="arthd.js"></script>
 <script src="hist.js"></script>
 <script src="login.js"></script>
+<script src="v62.js"></script>
 </body>
 </html>
