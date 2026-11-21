@@ -72,7 +72,7 @@ function hCenaBat(t,i,j,fim){const h=t.hist[i],c=hOpCods(h.op[j])[0],ult=i===3&&
  return {voz:[hvChave(t,i),j+1],sm:h.pl+' · batalha '+(j+1)+' de 8',nm:hCap(h.op[j].split(' · ').pop()),p:hPassos(h.b[j],imgs),cor:NAIPES[t.naipe].cor,ro:ult?'F':'',ts:ult?t.desfecho:'',th:ult?'A Batalha entre Planetas':'',fim};}
 function hCenaGancho(){return {voz:['h00',1],sm:'Cena final',nm:'O Devorador',ro:'D',ts:'Depois da batalha',th:'O chão treme',p:hPassos(LORE.gancho,[['ZCOR',9],['CMAG',10],['ZPEL',9],['CNEC',10]]),cor:'#c8aa6e',fim:hCarta};}
 // voz gravada (o mago): um arquivo por história; os tempos das palavras vêm da transcrição e são casados com o texto na hora
-const H_VOZ=['h00','h01','h02','h03','h04','h05','h09','h13'];
+const H_VOZ=['h00','h01','h02','h03','h04','h05','h06','h07','h08','h09','h10','h11','h12','h13','h14','h15','h16'];
 const HV={a:null,src:'',d:{}};
 const hNorm=t=>String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
 const hTok=t=>hNorm(t).split(' ').filter(Boolean);
