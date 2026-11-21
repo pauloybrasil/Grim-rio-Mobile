@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v66-mao-arco</title>
+<title>Grimório Mobile · v67-sete-cartas-e-mover</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Marcellus&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -820,12 +820,18 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 #duelo.rg .ohand.mo1 i{width:40px;height:56px;margin:0 -9px;border-radius:3px;background:url(art/costa.webp) center/cover;box-shadow:0 0 0 1.5px var(--ts),0 4px 10px rgba(0,0,0,.65);transform-origin:50% -70%;transform:rotate(calc(var(--k,0)*-6.5deg)) translateY(calc(var(--k,0)*var(--k,0)*-1.4px + 5px))}
 #duelo.rg .ohand.mo1 i::before{display:none}
 .omao i{background:url(art/costa.webp) center/cover!important;box-shadow:0 0 0 1.5px var(--ts),0 4px 10px rgba(0,0,0,.6)!important;width:52px;height:73px}
+
+/* ===== v67: mudar carta de campo ===== */
+#duelo.rg .slot.mv{filter:drop-shadow(0 0 8px #fff)}#duelo.rg .slot.mv::before{background:#fff;opacity:1}
+.mvc{position:absolute;left:50%;top:12px;z-index:3;margin-left:-13px;transform:rotate(45deg);width:26px;height:26px;display:grid;place-items:center;text-decoration:none;background:#10315c;box-shadow:inset 0 0 0 1.5px #7fc4ff,0 0 10px rgba(127,196,255,.6)}
+.mvc b{transform:rotate(-45deg);font:600 13px Inter,sans-serif;color:#fff}.mvc.no{background:#3a1616;box-shadow:inset 0 0 0 1.5px #e0685f}
+#duelo.rg .ohand.mo1 i{margin:0 -11px}
 </style>
 </head>
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v66-mao-arco</span>
+    <span class="tag">BASE · v67-sete-cartas-e-mover</span>
     <h1>Grimório Mobile</h1>
     <p>Duelo de 4 campos feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
@@ -1068,7 +1074,7 @@ function vazia(l){return FD(l).findIndex(x=>!x);}
 async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
 async function criarFicha(l,code,pw,nm,j){registrar();if(j===undefined)j=vazia(l);if(j<0)return false;const f=ficha(code,pw,nm);FD(l)[j]=f;render();cls(cardEl(l,j),'rise',600);pop(l,j,nm+' '+pw);lg(`${nm} ${pw} entrou no campo ${l==='m'?'seu':'inimigo'}`);await w(380);return true;}
 const MAOMAX=7;
-const comprasDoDia=d=>1+Math.ceil((d-1)/2); // começa em 1; a cada dia ímpar que termina, +1
+const comprasDoDia=d=>d<=3?1:d<=6?2:d<=10?3:4; // 1 carta do 1º ao 3º dia, 2 do 4º ao 6º, 3 do 7º ao 10º, 4 do 11º em diante // começa em 1; a cada dia ímpar que termina, +1
 async function comprar(l,n,inicio){let extra=0;for(let k=0;k<n;k++){const c=compra();if(!c)break;const H=HD(l);if(H.length<MAOMAX)H.push(c);else{S.cem.unshift({...c,lado:l,desc:1});extra++;}}
  if(extra){if(inicio){if(l==='m')S.mana+=extra;else S.omanaExtra=(S.omanaExtra||0)+extra;}else S.pend[l]=(S.pend[l]||0)+extra;
    lg(`🂠 Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} e ganhou +${extra} de mana${inicio?'':' no próximo dia'}`);if(l==='m')toast(`Mão cheia: ${extra} carta${extra>1?'s':''} para o cemitério · +${extra} de mana`);}
@@ -1239,7 +1245,7 @@ function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaA
 function compraExtra(l){return FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0;}
 
 function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
- for(let k=0;k<5;k++){S.hand.push(compra());S.oh.push(compra());}lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
+ for(let k=0;k<7;k++){S.hand.push(compra());S.oh.push(compra());}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
 function lg(t,tit){S.log.unshift({t,tit});if(S.log.length>150)S.log.pop();}
 function nome(c,me){return c.n+(me?' (sua)':' (inimiga)');}
 function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
@@ -1249,7 +1255,7 @@ function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
  const cell=c=>c&&!S.hide.has(c.id)&&!(c.novo&&lado(c)==='o')?cardHTML(c,c.novo?'oc':''):'';
  $('#oRow').innerHTML=S.theirs.map((c,i)=>`<div class="slot ${S.lane===i?'lane':''}" data-sy="${NKY[LN[i]].sym}" style="--lc:${NKY[LN[i]].cor}"><i class="sg s-${LN[i]}"><b>${NKY[LN[i]].sym}</b><small>${NKY[LN[i]].nome}</small></i>${cell(c)}</div>`).join('');
  const sc=S.sel>=0?S.hand[S.sel]:null,drag=!!DR;
- $('#mRow').innerHTML=S.mine.map((c,i)=>`<div class="slot ${!c&&(sc||drag)?'can':''} ${c&&(sc||drag)&&!S.trocou?'swap':''} ${S.lane===i?'lane':''}" data-i="${i}" data-sy="${NKY[LN[i]].sym}" style="--lc:${NKY[LN[i]].cor}"><i class="sg s-${LN[i]}"><b>${NKY[LN[i]].sym}</b><small>${NKY[LN[i]].nome}</small></i>${c?cell(c):''}</div>`).join('');
+ $('#mRow').innerHTML=S.mine.map((c,i)=>`<div class="slot ${!c&&(sc||drag||S.mov>=0)?'can':''} ${c&&(sc||drag)&&!S.trocou?'swap':''} ${S.lane===i?'lane':''} ${S.mov===i?'mv':''}" data-i="${i}" data-sy="${NKY[LN[i]].sym}" style="--lc:${NKY[LN[i]].cor}"><i class="sg s-${LN[i]}"><b>${NKY[LN[i]].sym}</b><small>${NKY[LN[i]].nome}</small></i>${c?cell(c):(S.mov>=0&&!sc&&!drag?`<u class="mvc ${Math.abs(S.mov-i)>S.mana?'no':''}"><b>${Math.abs(S.mov-i)}</b></u>`:'')}</div>`).join('');
  $('#hand').innerHTML=S.hand.map((c,i)=>`<div class="hc ${i===S.sel?'sel':''} ${c.cost>S.mana?'off':''}" data-i="${i}" style="${DR&&DR.i===i?'opacity:.25':''}${S.hide&&S.hide.has(c.id)?';visibility:hidden':''}">${cardHTML(c)}</div>`).join('');
  $('#mana').innerHTML=Array.from({length:Math.max(S.max,S.mana)},(_,i)=>`<i class="${i<S.mana?'f':''}"></i>`).join('')+`<span>${S.mana}/${S.max}</span>`;
  $('#pass').disabled=S.busy;
@@ -1387,8 +1393,13 @@ async function jogar(hi,slot,de){if(ONL.guest)return jogarConvidado(hi,slot);
 function duplo(q,i){const ag=Date.now(),ok=LF.q===q&&LF.i===i&&ag-LF.t<380;LF=ok?{}:{q,i,t:ag};return ok;}
 ['#mRow','#oRow'].forEach(q=>$(q).addEventListener('contextmenu',e=>e.preventDefault()));
 $('#mRow').addEventListener('click',e=>{const s=e.target.closest('.slot');if(!s)return;const i=+s.dataset.i;
- if(S.sel>=0&&!S.busy){LF={};jogar(S.sel,i);return;}
- if(S.mine[i]&&duplo('m',i))abrirZoom(S.mine[i],-1);});
+ if(S.sel>=0&&!S.busy){LF={};S.mov=-1;jogar(S.sel,i);return;}
+  if(!S.busy&&S.mov>=0&&!S.mine[i]){moverCarta(S.mov,i);return;}
+  if(S.mine[i]){if(duplo('m',i)){S.mov=-1;render();abrirZoom(S.mine[i],-1);return;}
+   if(!S.busy&&!(typeof ONL!=='undefined'&&(ONL.host||ONL.guest))){S.mov=S.mov===i?-1:i;render();if(S.mov>=0)$('#hint').textContent='Mover: 1 de mana por casa';}}});
+function moverCarta(a,b){const c=S.mine[a];if(!c){S.mov=-1;render();return;}const custo=Math.abs(a-b);if(c.stun){toast('Esta carta está presa e não pode mudar de campo');return;}
+ if(S.mana<custo){toast('Falta '+(custo-S.mana)+' de mana para mover até lá');return;}
+ S.mana-=custo;S.mine[b]=c;S.mine[a]=null;S.mov=-1;sfx('place');lg(`${c.n} mudou do campo ${a+1} para o campo ${b+1} (custou ${custo} de mana)`);render();}
 $('#oRow').addEventListener('click',e=>{const s=e.target.closest('.slot');if(!s)return;const i=[...s.parentNode.children].indexOf(s);if(S.theirs[i]&&!S.theirs[i].novo&&duplo('o',i))abrirZoom(S.theirs[i],-1);});
 $('#zClose').onclick=()=>{if(Date.now()-ZT<600)return;fecharTudo();};
 $('#zPlay').onclick=()=>{if(Date.now()-ZT<600)return;S.sel=zi;fecharTudo();render();};
@@ -1413,7 +1424,8 @@ function painel(q){
  if(q==='regras'){t='Regras';h=`<p class="lema">Derrube o líder inimigo de <b>${VIDA}</b> para <b>0</b>.</p>
  <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Os dois jogadores compram do mesmo baralho. A pilha ao lado do campo mostra quantas restam.</li></ul>
  <h4>Cartas</h4><ul><li>Número no canto: o <b>poder</b> (ataque e defesa).</li><li>Diamante azul: o <b>custo de mana</b>. 2 e 3 custam 1, 4 e 5 custam 2, 6 e 7 custam 3, 8 e 9 custam 4, o 10 custa 5.</li><li>Toda carta tem habilidade. Cada <b>planeta</b> tem 5 habilidades, uma por dupla de números e uma para o 10, e elas valem para as duas classes do planeta. São 80 no jogo e nenhuma se repete entre planetas.</li><li>Número verde: poder aumentado por habilidade. Vermelho: poder reduzido.</li></ul>
- <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por turno, até 6.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>No começo de cada dia, cada lado compra cartas. A cada dia ímpar que termina, a compra sobe 1: 2 cartas no 2º e no 3º dia, 3 no 4º e no 5º, 4 no 6º e no 7º, e assim por diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério e vira <b>+1 de mana</b> (no mesmo dia; se for comprada por efeito durante a batalha, vale no próximo dia).</li></ul>
+ <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por turno, até 6.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>Cada jogador começa com <b>7 cartas</b>. No começo de cada dia, cada lado compra: <b>1 carta</b> do 1º ao 3º dia, <b>2</b> do 4º ao 6º, <b>3</b> do 7º ao 10º e <b>4</b> do 11º em diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério e vira <b>+1 de mana</b> (no mesmo dia; se for comprada por efeito durante a batalha, vale no próximo dia).</li></ul>
+ <h4>Mudar de campo</h4><ul><li>Enquanto prepara as cartas, toque numa carta sua que está no campo e depois numa casa vazia para movê-la.</li><li>Custa <b>1 de mana por casa</b> de distância: a casa ao lado custa 1, a seguinte custa 2.</li><li>Os efeitos de entrada não ativam de novo.</li></ul>
  <h4>Troca (⇄)</h4><ul><li>1 vez por turno, baixe em cima de uma carta sua. A nova paga a mana inteira; a que sai vai para o cemitério sem ativar efeito de morrer.</li></ul>
  <h4>Campos e rivalidade</h4><div class="rv4">${LN.map(k=>`<span style="--c:${NKY[k].cor}">${NKY[k].sym}\uFE0E<small>${NKY[k].nome}</small></span>`).join('')}</div><ul><li>São <b>4 campos de batalha</b>, um de cada naipe: Copas, Espadas, Ouros e Paus.</li><li>Carta no campo do <b>próprio naipe</b> ganha <b>+1</b> de poder.</li><li>Carta no campo do <b>naipe rival</b> perde <b>1</b> de poder.</li><li>Nos outros dois campos nada muda.</li></ul><div class="rvs">${[['h','s'],['d','c']].map(([x,y])=>`<div><span style="--c:${NKY[x].cor}">${NKY[x].sym}\uFE0E ${NKY[x].nome}</span><i>rivais</i><span style="--c:${NKY[y].cor}">${NKY[y].sym}\uFE0E ${NKY[y].nome}</span></div>`).join('')}</div>
  <h4>Combate (campo por campo)</h4><ul><li>Frente a frente: o maior poder destrói o outro. Empate: as duas morrem.</li><li>Carta sozinha no campo bate no líder inimigo com o poder dela.</li><li>Toque na mesa para acelerar.</li></ul>

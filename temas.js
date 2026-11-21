@@ -125,7 +125,7 @@ comprar=async function(l,n,inicio){if(SPD>1||!S||!$('#duelo').classList.contains
  render();for(const x of novos)await animCompra(l,x,novos.length>2);novos.forEach(x=>S.hide.delete(x.c.id));render();};
 // distribuição inicial: 5 cartas para cada lado saindo do baralho
 async function distribuir(){if(!S)return;const mh=S.hand.slice(),oh=S.oh.length;mh.forEach(c=>S.hide.add(c.id));S.oh=S.oh.slice();const ohc=S.oh.splice(0);render();
- for(let k=0;k<5;k++){if(mh[k]){S.hide.delete(mh[k].id);render();const el=$('#hand').children[k];if(el){el.style.visibility='hidden';await voo(retDeck(),R(el),COSTA,170);el.style.visibility='';cls(el,'flipin',380);}}
+ for(let k=0;k<7;k++){if(mh[k]){S.hide.delete(mh[k].id);render();const el=$('#hand').children[k];if(el){el.style.visibility='hidden';await voo(retDeck(),R(el),COSTA,170);el.style.visibility='';cls(el,'flipin',380);}}
    if(ohc[k]){S.oh.push(ohc[k]);render();}}
  S.oh=S.oh.length?S.oh:ohc;render();}
 
