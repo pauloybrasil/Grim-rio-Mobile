@@ -32,7 +32,7 @@ $('#gBack').onclick=()=>{if(GAL.de==='escolha'){desenhaEsc();show('escolha');}el
 $('#cGrade').addEventListener('click',e=>{const c=e.target.closest('.cc');if(!c)return;if(c.classList.contains('tr')){toast('Libere este baralho na História');return;}galAbrir(c.dataset.c,'colecao');});
 // mão do oponente: abre um painel com as cartas viradas
 $('#oMaoIt').onclick=()=>{if(!S)return;fecharTudo();const n=S.oh.length;$('#pnT').textContent='Mão do oponente';
- $('#pnB').innerHTML=`<div class="omao">${Array.from({length:n},(_,i)=>`<i style="--k:${i-(n-1)/2}"></i>`).join('')||'<p class="vazio" style="margin:0">Sem cartas na mão.</p>'}</div><ul><li>O oponente tem <b>${n} ${n===1?'carta':'cartas'}</b> na mão (o máximo é 7).</li><li>Restam <b>${S.deck.length}</b> cartas no baralho, que é comum aos dois.</li><li>Há <b>${S.cem.length}</b> ${S.cem.length===1?'carta':'cartas'} no cemitério.</li></ul><h4>Estilo da mão no campo</h4><div class="maoest">${MAON.slice(1).map((x,i)=>`<button data-m="${i+1}" class="${MAOK===i+1?'on':''}"><i></i>${x[0]}<small>ref. ${x[1]}</small></button>`).join('')}</div>`;$('#pnB').querySelectorAll('.maoest button').forEach(b=>b.onclick=()=>{maoEstilo(+b.dataset.m);$('#pnB').querySelectorAll('.maoest button').forEach(x=>x.classList.toggle('on',x===b));});$('#pn').classList.add('on');};
+ $('#pnB').innerHTML=`<div class="omao">${Array.from({length:n},(_,i)=>`<i style="--k:${i-(n-1)/2}"></i>`).join('')||'<p class="vazio" style="margin:0">Sem cartas na mão.</p>'}</div><ul><li>O oponente tem <b>${n} ${n===1?'carta':'cartas'}</b> na mão (o máximo é 7).</li><li>Restam <b>${S.deck.length}</b> cartas no baralho, que é comum aos dois.</li><li>Há <b>${S.cem.length}</b> ${S.cem.length===1?'carta':'cartas'} no cemitério.</li></ul>`;$('#pn').classList.add('on');};
 // diagnóstico de som (abra o site com ?diag para ver)
 if(/[?&]diag/.test(location.search)){const d=document.createElement('pre');d.id='diag';document.body.appendChild(d);let n=0;const t=setInterval(()=>{n++;d.textContent=`som pronto:${SOM.pronto} falas:${Object.keys(SOM.clips).length} efeitos:${Object.keys(SOM.sfx).length} trilhas:${Object.keys(SOM.mus||{}).length} ctx:${SOM.ctx?SOM.ctx.state:'-'}`;if(n>40)clearInterval(t);},1000);}
 
@@ -46,6 +46,6 @@ const cDesenha1=cDesenha;cDesenha=function(){cDesenha1();document.querySelectorA
 const abrirTemas1=abrirTemas;abrirTemas=function(){abrirTemas1();document.querySelectorAll('#temaGrade .tm-b:not(.tr)').forEach(b=>{const r=RG[b.dataset.pl];hdSobre(b.querySelector('.tm-a'),r[2],10,500,'50% 22%');});};
 
 // ===== v65: estilos da mão do oponente =====
-const MAON=[null,['Arco','Hearthstone'],['Borda','Legends of Runeterra'],['Contador','Marvel Snap'],['Fileira','Magic Arena'],['Pilha','Gwent']];let MAOK=1;try{MAOK=+localStorage.getItem('gm-mao')||1;}catch(e){}
+const MAON=[null,['Arco','Hearthstone'],['Borda','Legends of Runeterra'],['Contador','Marvel Snap'],['Fileira','Magic Arena'],['Pilha','Gwent']];let MAOK=1; // escolhido: Arco
 function maoEstilo(k){MAOK=k;const o=$('#oHand');o.className='ohand mo'+k;try{localStorage.setItem('gm-mao',k);}catch(e){}}
 new MutationObserver(()=>{$('#oHand').dataset.n=$('#oHand').children.length;}).observe($('#oHand'),{childList:true});maoEstilo(MAOK);
