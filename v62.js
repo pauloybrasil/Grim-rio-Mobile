@@ -13,7 +13,7 @@ function capaAplica(){let c=null;try{c=JSON.parse(localStorage.getItem('gm-capa'
  const a=$('.mA-art');a.style.backgroundImage=`url(s/${c.code}.webp)`;a.style.backgroundPosition=`${(c.v-2)/18*100}% 20%`;hdSobre(a,c.code,c.v,900);}
 function capaFixa(code,v){try{if(code)localStorage.setItem('gm-capa',JSON.stringify({code,v}));else localStorage.removeItem('gm-capa');}catch(e){}capaAplica();}
 capaAplica();
-const hDesenha0=hDesenha;hDesenha=function(v){hDesenha0(v);document.querySelectorAll('#hCorpo .hp').forEach(b=>{const c=H_CAP[+b.dataset.i][3+ +b.dataset.j][1];hdSobre(b.querySelector('.a'),c,10,600);});};
+
 const abrirZoom0=abrirZoom;abrirZoom=function(c,i){abrirZoom0(c,i);if(!c.token)hdSobre($('#zc .card'),c.code,c.ai,800);};
 const fimTela0=fimTela;fimTela=function(v,x){fimTela0(v,x);const i=$('#fimX .fnv i');if(i){const m=/s\/(\w+)\.webp/.exec(i.getAttribute('style')||'');if(m)hdSobre(i,m[1],10,240);}};
 // galeria: todas as cartas da classe, toque para ampliar

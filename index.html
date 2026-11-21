@@ -597,6 +597,58 @@ body.cinema .card .pw,body.cinema .card .tg{opacity:0}
 /* ===== v53: MODO HISTÓRIA E COLEÇÃO ===== */
 .mA-h{height:50px;font-size:27px;color:#c8aa6e}.mA-h i{background:none!important;box-shadow:inset 0 0 0 1.5px #c8aa6e}
 #historia,#colecao{background:#0b1a20}
+/* ===== história: escolha, trilha e cenas narradas (v72) ===== */
+.ht-g{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding-top:12px}
+.ht-c{position:relative;aspect-ratio:3/4.5;overflow:hidden;text-align:left;clip-path:polygon(12px 0,calc(100% - 12px) 0,100% 12px,100% calc(100% - 12px),calc(100% - 12px) 100%,12px 100%,0 calc(100% - 12px),0 12px)}
+.ht-a{position:absolute;inset:0;overflow:hidden;background:#050d10}.ht-a>div{position:absolute;top:0;left:50%;height:100%;aspect-ratio:3/4;min-width:100%;transform:translateX(-50%);background-size:1900% 100%}.ht-a img.ahd{object-position:50% 18%}
+.ht-c::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,13,16,0) 30%,rgba(5,13,16,.95) 82%);box-shadow:inset 0 0 0 1.5px var(--nc);pointer-events:none}
+.ht-x{position:absolute;left:0;right:0;bottom:0;z-index:1;padding:10px 10px 12px}.ht-x small{display:block;font:600 8.5px Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--nc)}
+.ht-x b{display:block;font:400 19px/1.1 Marcellus,serif;color:#f0e6d2;margin:2px 0 4px}.ht-x span{display:block;font:400 11.5px/1.3 Inter,sans-serif;color:#c9d3d6}
+.ht-c em{position:absolute;z-index:1;top:8px;right:8px;font:600 8.5px Inter,sans-serif;font-style:normal;letter-spacing:.14em;text-transform:uppercase;color:#0b1a20;background:#c8aa6e;padding:3px 7px}
+.ht-r{display:block;flex:none;margin:16px auto 0;height:44px;padding:0 18px;font:600 10px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#c8aa6e;box-shadow:inset 0 0 0 1px rgba(200,170,110,.45)}
+#historia .htira{padding:10px 0 6px;justify-content:center;gap:8px}#historia .htira button{width:44px;height:44px;font:400 16px Marcellus,serif}
+.ht-t{text-align:center;margin:2px 0 8px}.ht-t small{font:600 9.5px Inter,sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--nc)}.ht-t h4{margin:2px 0 0;font:400 24px/1.1 Marcellus,serif;color:#f0e6d2}
+.ht-rot{font:600 9px Inter,sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--nc)}
+.ht-dk{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0 12px}.ht-dk span{padding:4px 10px;font:600 9.5px Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#f0e6d2;box-shadow:inset 0 0 0 1px rgba(200,170,110,.5)}.ht-dk span.n{background:#c8aa6e;color:#0b1a20;box-shadow:none}
+.ht-bs{position:relative;display:grid;gap:6px;margin-top:8px}.ht-bs::before{content:'';position:absolute;left:21px;top:20px;bottom:20px;width:1px;background:rgba(200,170,110,.35)}
+.ht-b{position:relative;display:flex;align-items:center;gap:12px;width:100%;min-height:58px;padding:8px 10px 8px 4px;text-align:left}
+.ht-b .lz{flex:none;width:28px;height:28px;margin:0 7px;transform:rotate(45deg);background:#0b1a20;box-shadow:inset 0 0 0 1.5px rgba(200,170,110,.45);display:grid;place-items:center}.ht-b .lz b{transform:rotate(-45deg);font:400 14px Marcellus,serif;color:#c8aa6e}
+.ht-b .hx6{flex:none;width:40px;height:46px;position:relative;clip-path:polygon(50% 0,100% 22%,100% 78%,50% 100%,0 78%,0 22%)}
+.ht-b .nm{flex:1;min-width:0}.ht-b .nm b{display:block;font:400 16px/1.15 Marcellus,serif;color:#f0e6d2}.ht-b .nm span{font:600 9px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#c8aa6e}
+.ht-b.ok .lz{background:#c8aa6e}.ht-b.ok .lz b{color:#0b1a20}.ht-b.fe{opacity:.38}.ht-b.fe .hx6{filter:grayscale(1)}
+.ht-b.at{background:color-mix(in srgb,var(--nc) 10%,transparent);box-shadow:inset 0 0 0 1px var(--nc)}.ht-b.at .lz{box-shadow:inset 0 0 0 1.5px var(--nc)}
+.ht-b i.ac{flex:none;font:600 9.5px Inter,sans-serif;font-style:normal;letter-spacing:.16em;text-transform:uppercase;color:#c8aa6e}.ht-b.at i.ac{color:#0b1a20;background:#c8aa6e;padding:9px 14px;clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 50%,calc(100% - 8px) 100%,8px 100%,0 50%)}
+#hcena,#hcarta{padding:0!important;background:#050d10!important}#hcena::before,#hcarta::before{display:none!important}
+.hc-w{position:relative!important;flex:1;overflow:hidden}
+.hc-art{position:absolute;inset:0;overflow:hidden;background:#050d10;transition:opacity .9s}.hc-art.b{opacity:0}.hc-art.b.on{opacity:1}
+.hc-art>div{position:absolute;top:0;left:50%;height:100%;aspect-ratio:3/4;min-width:100%;margin-left:-50%;background-size:1900% 100%;filter:blur(3px)}
+.hc-art img.ahd{object-position:50% 8%;transition:opacity .5s}
+.hc-art>div,.hc-art>img{animation:hckb 16s ease-in-out infinite alternate}.hc-art.b>div,.hc-art.b>img{animation-name:hckb2}
+@keyframes hckb{from{scale:1.04;translate:0 0}to{scale:1.16;translate:-2% -2%}}@keyframes hckb2{from{scale:1.16;translate:2% -1%}to{scale:1.04;translate:0 1%}}
+.hc-vg{position:absolute;inset:0;pointer-events:none;background:linear-gradient(180deg,rgba(5,13,16,.72) 0,rgba(5,13,16,0) 18%,rgba(5,13,16,.15) 36%,rgba(5,13,16,.86) 52%,rgba(5,13,16,.94) 80%,#050d10 100%)}
+#hcPg{position:absolute;top:calc(var(--sat) + 10px);left:12px;right:12px;display:flex;gap:3px;z-index:3}#hcPg i{flex:1;height:2px;background:rgba(240,230,210,.25)}#hcPg i u{display:block;height:100%;width:0;background:#c8aa6e}
+#hcTop{position:absolute;top:calc(var(--sat) + 22px);left:14px;right:14px;z-index:3;display:flex;align-items:flex-start;gap:8px}#hcTop div{flex:1}
+#hcTop small{display:block;font:600 9px Inter,sans-serif;letter-spacing:.26em;text-transform:uppercase;color:var(--nc)}#hcTop b{font:400 16px Marcellus,serif;color:#f0e6d2}
+.hc-b{flex:none;min-width:44px;height:44px;padding:0 12px;font:600 9.5px Inter,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#f0e6d2;background:rgba(5,13,16,.55);box-shadow:inset 0 0 0 1px rgba(200,170,110,.5);clip-path:polygon(8px 0,calc(100% - 8px) 0,100% 8px,100% calc(100% - 8px),calc(100% - 8px) 100%,8px 100%,0 calc(100% - 8px),0 8px)}
+#hcToq{position:absolute;inset:90px 0 90px;z-index:2;display:flex}#hcToq button{flex:1}#hcToq button:first-child{flex:.45}
+#hcTit{position:absolute;inset:0;z-index:2;display:grid;place-content:center;text-align:center;padding:0 26px;pointer-events:none;opacity:0;transition:opacity .7s;background:rgba(5,13,16,.55)}#hcTit.on{opacity:1}
+#hcTit i{width:34px;height:34px;margin:0 auto 18px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px var(--nc);display:grid;place-items:center}#hcTit i b{transform:rotate(-45deg);font:400 16px Marcellus,serif;font-style:normal;color:var(--nc)}
+#hcTit small{font:600 10px Inter,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:var(--nc)}#hcTit h2{font:400 34px/1.08 Marcellus,serif;color:#f0e6d2;margin:8px 0 0}
+#hcTit hr{width:120px;border:0;height:1px;background:linear-gradient(90deg,transparent,#c8aa6e,transparent);margin:16px auto 0}
+#hcLeg{position:absolute;left:0;right:0;top:50%;z-index:2;padding:0 20px;pointer-events:none;transition:opacity .35s}#hcLeg.sai{opacity:0}
+#hcLeg>div{border-left:2px solid #c8aa6e;padding-left:14px}#hcLeg p{margin:0;font:400 21px/1.42 Marcellus,serif;color:#f0e6d2;text-wrap:pretty;text-shadow:0 2px 8px #000}
+#hcLeg p::first-letter{float:left;font-size:58px;line-height:.86;padding:4px 8px 0 0;color:#c8aa6e}
+#hcLeg w{opacity:.3;transition:opacity .25s,color .5s}#hcLeg w.on{opacity:1}#hcLeg w.ag{color:#c8aa6e}
+#hcRod{position:absolute;left:0;right:0;bottom:calc(var(--sab) + 14px);z-index:3;display:flex;align-items:center;gap:10px;padding:0 14px}
+.hc-pp{width:44px;height:44px;display:grid;place-items:center}.hc-pp i{width:26px;height:26px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px #c8aa6e;display:grid;place-items:center}
+.hc-pp i::before{content:'';transform:rotate(-45deg);width:8px;height:10px;border-left:3px solid #c8aa6e;border-right:3px solid #c8aa6e}.hc-pp.pa i::before{width:0;height:0;border:6px solid transparent;border-left:9px solid #c8aa6e;border-right:0;margin-left:2px}
+#hcRod span{flex:1;font:600 9px Inter,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#8a979b;text-align:center}
+.hk-w{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:24px;background:#0b1a20}
+.hk-w small{font:600 10px Inter,sans-serif;letter-spacing:.32em;text-transform:uppercase;color:#c8aa6e}.hk-w h2{font:400 32px/1.1 Marcellus,serif;color:#f0e6d2;margin:8px 0 6px}
+.hk-c{position:relative;width:190px;aspect-ratio:2/3;margin:22px auto;box-shadow:0 0 0 1px #c8aa6e,0 0 0 5px #0b1a20,0 0 0 6px rgba(200,170,110,.4),0 0 60px rgba(200,170,110,.25);transition:transform .9s;transform-style:preserve-3d}.hk-c.v{transform:rotateY(180deg)}
+.hk-f,.hk-v{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;display:grid;place-content:center;padding:14px;background:#10262e}.hk-v{transform:rotateY(180deg)}.hk-f{background:#10262e url(art/costa.webp) center/cover}
+.hk-v i{display:block;width:36px;height:36px;margin:0 auto 14px;transform:rotate(45deg);box-shadow:inset 0 0 0 1.5px #c8aa6e}.hk-v b{font:400 20px/1.15 Marcellus,serif;color:#f0e6d2}.hk-v span{display:block;margin-top:8px;font:400 12px/1.35 Inter,sans-serif;color:#c9d3d6}
+
 .htira{display:flex;gap:5px;overflow-x:auto;padding:4px 16px 10px;flex:none;scrollbar-width:none}
 .htira button{flex:none;width:36px;height:36px;font:600 13px Inter,sans-serif;color:#f0e6d2;box-shadow:inset 0 0 0 1px rgba(200,170,110,.5);clip-path:polygon(22% 0,78% 0,100% 22%,100% 78%,78% 100%,22% 100%,0 78%,0 22%)}
 .htira .ok{background:rgba(200,170,110,.22);color:#c8aa6e}.htira .tr{color:#56666b;box-shadow:inset 0 0 0 1px #2a3f46}.htira .on{background:#c8aa6e;color:#0b1a20}
@@ -923,8 +975,15 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
     <div id="casaSheet"><div class="cs-box"><div class="cs-h"><small>Casas dos campos</small><b>Escolha o estilo</b></div><div id="casaGrid"></div><button class="primary" id="casaOk" style="width:auto;min-width:200px;padding:0 30px;height:48px;font-size:18px;align-self:center">Pronto</button></div></div></section>
 
     <!-- FIM -->
-    <section class="scr" id="historia"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small id="hProg"></small><h3>História</h3></div><button class="ico" id="hI" aria-label="Como funciona"><i style="font:400 20px Marcellus,serif;font-style:italic">i</i></button><button class="ico" id="hBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="htira" id="hTira"></div><div class="hcorpo" id="hCorpo"></div><div class="hvis" id="hVis"><small>Visual</small><button data-k="1">1</button><button data-k="2">2</button><button data-k="3">3</button><button data-k="4">4</button><button data-k="5">5</button></div>
-     <div id="hInfo"><div class="hib"><b>Como funciona</b><ul><li>Cada capítulo tem duas portas. Vença as duas para avançar.</li><li>Cada porta vencida libera um baralho novo.</li><li>Os losangos mostram quantas vitórias a porta pede.</li><li>A porta que você deixa para depois dá 5 de vida a mais ao líder inimigo.</li><li>A batalha usa o seu baralho, com a classe da porta no naipe dela.</li></ul><em>Toque para fechar</em></div></div></section>
+    <section class="scr" id="historia"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small id="hProg"></small><h3>História</h3></div><button class="ico" id="hI" aria-label="Como funciona"><i style="font:400 20px Marcellus,serif;font-style:italic">i</i></button><button class="ico" id="hBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="hcorpo" id="hCorpo"></div>
+     <div id="hInfo"><div class="hib"><b>Como funciona</b><ul><li>Escolha uma das quatro histórias. Dá para fazer todas.</li><li>Cada história tem 8 batalhas, e cada vitória conta mais um trecho.</li><li>Você joga só com os baralhos da sua trilha. A cada história entra um naipe novo.</li><li>A 4ª batalha libera o povo rival do planeta, e a 8ª libera o baralho do próximo.</li><li>Na última batalha, os seus quatro naipes enfrentam os de outra trilha.</li></ul><em>Toque para fechar</em></div></div></section>
+    <section class="scr" id="hcena"><div class="hc-w"><div class="hc-art a"></div><div class="hc-art b"></div><div class="hc-vg"></div>
+      <div id="hcPg"></div><div id="hcTop"><div><small id="hcSm"></small><b id="hcNm"></b></div><button class="hc-b" id="hcPula">Pular</button></div>
+      <div id="hcTit"><div><i><b id="hcRo"></b></i><small id="hcTs"></small><h2 id="hcTh"></h2><hr></div></div>
+      <div id="hcToq"><button aria-label="Voltar" id="hcV"></button><button aria-label="Avançar" id="hcA"></button></div>
+      <div id="hcLeg"><div><p id="hcP"></p></div></div>
+      <div id="hcRod"><button class="hc-pp" id="hcPP" aria-label="Pausar"><i></i></button><span id="hcInf"></span><span style="flex:none;width:44px"></span></div></div></section>
+    <section class="scr" id="hcarta"><div class="hc-w hk-w"><small>Uma carta nova</small><h2 id="hkH">Vire a carta</h2><div class="hk-c" id="hkC"><div class="hk-f"></div><div class="hk-v"><div><i></i><b>O Devorador de Mundos</b><span>A história continua no Duelo de Grimório.</span></div></div></div><button class="primary" id="hkB" style="max-width:280px">VIRAR A CARTA</button></div></section>
     <section class="scr" id="colecao"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Coleção</h3></div><button class="ico" id="cBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="hcorpo"><div class="cres" id="cRes"></div><div class="cbar" id="cBar"><i></i></div><div id="cGrade"></div><div class="cteste"><small>Só para testar o mockup</small><button class="sec" id="cTudo">Liberar tudo</button><button class="sec" id="cZera">Recomeçar história</button></div></div></section>
     <section class="scr" id="ranking"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Ranking</h3></div><button class="ico" id="rBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div>
       <div class="hcorpo"><div class="rabas" id="rAbas"><button class="on">Geral</button><button>Semana</button><button>Amigos</button></div>
@@ -994,7 +1053,7 @@ let ESC={};Object.keys(NAIPES).forEach(k=>ESC[k]=CLASSES.find(c=>c.s===k).code);
 const BARALHOS=2;
 function baralho(){const d=[];for(let b=0;b<BARALHOS;b++)Object.values(ESC).forEach(code=>{for(let v=2;v<=10;v++)d.push(carta(code,v));});
  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}return d;}
-function compra(){return S.deck.length?S.deck.pop():null;}
+function compra(l){const d=l==='o'&&S.odeck?S.odeck:S.deck;return d.length?d.pop():null;}
 let S,SPD=1;
 const PH=()=>$('#phone');
 const ORDS=['','Primeiro','Segundo','Terceiro','Quarto','Quinto','Sexto','Sétimo','Oitavo','Nono','Décimo','Décimo primeiro','Décimo segundo','Décimo terceiro','Décimo quarto','Décimo quinto','Décimo sexto','Décimo sétimo','Décimo oitavo','Décimo nono','Vigésimo'];
@@ -1075,7 +1134,7 @@ async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(
 async function criarFicha(l,code,pw,nm,j){registrar();if(j===undefined)j=vazia(l);if(j<0)return false;const f=ficha(code,pw,nm);FD(l)[j]=f;render();cls(cardEl(l,j),'rise',600);pop(l,j,nm+' '+pw);lg(`${nm} ${pw} entrou no campo ${l==='m'?'seu':'inimigo'}`);await w(380);return true;}
 const MAOMAX=7;
 const comprasDoDia=d=>d<=3?1:d<=6?2:d<=10?3:4; // 1 carta do 1º ao 3º dia, 2 do 4º ao 6º, 3 do 7º ao 10º, 4 do 11º em diante // começa em 1; a cada dia ímpar que termina, +1
-async function comprar(l,n,inicio){let extra=0;for(let k=0;k<n;k++){const c=compra();if(!c)break;const H=HD(l);if(H.length<MAOMAX)H.push(c);else{S.cem.unshift({...c,lado:l,desc:1});extra++;}}
+async function comprar(l,n,inicio){let extra=0;for(let k=0;k<n;k++){const c=compra(l);if(!c)break;const H=HD(l);if(H.length<MAOMAX)H.push(c);else{S.cem.unshift({...c,lado:l,desc:1});extra++;}}
  if(extra){if(inicio){if(l==='m')S.mana+=extra;else S.omanaExtra=(S.omanaExtra||0)+extra;}else S.pend[l]=(S.pend[l]||0)+extra;
    lg(`🂠 Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} e ganhou +${extra} de mana${inicio?'':' no próximo dia'}`);if(l==='m')toast(`Mão cheia: ${extra} carta${extra>1?'s':''} para o cemitério · +${extra} de mana`);}
  render();}
@@ -1111,7 +1170,7 @@ async function entrar(c,l,i){
  if(e.spendMana){const m=l==='m'?S.mana:(S.omanaSobra||0);if(m>0){if(l==='m'){S.mana=0;}else S.omanaSobra=0;await buff(l,i,m*e.spendMana,'💵 +'+m*e.spendMana);}}
  if(e.bounceFront&&O[i]&&P(O[i],ol)<=e.bounceFront){const a=O[i];say('devolve '+a.n);cls(cardEl(ol,i),'die',450);await w(420);O[i]=null;if(!a.token&&HO.length<7)HO.push(carta(a.code,a.v));render();}
  if(e.bounceAll){let any=0;for(let j=0;j<NL;j++){const a=O[j];if(a&&P(a,ol)<=e.bounceAll){any=1;cls(cardEl(ol,j),'die',450);O[j]=null;if(!a.token&&HO.length<7)HO.push(carta(a.code,a.v));}}if(any){say('devolve as fracas');await w(450);render();}}
- if(e.deckFront&&O[i]&&P(O[i],ol)<=e.deckFront){const a=O[i];say(a.n+' vai para o fundo');cls(cardEl(ol,i),'die',450);await w(420);O[i]=null;if(!a.token)S.deck.unshift(carta(a.code,a.v));render();}
+ if(e.deckFront&&O[i]&&P(O[i],ol)<=e.deckFront){const a=O[i];say(a.n+' vai para o fundo');cls(cardEl(ol,i),'die',450);await w(420);O[i]=null;if(!a.token)(ol==='o'&&S.odeck?S.odeck:S.deck).unshift(carta(a.code,a.v));render();}
  if(e.stealFront&&O[i]&&P(O[i],ol)<=e.stealFront){const j=vazia(l);if(j>=0){const a=O[i];O[i]=null;F[j]=a;a.stun=false;say(a.n+' muda de lado');render();cls(cardEl(l,j),'rise',600);await w(500);}}
  if(e.stealHand){if(HO.length){const k=Math.floor(Math.random()*HO.length),x=HO.splice(k,1)[0];if(H.length<7)H.push(x);say('rouba 1 carta');render();await w(400);}else{say('mão vazia: 2 no líder');await dano(ol,2,R(cardEl(l,i)));}}
  if(e.discard&&HO.length){const k=Math.floor(Math.random()*HO.length),x=HO.splice(k,1)[0];S.cem.unshift({...x,lado:ol});say('oponente descarta');render();await w(400);}
@@ -1244,8 +1303,8 @@ async function fimDoTurno(){
 function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaAura:0),0);}
 function compraExtra(l){return FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0;}
 
-function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
- for(let k=0;k<7;k++){S.hand.push(compra());S.oh.push(compra());}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
+function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),odeck:(typeof baralhoOp==='function'?baralhoOp():null),hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
+ for(let k=0;k<7;k++){S.hand.push(compra('m'));S.oh.push(compra('o'));}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
 function lg(t,tit){S.log.unshift({t,tit});if(S.log.length>150)S.log.pop();}
 function nome(c,me){return c.n+(me?' (sua)':' (inimiga)');}
 function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
@@ -1547,6 +1606,7 @@ document.querySelectorAll('#casaGrid .cs-b').forEach(b=>b.onclick=()=>casas(+b.d
 $('#casasIt').onclick=()=>{fecharTudo();$('#casaSheet').classList.add('on');};$('#casaOk').onclick=()=>$('#casaSheet').classList.remove('on');$('#shX').onclick=fecharTudo;casas(SLK);
 </script>
 <script src="arthd.js"></script>
+<script src="lore.js"></script>
 <script src="hist.js"></script>
 <script src="login.js"></script>
 <script src="v62.js"></script>
