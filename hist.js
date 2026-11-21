@@ -52,31 +52,66 @@ function hFrases(par){const f=par.split(/(?<=[.!?…]"?)\s+(?=["A-ZÁÉÍÓÚÂ�
 function hPassos(txt,imgs){const o=[];txt.split('\n\n').forEach((p,i)=>hFrases(p).forEach(f=>o.push({t:f,im:imgs[Math.min(i,imgs.length-1)]})));return o;}
 function hCenaIntro(){const p=hPassos(LORE.intro,[['CMAG',10],['CGUE',6],['CELF',10]]);
  p.forEach(x=>{if(/Brasão/.test(x.t))x.im=['CGUE',6];if(/Nexo/.test(x.t))x.im=['CCIB',6];if(/Ossário/.test(x.t))x.im=['CNEC',6];if(/Verdélia/.test(x.t))x.im=['CELF',5];});
- return {sm:'A galáxia',nm:'Apresentação',ro:'G',ts:'Grimório',th:'O mesmo fim',p,cor:'#c8aa6e',fim:()=>{hDesenha();show('historia');}};}
-function hCenaAbre(t,i,fim){const h=t.hist[i];return {sm:h.pl+' · história '+H_ROM[i],nm:h.t,ro:H_ROM[i],ts:t.classe+' · '+h.pl,th:h.t,p:hPassos(h.x,[2,4,6,8,10].map(n=>[h.code,n])),cor:NAIPES[t.naipe].cor,fim};}
+ return {voz:['h00',0],sm:'A galáxia',nm:'Apresentação',ro:'G',ts:'Grimório',th:'O mesmo fim',p,cor:'#c8aa6e',fim:()=>{hDesenha();show('historia');}};}
+function hCenaAbre(t,i,fim){const h=t.hist[i];return {voz:[hvChave(t,i),0],sm:h.pl+' · história '+H_ROM[i],nm:h.t,ro:H_ROM[i],ts:t.classe+' · '+h.pl,th:h.t,p:hPassos(h.x,[2,4,6,8,10].map(n=>[h.code,n])),cor:NAIPES[t.naipe].cor,fim};}
 function hCenaBat(t,i,j,fim){const h=t.hist[i],c=hOpCods(h.op[j])[0],ult=i===3&&j===7;
  const imgs=ult?[[c,9],[h.code,10],[t.code,10],[t.code,9]]:[[c,2+((j*2+i)%9)]];
- return {sm:h.pl+' · batalha '+(j+1)+' de 8',nm:hCap(h.op[j].split(' · ').pop()),p:hPassos(h.b[j],imgs),cor:NAIPES[t.naipe].cor,ro:ult?'F':'',ts:ult?t.desfecho:'',th:ult?'A Batalha entre Planetas':'',fim};}
-function hCenaGancho(){return {sm:'Cena final',nm:'O Devorador',ro:'D',ts:'Depois da batalha',th:'O chão treme',p:hPassos(LORE.gancho,[['ZCOR',9],['CMAG',10],['ZPEL',9],['CNEC',10]]),cor:'#c8aa6e',fim:hCarta};}
-const HC={c:null,ix:0,pal:0,tm:null,par:false,lado:0,im:''};
-function hcCena(c){HC.c=c;HC.ix=-1;HC.par=false;HC.im='';$('#hcPP').classList.remove('pa');$('#hcena').style.setProperty('--nc',c.cor);
- $('#hcSm').textContent=c.sm;$('#hcNm').textContent=c.nm;$('#hcPg').innerHTML=c.p.map(()=>'<i><u></u></i>').join('');$('#hcP').innerHTML='';
- show('hcena');hcImg(c.p[0].im);clearTimeout(HC.tm);
- if(c.th){$('#hcRo').textContent=c.ro;$('#hcTs').textContent=c.ts;$('#hcTh').textContent=c.th;$('#hcTit').classList.add('on');$('#hcLeg').classList.add('sai');HC.tm=setTimeout(()=>hcPasso(1),2400);}
- else{$('#hcTit').classList.remove('on');hcPasso(1);}}
+ return {voz:[hvChave(t,i),j+1],sm:h.pl+' · batalha '+(j+1)+' de 8',nm:hCap(h.op[j].split(' · ').pop()),p:hPassos(h.b[j],imgs),cor:NAIPES[t.naipe].cor,ro:ult?'F':'',ts:ult?t.desfecho:'',th:ult?'A Batalha entre Planetas':'',fim};}
+function hCenaGancho(){return {voz:['h00',1],sm:'Cena final',nm:'O Devorador',ro:'D',ts:'Depois da batalha',th:'O chão treme',p:hPassos(LORE.gancho,[['ZCOR',9],['CMAG',10],['ZPEL',9],['CNEC',10]]),cor:'#c8aa6e',fim:hCarta};}
+// voz gravada (o mago): um arquivo por história; os tempos das palavras vêm da transcrição e são casados com o texto na hora
+const H_VOZ=['h00','h01','h02','h03','h04'];
+const HV={a:null,src:'',d:{}};
+const hNorm=t=>String(t).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim();
+const hTok=t=>hNorm(t).split(' ').filter(Boolean);
+const hvChave=(t,i)=>'h'+String(1+LORE.trilhas.indexOf(t)*4+i).padStart(2,'0');
+function hvTextos(k){if(k==='h00')return [LORE.intro,LORE.gancho];const n=+k.slice(1)-1,h=LORE.trilhas[n>>2].hist[n&3];return [h.x,...h.b];}
+function hvAlinha(T,W){const n=T.length,m=W.length,L=m+1,D=new Uint16Array((n+1)*L);
+ for(let i=n-1;i>=0;i--)for(let j=m-1;j>=0;j--)D[i*L+j]=T[i].w===W[j].w?D[(i+1)*L+j+1]+1:Math.max(D[(i+1)*L+j],D[i*L+j+1]);
+ let i=0,j=0;while(i<n&&j<m){if(T[i].w===W[j].w){T[i].s=W[j].s;T[i].e=W[j].e;i++;j++;}else if(D[(i+1)*L+j]>=D[i*L+j+1])i++;else j++;}
+ for(let a=0;a<n;a++)if(T[a].s==null){let q=a+1;while(q<n&&T[q].s==null)q++;const s0=a?T[a-1].e:0,s1=q<n?T[q].s:s0+.4*(q-a),p=(s1-s0)/(q-a+1);T[a].s=s0+p*.5;T[a].e=s0+p;}}
+async function hvCarrega(k){if(k in HV.d)return HV.d[k];HV.d[k]=null;if(!H_VOZ.includes(k))return null;
+ try{const j=await fetch(AUD_BASE+'hist/'+k+'.json').then(r=>r.json());const W=[];(j.words||j).forEach(w=>{if(w.type&&w.type!=='word')return;hTok(w.text).forEach(x=>W.push({w:x,s:w.start,e:w.end}));});
+  const T=[],ini=[];hvTextos(k).forEach(tx=>{ini.push(T.length);hTok(tx).forEach(w=>T.push({w}));});if(W.length<T.length*.6)return null;hvAlinha(T,W);HV.d[k]={T,ini};}catch(e){}
+ return HV.d[k];}
+async function hvPrep(c){if(!c.voz||(typeof VOZ!=='undefined'&&!VOZ)||(typeof SOM!=='undefined'&&!SOM.on))return;const [k,ci]=c.voz,d=await hvCarrega(k);if(!d)return;
+ const i0=d.ini[ci],i1=(ci+1<d.ini.length?d.ini[ci+1]:d.T.length)-1,T=d.T.slice(i0,i1+1);if(!T.length)return;
+ const b=Math.min(T[T.length-1].e+.5,i1+1<d.T.length?d.T[i1+1].s-.04:1e9);
+ if(!HV.a){HV.a=new Audio();HV.a.preload='auto';}const A=HV.a,u=AUD_BASE+'hist/'+k+'.mp3';if(HV.src!==u){HV.src=u;A.src=u;A.load();}
+ await new Promise(r=>{if(A.readyState>=1)return r();const f=()=>r();A.addEventListener('loadedmetadata',f,{once:true});A.addEventListener('error',f,{once:true});setTimeout(f,4000);});
+ if(A.readyState<1||A.error)return;c.v={T,a:Math.max(0,T[0].s-.12),b};}
+const HC={c:null,ix:0,pal:0,tm:null,par:false,lado:0,im:'',rf:0};
+function hcCena(c){HC.c=c;HC.ix=-1;HC.par=false;HC.im='';c.v=null;$('#hcPP').classList.remove('pa');$('#hcena').style.setProperty('--nc',c.cor);
+ let acc=0;c.p.forEach(s=>{s.i0=acc;acc+=hTok(s.t).length;});
+ $('#hcSm').textContent=c.sm;$('#hcNm').textContent=c.nm;$('#hcPg').innerHTML=c.p.map(()=>'<i><u></u></i>').join('');$('#hcP').innerHTML='';$('#hcInf').textContent='';
+ show('hcena');hcImg(c.p[0].im);clearTimeout(HC.tm);cancelAnimationFrame(HC.rf);try{HV.a&&HV.a.pause();}catch(e){}
+ if(c.th){$('#hcRo').textContent=c.ro;$('#hcTs').textContent=c.ts;$('#hcTh').textContent=c.th;$('#hcTit').classList.add('on');}else $('#hcTit').classList.remove('on');
+ $('#hcLeg').classList.add('sai');
+ const voz=Promise.race([hvPrep(c).catch(()=>{}),new Promise(r=>setTimeout(r,3000))]);
+ Promise.all([voz,new Promise(r=>setTimeout(r,c.th?2400:300))]).then(()=>{if(HC.c===c&&HC.ix<0)hcPasso(1);});}
 function hcImg(im){const k=im.join();if(k===HC.im)return;HC.im=k;HC.lado^=1;const a=$('#hcena .hc-art.a'),b=$('#hcena .hc-art.b');
  if(HC.lado){hArte(b,im[0],im[1],900);b.classList.add('on');}else{hArte(a,im[0],im[1],900);b.classList.remove('on');}}
-function hcPasso(d){const C=HC.c;if(!C)return;clearTimeout(HC.tm);$('#hcTit').classList.remove('on');HC.ix+=d;if(HC.ix<0)HC.ix=0;if(HC.ix>=C.p.length)return hcFim();
- const s=C.p[HC.ix];hcImg(s.im);$('#hcLeg').classList.add('sai');
- setTimeout(()=>{if(HC.c!==C)return;$('#hcP').innerHTML=s.t.split(' ').map(w=>'<w>'+w.replace(/</g,'&lt;')+'</w>').join(' ');$('#hcLeg').classList.remove('sai');HC.pal=0;
-  [...$('#hcPg').children].forEach((e,k)=>{e.firstChild.style.width=k<HC.ix?'100%':'0';});
-  $('#hcInf').textContent=(HC.ix+1)+' de '+C.p.length+' · toque para avançar';if(!HC.par)hcAnda();},280);}
-function hcAnda(){if(!HC.c)return;const ws=$('#hcP').children;if(HC.pal>=ws.length){HC.tm=setTimeout(()=>hcPasso(1),1100);return;}
+function hcMostra(){const C=HC.c,s=C.p[HC.ix];let k=s.i0;$('#hcP').innerHTML=s.t.split(' ').map(w=>{const h='<w data-k="'+k+'">'+w.replace(/</g,'&lt;')+'</w>';k+=hTok(w).length;return h;}).join(' ');$('#hcLeg').classList.remove('sai');HC.pal=0;
+ [...$('#hcPg').children].forEach((e,q)=>{e.firstChild.style.width=q<HC.ix?'100%':'0';});$('#hcInf').textContent=(HC.ix+1)+' de '+C.p.length+' · toque para avançar';}
+// natural = a própria voz chegou na frase seguinte (não mexe no áudio)
+function hcPasso(d,natural){const C=HC.c;if(!C)return;clearTimeout(HC.tm);$('#hcTit').classList.remove('on');HC.ix+=d;if(HC.ix<0)HC.ix=0;if(HC.ix>=C.p.length)return hcFim();
+ const s=C.p[HC.ix];hcImg(s.im);
+ if(C.v){hcMostra();if(!natural){const A=HV.a,T=C.v.T;try{A.currentTime=HC.ix?Math.max(C.v.a,T[Math.min(s.i0,T.length-1)].s-.06):C.v.a;}catch(e){}hcDuck(1);
+   if(!HC.par)A.play().catch(()=>{C.v=null;hcDuck(0);hcAnda();});cancelAnimationFrame(HC.rf);HC.rf=requestAnimationFrame(hcVoz);}return;}
+ $('#hcLeg').classList.add('sai');setTimeout(()=>{if(HC.c!==C)return;hcMostra();if(!HC.par)hcAnda();},d?280:0);}
+function hcVoz(){const C=HC.c;if(!C||!C.v)return;const A=HV.a,t=A.currentTime,T=C.v.T;
+ if(t>=C.v.b||A.ended){A.pause();HC.tm=setTimeout(()=>{if(HC.c===C)hcFim();},900);return;}
+ const nx=C.p[HC.ix+1];if(nx&&t>=T[Math.min(nx.i0,T.length-1)].s-.05){hcPasso(1,true);}
+ const ws=$('#hcP').children;let u=-1;for(let q=0;q<ws.length;q++){const k=Math.min(+ws[q].dataset.k,T.length-1);if(T[k].s<=t+.03){u=q;ws[q].classList.add('on');}ws[q].classList.remove('ag');}
+ if(u>=0)ws[u].classList.add('ag');const b=$('#hcPg').children[HC.ix];if(b&&ws.length)b.firstChild.style.width=((u+1)/ws.length*100)+'%';
+ HC.rf=requestAnimationFrame(hcVoz);}
+function hcDuck(on){try{if(typeof SOM!=='undefined'&&SOM.musica)SOM.musica.volume=on?Math.min(.1,SOM.vol.mus):SOM.vol.mus;}catch(e){}}
+function hcAnda(){if(!HC.c||HC.c.v)return;const ws=$('#hcP').children;if(HC.pal>=ws.length){HC.tm=setTimeout(()=>hcPasso(1),1100);return;}
  if(HC.pal)ws[HC.pal-1].classList.remove('ag');ws[HC.pal].classList.add('on','ag');HC.pal++;
  const b=$('#hcPg').children[HC.ix];if(b)b.firstChild.style.width=(HC.pal/ws.length*100)+'%';
  const w=ws[HC.pal-1].textContent;HC.tm=setTimeout(hcAnda,H_MS+(/[.,:;!?]/.test(w)?260:0)+Math.max(0,w.length-6)*22);}
-function hcPausa(){HC.par=!HC.par;$('#hcPP').classList.toggle('pa',HC.par);clearTimeout(HC.tm);if(!HC.par)hcAnda();}
-function hcFim(){clearTimeout(HC.tm);const f=HC.c&&HC.c.fim;HC.c=null;if(f)f();}
+function hcPausa(){if(!HC.c)return;HC.par=!HC.par;$('#hcPP').classList.toggle('pa',HC.par);clearTimeout(HC.tm);
+ if(HC.c.v){if(HC.par)HV.a.pause();else{HV.a.play().catch(()=>{});cancelAnimationFrame(HC.rf);HC.rf=requestAnimationFrame(hcVoz);}return;}if(!HC.par)hcAnda();}
+function hcFim(){clearTimeout(HC.tm);cancelAnimationFrame(HC.rf);try{HV.a&&HV.a.pause();}catch(e){}hcDuck(0);const f=HC.c&&HC.c.fim;HC.c=null;if(f)f();}
 $('#hcPula').onclick=hcFim;$('#hcPP').onclick=hcPausa;$('#hcV').onclick=()=>hcPasso(-1);$('#hcA').onclick=()=>hcPasso(1);
 // carta final
 function hCarta(){$('#hkC').classList.remove('v');$('#hkH').textContent='Vire a carta';$('#hkB').textContent='VIRAR A CARTA';$('#hkB').dataset.e='0';show('hcarta');}
@@ -114,7 +149,8 @@ function hDepois(b){HT=b.t;const fim=b.i===3&&b.j===7;
 $('#denovo').addEventListener('click',e=>{if(!HB)return;e.stopImmediatePropagation();const b=HB;HB=null;try{musica('calma');}catch(x){}if(b.venceu)hDepois(b);else{HT=b.t;HH=b.i;hLutar(b.i,b.j);}},true);
 $('#voltar').addEventListener('click',()=>{if(HB){HB=null;$('#denovo').textContent='JOGAR DE NOVO';}});
 $('#jogar').addEventListener('click',()=>{HB=null;hAjustaEsc();},true);
-const show0h=show;show=function(id){if(id==='menu'&&HB){hSaiDaLuta();HB=null;}return show0h(id);};
+function hResumo(){let m=null;LORE.trilhas.forEach(t=>{const v=hV(t),n=v.reduce((a,b)=>a+b,0);if(n&&n<32&&(!m||n>m.n))m={t,n,i:hHistAtual(t)};});const e=$('#mHist');if(e)e.textContent=m?m.t.nome+' · '+m.t.hist[m.i].pl+' · batalha '+Math.min(8,hV(m.t)[m.i]+1)+' de 8':hAtual()>=128?'As quatro trilhas concluídas':'Quatro trilhas · 128 batalhas';}
+const show0h=show;show=function(id){if(id==='menu'){if(HB){hSaiDaLuta();HB=null;}hResumo();try{musica('calma');}catch(e){}}return show0h(id);};hResumo();try{musica('calma');}catch(e){}
 
 // ---------- coleção ----------
 const H_ONDE={};LORE.trilhas.forEach(t=>t.hist.forEach((h,i)=>{[h.l4,h.l8].forEach(n=>{if(H_COD[n])H_ONDE[H_COD[n]]=t.classe+' · '+H_ROM[i];});}));
