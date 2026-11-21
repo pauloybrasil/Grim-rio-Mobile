@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
-<title>Grimório Mobile · v59-valendo</title>
+<title>Grimório Mobile · v60-login-google</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;800&family=Marcellus&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
@@ -728,19 +728,25 @@ body:not(:has(#duelo.on)) #leg{display:none}
 /* ===== v59: sala online no tema ===== */
 #online{background:#0b1a20}#online #onIn{border-radius:0!important;border:0!important;box-shadow:inset 0 0 0 1px #c8aa6e;background:#10262e!important;color:#f0e6d2!important}
 #online .sec{box-shadow:inset 0 0 0 1px rgba(200,170,110,.55)}#online #onCode{color:#c8aa6e!important}
+
+/* ===== v60: login e lista do ranking ===== */
+.rln{display:grid;grid-template-columns:30px 1fr auto;grid-template-areas:"p n s" "p d s";align-items:center;column-gap:10px;padding:9px 12px;margin-top:6px;background:#10262e;box-shadow:inset 0 0 0 1px #24424b}
+.rln span{grid-area:p;font:400 18px Marcellus,serif;color:#c8aa6e;text-align:center}.rln b{grid-area:n;font:400 17px Marcellus,serif;color:#f0e6d2;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rln small{grid-area:d;font:400 10.5px Inter,sans-serif;color:#c9d3d6}.rln strong{grid-area:s;font:400 22px Marcellus,serif;color:#c8aa6e}
+.rln.eu{box-shadow:inset 0 0 0 1.5px #c8aa6e;background:rgba(200,170,110,.12)}.rcar{padding:30px 0;text-align:center;color:#c9d3d6}
+#rLista{margin-top:14px}.reu>i{background-size:cover;background-position:center}
 </style>
 </head>
 <body>
 <div class="stage">
   <aside class="side">
-    <span class="tag">BASE · v59-valendo</span>
+    <span class="tag">BASE · v60-login-google</span>
     <h1>Grimório Mobile</h1>
-    <p>Duelo de 3 colunas feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
+    <p>Duelo de 4 campos feito para celular, agora com as regras e os efeitos das cartas funcionando.</p>
     <ol>
       <li>Arraste a carta até uma casa dourada (ou toque na carta e depois na casa).</li>
       <li>⇄ Troca: 1 vez por turno, baixe em cima de uma carta sua.</li>
       <li>Toque 2 vezes numa carta para ver o efeito.</li>
-      <li>“Batalha” resolve o combate coluna por coluna. Toque na mesa para acelerar.</li>
+      <li>“Batalha” resolve o combate campo por campo. Toque na mesa para acelerar.</li>
       <li>☰ abre Regras, Histórico e Cemitério.</li>
     </ol>
   </aside>
@@ -831,7 +837,7 @@ body:not(:has(#duelo.on)) #leg{display:none}
     <section class="scr" id="ranking"><div class="topbar"><button class="ico" id="rBack" aria-label="Voltar"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button><h3 class="esct">Ranking</h3><span style="width:44px"></span></div>
       <div class="hcorpo"><div class="rabas" id="rAbas"><button class="on">Geral</button><button>Semana</button><button>Amigos</button></div>
       <div class="reu" id="rEu"></div><div class="rnum" id="rNum"></div>
-      <div class="rvaz"><span class="femb"><i></i></span><b>O ranking abre com o login</b><p>Quando o login estiver pronto, seus pontos sobem para cá e você vê a sua posição entre os outros jogadores.</p><button class="primary" id="rEntrar" style="max-width:260px;height:50px;font-size:19px">ENTRAR</button></div></div></section>
+      <div id="rLista"></div><div class="rvaz" id="rVaz"><span class="femb"><i></i></span><b>Entre para aparecer no ranking</b><p>Com a conta Google, seus pontos e o progresso da História ficam salvos e você vê a sua posição entre os outros jogadores.</p><button class="primary" id="rEntrar" style="max-width:300px;height:50px;font-size:17px">ENTRAR COM GOOGLE</button></div></div></section>
     <section class="scr" id="fim">
       <span class="femb"><i></i></span><h2 id="fimT">Vitória</h2><div class="pn-l fl"><i></i></div><p id="fimS"></p><div id="fimX"></div>
       <button class="primary" id="denovo" style="max-width:280px">JOGAR DE NOVO</button>
@@ -1441,5 +1447,6 @@ document.querySelectorAll('#casaGrid .cs-b').forEach(b=>b.onclick=()=>casas(+b.d
 $('#casasIt').onclick=()=>{fecharTudo();$('#casaSheet').classList.add('on');};$('#casaOk').onclick=()=>$('#casaSheet').classList.remove('on');$('#shX').onclick=fecharTudo;casas(SLK);
 </script>
 <script src="hist.js"></script>
+<script src="login.js"></script>
 </body>
 </html>

@@ -86,6 +86,5 @@ function rDesenha(){const v=HS.vit||0,d=HS.der||0;
  $('#rEu').innerHTML=`<span class="rpos">—</span><i></i><div><b>Você</b><small>Sem login · só neste aparelho</small></div><strong>${rPontos()}<small>pontos</small></strong>`;
  $('#rNum').innerHTML=`<div><b>${v}</b><small>vitórias</small></div><div><b>${d}</b><small>derrotas</small></div><div><b>${HS.lib.length}</b><small>baralhos</small></div><div><b>${Math.min(hAtual(),14)}</b><small>capítulos</small></div>`;}
 $('#rankBtn').onclick=()=>{rDesenha();show('ranking');};$('#rBack').onclick=()=>show('menu');
-document.querySelectorAll('#rAbas button').forEach(b=>b.onclick=()=>{document.querySelectorAll('#rAbas button').forEach(x=>x.classList.toggle('on',x===b));});
-$('#rEntrar').onclick=()=>toast('Login ainda não está pronto');
+document.querySelectorAll('#rAbas button').forEach((b,i)=>b.onclick=()=>{if(i)toast(b.textContent+': em breve');});
 hAjustaEsc();
