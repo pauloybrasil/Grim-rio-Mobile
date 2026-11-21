@@ -15,8 +15,21 @@ function hNaipe(code){const s=CL[code].s;return NAIPES[s]||Object.values(NAIPES)
 function hChaveNaipe(code){const s=CL[code].s;return NAIPES[s]?s:Object.keys(NAIPES).find(k=>NAIPES[k].k===s);}
 function hAjustaEsc(){Object.keys(ESC).forEach(k=>{if(!hTem(ESC[k])){const c=CLASSES.find(x=>hChaveNaipe(x.code)===k&&hTem(x.code));if(c)ESC[k]=c.code;}});}
 const hCap=x=>x[0].toUpperCase()+x.slice(1);
+const hTok0=t=>String(t).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]+/g,' ').trim().split(' ').filter(Boolean);
 function hOpCods(op){const a=op.match(/aliança de (.+)$/);return a?H_ALI[a[1]]:[H_COD[op.split(' · ')[0]]||'CGUE'];}
-function hArte(el,code,n,w){if(!el)return;el.innerHTML='';const s=document.createElement('div');s.style.backgroundImage='url(s/'+code+'.webp)';s.style.backgroundPosition=((n-2)/18*100)+'% 0';el.appendChild(s);if(typeof hdSobre==='function')hdSobre(el,code,n,w||800);}
+function hArte(el,code,n,w){if(!el)return;el.innerHTML='';const s=document.createElement('div');s.style.backgroundImage='url(s/'+code+'.webp)';s.style.backgroundPosition=((n-2)/18*100)+'% 0';el.appendChild(s);
+ if(typeof hdURL!=='function')return;const u1=hdURL(code,n,w||800),u2=hdURL(code,n);if(!u1)return;const im=new Image();im.className='ahd';im.alt='';im.decoding='async';
+ im.onload=()=>{im.classList.add('ok');s.style.visibility='hidden';};im.onerror=()=>{if(im.dataset.t){im.remove();return;}im.dataset.t=1;im.src=u2;};im.src=u1;el.appendChild(im);}
+// qual arte mostrar quando a narração cita um povo, um planeta ou um personagem
+const H_CUE={};CLASSES.forEach(c=>{hTok0(c.name).forEach(w=>{if(w.length>3){H_CUE[w]=c.code;if(w.endsWith('s'))H_CUE[w.slice(0,-1)]=c.code;}});if(c.code[0]==='C')H_CUE[hTok0(c.pl)[0]]=c.code;});
+Object.assign(H_CUE,{anao:'CELF',anoes:'CELF',elfa:'CELF',elfo:'CELF',elfos:'CELF',orc:'ZVER',orcs:'ZVER',troll:'ZVER',trolls:'ZVER',anjo:'CANJ',infernal:'CINF',infernais:'CINF',demonios:'CINF',elemental:'CELE',elementais:'CELE',animal:'CFER',animais:'CFER',matilha:'CFER',matilhas:'CFER',colmeia:'ZFER',enxame:'ZFER',dragao:'CDRA',dragoes:'CDRA',bruxa:'ZARC',bruxas:'ZARC',leviata:'ZCOR',leviatas:'ZCOR',devorador:'ZCOR',esporo:'CMIC',esporos:'CMIC',arvore:'CELF'});
+const H_CUE2={aldren:'CGUE',brann:'CGUE',nyxara:'CDRA',vyrn:'CDRA',iris:'CCIB',tau:'CCIB',omega:'CCIB',kharos:'CINF',kade:'CFER',rubra:'CFER',uru:'CFER',corvin:'CNEC',nyssa:'CNEC',seraphiel:'CANJ',hale:'CHUM',mara:'CHUM',kael:'CMAG',ysmeriel:'CELF',thorgar:'CELF',zahir:'CSAH',kor:'CSAH',varko:'CMER'};
+// escolhe a carta do povo cuja cena mais parece com a frase
+function hQuadro(code,frase,usados){const cr=(CL[code]||{}).cr||{},f=new Set(hTok0(frase).filter(w=>w.length>3));let m=0,pt=-1;for(let n=2;n<=10;n++){let p=0;hTok0(cr[n]||'').forEach(w=>{if(w.length>3&&f.has(w))p+=2;});if(usados[code+n])p-=1.5;if(p>pt){pt=p;m=n;}}
+ if(pt<=0){m=2+((usados[code]||0)*2)%9;}usados[code]=(usados[code]||0)+1;usados[code+m]=1;return [code,m];}
+function hCues(c){const us={};let at=c.p[0].im,par=null,desde=99;c.p.forEach((s,si)=>{const ws=s.t.split(' ');s.cues=[];if(par!==null&&s.pi!==par&&s.imPar){at=s.imPar;}par=s.pi;s.im=at;
+  let forte=false;ws.forEach(w=>{if(H_CUE[hTok0(w)[0]])forte=true;});
+  ws.forEach((w,q)=>{const k=hTok0(w)[0],code=H_CUE[k]||(!forte&&q<4&&H_CUE2[k]);desde++;if(!code||code===at[0]||(desde<6&&si+q>0))return;at=hQuadro(code,s.t,us);desde=0;if(q<2)s.im=at;else s.cues.push({q,im:at});});});}
 let HB=null,HT=null,HH=0; // batalha em curso, trilha aberta, história à vista
 
 // ---------- telas: escolha da trilha e trilha das 8 batalhas ----------
@@ -49,9 +62,9 @@ $('#hI').onclick=()=>$('#hInfo').classList.add('on');$('#hInfo').onclick=()=>$('
 
 // ---------- cenas narradas: imagem em tela cheia e legenda capitular a partir do meio ----------
 function hFrases(par){const f=par.split(/(?<=[.!?…]"?)\s+(?=["A-ZÁÉÍÓÚÂÊÔÃÕÀ])/),o=[];for(const x of f){const u=o[o.length-1];if(u&&(u.split(' ').length+x.split(' ').length)<=24)o[o.length-1]=u+' '+x;else o.push(x);}return o;}
-function hPassos(txt,imgs){const o=[];txt.split('\n\n').forEach((p,i)=>hFrases(p).forEach(f=>o.push({t:f,im:imgs[Math.min(i,imgs.length-1)]})));return o;}
+function hPassos(txt,imgs){const o=[];txt.split('\n\n').forEach((p,i)=>hFrases(p).forEach(f=>{const im=imgs[Math.min(i,imgs.length-1)];o.push({t:f,im,imPar:im,pi:i});}));return o;}
 function hCenaIntro(){const p=hPassos(LORE.intro,[['CMAG',10],['CGUE',6],['CELF',10]]);
- p.forEach(x=>{if(/Brasão/.test(x.t))x.im=['CGUE',6];if(/Nexo/.test(x.t))x.im=['CCIB',6];if(/Ossário/.test(x.t))x.im=['CNEC',6];if(/Verdélia/.test(x.t))x.im=['CELF',5];});
+
  return {voz:['h00',0],sm:'A galáxia',nm:'Apresentação',ro:'G',ts:'Grimório',th:'O mesmo fim',p,cor:'#c8aa6e',fim:()=>{hDesenha();show('historia');}};}
 function hCenaAbre(t,i,fim){const h=t.hist[i];return {voz:[hvChave(t,i),0],sm:h.pl+' · história '+H_ROM[i],nm:h.t,ro:H_ROM[i],ts:t.classe+' · '+h.pl,th:h.t,p:hPassos(h.x,[2,4,6,8,10].map(n=>[h.code,n])),cor:NAIPES[t.naipe].cor,fim};}
 function hCenaBat(t,i,j,fim){const h=t.hist[i],c=hOpCods(h.op[j])[0],ult=i===3&&j===7;
@@ -81,7 +94,7 @@ async function hvPrep(c){if(!c.voz||(typeof VOZ!=='undefined'&&!VOZ)||(typeof SO
  if(A.readyState<1||A.error)return;c.v={T,a:Math.max(i0?d.T[i0-1].e+.02:0,T[0].s-.12),b};}
 const HC={c:null,ix:0,pal:0,tm:null,par:false,lado:0,im:'',rf:0};
 function hcCena(c){HC.c=c;HC.ix=-1;HC.par=false;HC.im='';c.v=null;$('#hcPP').classList.remove('pa');$('#hcena').style.setProperty('--nc',c.cor);
- let acc=0;c.p.forEach(s=>{s.i0=acc;acc+=hTok(s.t).length;});
+ let acc=0;c.p.forEach(s=>{s.i0=acc;acc+=hTok(s.t).length;});hCues(c);
  $('#hcSm').textContent=c.sm;$('#hcNm').textContent=c.nm;$('#hcPg').innerHTML=c.p.map(()=>'<i><u></u></i>').join('');$('#hcP').innerHTML='';$('#hcInf').textContent='';
  show('hcena');hcImg(c.p[0].im);clearTimeout(HC.tm);cancelAnimationFrame(HC.rf);try{HV.a&&HV.a.pause();}catch(e){}
  if(c.th){$('#hcRo').textContent=c.ro;$('#hcTs').textContent=c.ts;$('#hcTh').textContent=c.th;$('#hcTit').classList.add('on');}else $('#hcTit').classList.remove('on');
@@ -89,8 +102,8 @@ function hcCena(c){HC.c=c;HC.ix=-1;HC.par=false;HC.im='';c.v=null;$('#hcPP').cla
  const voz=Promise.race([hvPrep(c).catch(()=>{}),new Promise(r=>setTimeout(r,3000))]);
  Promise.all([voz,new Promise(r=>setTimeout(r,c.th?2400:300))]).then(()=>{if(HC.c===c&&HC.ix<0)hcPasso(1);});}
 function hcImg(im){const k=im.join();if(k===HC.im)return;HC.im=k;HC.lado^=1;const a=$('#hcena .hc-art.a'),b=$('#hcena .hc-art.b');
- if(HC.lado){hArte(b,im[0],im[1],900);b.classList.add('on');}else{hArte(a,im[0],im[1],900);b.classList.remove('on');}}
-function hcMostra(){const C=HC.c,s=C.p[HC.ix];let k=s.i0;$('#hcP').innerHTML=s.t.split(' ').map(w=>{const h='<w data-k="'+k+'">'+w.replace(/</g,'&lt;')+'</w>';k+=hTok(w).length;return h;}).join(' ');$('#hcLeg').classList.remove('sai');HC.pal=0;
+ if(HC.lado){hArte(b,im[0],im[1],1200);b.classList.add('on');}else{hArte(a,im[0],im[1],1200);b.classList.remove('on');}}
+function hcMostra(){const C=HC.c,s=C.p[HC.ix];let k=s.i0;$('#hcP').innerHTML=s.t.split(' ').map(w=>{const h='<w data-k="'+k+'">'+w.replace(/</g,'&lt;')+'</w>';k+=hTok(w).length;return h;}).join(' ');$('#hcLeg').classList.remove('sai');HC.pal=0;s.cq=0;
  [...$('#hcPg').children].forEach((e,q)=>{e.firstChild.style.width=q<HC.ix?'100%':'0';});$('#hcInf').textContent=(HC.ix+1)+' de '+C.p.length+' · toque para avançar';}
 // natural = a própria voz chegou na frase seguinte (não mexe no áudio)
 function hcPasso(d,natural){const C=HC.c;if(!C)return;clearTimeout(HC.tm);$('#hcTit').classList.remove('on');HC.ix+=d;if(HC.ix<0)HC.ix=0;if(HC.ix>=C.p.length)return hcFim();
@@ -102,11 +115,12 @@ function hcVoz(){const C=HC.c;if(!C||!C.v)return;const A=HV.a,t=A.currentTime,T=
  if(t>=C.v.b||A.ended){A.pause();HC.tm=setTimeout(()=>{if(HC.c===C)hcFim();},900);return;}
  const nx=C.p[HC.ix+1];if(nx&&t>=T[Math.min(nx.i0,T.length-1)].s-.05){hcPasso(1,true);}
  const ws=$('#hcP').children;let u=-1;for(let q=0;q<ws.length;q++){const k=Math.min(+ws[q].dataset.k,T.length-1);if(T[k].s<=t+.03){u=q;ws[q].classList.add('on');}ws[q].classList.remove('ag');}
- if(u>=0)ws[u].classList.add('ag');const b=$('#hcPg').children[HC.ix];if(b&&ws.length)b.firstChild.style.width=((u+1)/ws.length*100)+'%';
+ if(u>=0)ws[u].classList.add('ag');hcCue(u);const b=$('#hcPg').children[HC.ix];if(b&&ws.length)b.firstChild.style.width=((u+1)/ws.length*100)+'%';
  HC.rf=requestAnimationFrame(hcVoz);}
+function hcCue(u){const s=HC.c&&HC.c.p[HC.ix];if(!s||!s.cues)return;while(s.cq<s.cues.length&&s.cues[s.cq].q<=u){hcImg(s.cues[s.cq].im);s.cq++;}}
 function hcDuck(on){try{if(typeof SOM!=='undefined'&&SOM.musica)SOM.musica.volume=on?Math.min(.1,SOM.vol.mus):SOM.vol.mus;}catch(e){}}
 function hcAnda(){if(!HC.c||HC.c.v)return;const ws=$('#hcP').children;if(HC.pal>=ws.length){HC.tm=setTimeout(()=>hcPasso(1),1100);return;}
- if(HC.pal)ws[HC.pal-1].classList.remove('ag');ws[HC.pal].classList.add('on','ag');HC.pal++;
+ if(HC.pal)ws[HC.pal-1].classList.remove('ag');ws[HC.pal].classList.add('on','ag');HC.pal++;hcCue(HC.pal-1);
  const b=$('#hcPg').children[HC.ix];if(b)b.firstChild.style.width=(HC.pal/ws.length*100)+'%';
  const w=ws[HC.pal-1].textContent;HC.tm=setTimeout(hcAnda,H_MS+(/[.,:;!?]/.test(w)?260:0)+Math.max(0,w.length-6)*22);}
 function hcPausa(){if(!HC.c)return;HC.par=!HC.par;$('#hcPP').classList.toggle('pa',HC.par);clearTimeout(HC.tm);

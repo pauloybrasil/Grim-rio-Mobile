@@ -913,6 +913,21 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 .mA-p:active,#menu .mA-h:active,.mA-b button:active{filter:brightness(1.25)}
 @media (max-height:700px){#menu .mA-t{font-size:50px}.mA-em{display:none}#menu .mA-l{margin:10px 0 14px}}
 </style>
+
+<style>
+/* ===== cenas narradas (v74): arte nítida em cima, legenda embaixo ===== */
+#hcena .hc-w{display:flex;flex-direction:column;background:#050d10}
+.hc-im{position:relative;flex:none;width:100%;aspect-ratio:2/3;max-height:66%;overflow:hidden;background:#050d10}
+#hcena .hc-art>div{filter:none}
+#hcena .hc-art img.ahd{object-position:50% 22%}
+#hcena .hc-art>div,#hcena .hc-art>img{animation-duration:22s}
+@keyframes hckb{from{scale:1;translate:0 0}to{scale:1.06;translate:-1% -1%}}@keyframes hckb2{from{scale:1.06;translate:1% 0}to{scale:1;translate:0 0}}
+#hcena .hc-vg{background:linear-gradient(180deg,rgba(5,13,16,.7) 0,rgba(5,13,16,0) 16%,rgba(5,13,16,0) 80%,#050d10 100%)}
+#hcena #hcLeg{position:relative;top:auto;left:auto;right:auto;flex:1;min-height:0;margin-top:-10px;padding:0 20px calc(var(--sab) + 70px);display:flex;align-items:flex-start}
+#hcena #hcLeg>div{width:100%}#hcena #hcLeg p{font-size:20px;line-height:1.4;text-shadow:none}
+#hcena #hcLeg p::first-letter{font-size:54px}
+@media (max-height:720px){#hcena #hcLeg p{font-size:18px}#hcena #hcLeg p::first-letter{font-size:46px}.hc-im{max-height:60%}}
+</style>
 </head>
 <body>
 <div class="stage">
@@ -1013,7 +1028,7 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
     <!-- FIM -->
     <section class="scr" id="historia"><div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small id="hProg"></small><h3>História</h3></div><button class="ico" id="hI" aria-label="Como funciona"><i style="font:400 20px Marcellus,serif;font-style:italic">i</i></button><button class="ico" id="hBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div><div class="hcorpo" id="hCorpo"></div>
      <div id="hInfo"><div class="hib"><b>Como funciona</b><ul><li>Escolha uma das quatro histórias. Dá para fazer todas.</li><li>Cada história tem 8 batalhas, e cada vitória conta mais um trecho.</li><li>Você joga só com os baralhos da sua trilha. A cada história entra um naipe novo.</li><li>A 4ª batalha libera o povo rival do planeta, e a 8ª libera o baralho do próximo.</li><li>Na última batalha, os seus quatro naipes enfrentam os de outra trilha.</li></ul><em>Toque para fechar</em></div></div></section>
-    <section class="scr" id="hcena"><div class="hc-w"><div class="hc-art a"></div><div class="hc-art b"></div><div class="hc-vg"></div>
+    <section class="scr" id="hcena"><div class="hc-w"><div class="hc-im"><div class="hc-art a"></div><div class="hc-art b"></div><div class="hc-vg"></div></div>
       <div id="hcPg"></div><div id="hcTop"><div><small id="hcSm"></small><b id="hcNm"></b></div><button class="hc-b" id="hcPula">Pular</button></div>
       <div id="hcTit"><div><i><b id="hcRo"></b></i><small id="hcTs"></small><h2 id="hcTh"></h2><hr></div></div>
       <div id="hcToq"><button aria-label="Voltar" id="hcV"></button><button aria-label="Avançar" id="hcA"></button></div>
