@@ -27,9 +27,11 @@ function abrirCanal(code,papel,onMsg,onPresenca){
 function criarSala(){ONL.code=Math.random().toString(36).slice(2,6).toUpperCase();ONL.on=true;ONL.host=true;ONL.guest=false;abrirEscolha();toast('Escolha as classes e toque em Começar');}
 function esperarAmigo(){ $('#onCode').textContent=ONL.code;$('#onMsg').textContent='Mande este código para o seu amigo. Ele toca em Jogar online → Entrar e digita o código.';show('online');$('#onWait').hidden=false;$('#onJoin').hidden=true;
  ONL.ch=abrirCanal(ONL.code,'host',hostMsg,ok=>{if(ok&&!ONL.partner){ONL.partner=true;comecarOnline();}else if(!ok&&ONL.partner){toast('Seu amigo saiu da sala');}});}
-function comecarOnline(){nova();S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
+// cada jogador com o próprio baralho: o amigo manda as classes dele ao entrar
+function deckAmigo(){if(typeof baralhoDe!=='function'||!ONL.guestESC||!S||ONL.deckOk||S.turn!==1)return;const E=ONL.guestESC;if(!Object.keys(NAIPES).every(k=>E[k]&&CL[E[k]]&&CL[E[k]].s===k))return;ONL.deckOk=1;ESCOU=E;S.odeck=baralhoDe(E);S.oh=[];for(let k=0;k<7;k++)S.oh.push(S.odeck.pop());lg('Seu amigo joga com '+Object.values(E).map(c=>CL[c].name).join(', '));render();}
+function comecarOnline(){ONL.deckOk=0;nova();deckAmigo();S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
 function hostMsg(ev,d){if(ev==='plays'){ONL.guestPlays=d.plays||[];if(ONL.ready){const r=ONL.ready;ONL.ready=null;r();}else toast('Seu amigo já preparou as cartas');}
- if(ev==='hello2')ONL.snap();
+ if(ev==='hello2'){if(d&&d.ESC){ONL.guestESC=d.ESC;if(ONL.partner)deckAmigo();}ONL.snap();}
  if(ev==='desiste')fim(true,'Seu amigo desistiu.');}
 async function aplicarJogadasAmigo(){ // entra no lugar do oponente do computador
  let mana=S.gmana||S.max;const plays=ONL.guestPlays||[];ONL.guestPlays=null;let trocou=false;
@@ -39,8 +41,8 @@ async function aplicarJogadasAmigo(){ // entra no lugar do oponente do computado
  S.omanaSobra=mana;render();}
 // ---------- amigo (convidado) ----------
 function entrarSala(){const code=($('#onIn').value||'').trim().toUpperCase();if(code.length<4){toast('Digite o código de 4 letras');return;}
- ONL.code=code;ONL.on=true;ONL.guest=true;ONL.host=false;$('#onMsg').textContent='Conectando à sala '+code+'…';
- ONL.ch=abrirCanal(code,'guest',guestMsg,ok=>{if(ok){$('#onMsg').textContent='Conectado! Esperando o anfitrião começar…';ONL.send('hello2',{});}});}
+ ONL.code=code;ONL.on=true;ONL.guest=true;ONL.host=false;ONL.meuESC={...ESC};$('#onMsg').textContent='Conectando à sala '+code+'…';
+ ONL.ch=abrirCanal(code,'guest',guestMsg,ok=>{if(ok){$('#onMsg').textContent='Conectado! Esperando o anfitrião começar…';ONL.send('hello2',{ESC:ONL.meuESC});}});}
 function guestMsg(ev,d){
  if(ev==='snap'&&typeof musica==='function')musica(d.busy?'batalha':'calma');
  if(ev==='start'){ESC=d.ESC;S=null;show('duelo');narrar('Você entrou na sala. Que comece o duelo.',false,true);}

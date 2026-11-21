@@ -122,7 +122,7 @@ const comprar0=comprar;
 comprar=async function(l,n,inicio){if(SPD>1||!S||!$('#duelo').classList.contains('on'))return comprar0(l,n,inicio);
  let extra=0;const novos=[];for(let k=0;k<n;k++){const c=compra(l);if(!c)break;const H=HD(l);if(H.length<MAOMAX){H.push(c);novos.push({c,ok:1});if(l==='m')S.hide.add(c.id);}else{S.cem.unshift({...c,lado:l,desc:1});extra++;novos.push({c,ok:0});}}
  if(extra){lg(`Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} carta${extra>1?'s':''}`);if(l==='m')toast(`Mão cheia: ${extra} carta${extra>1?'s':''} para o cemitério`);}
- render();for(const x of novos)await animCompra(l,x,novos.length>2);novos.forEach(x=>S.hide.delete(x.c.id));render();};
+ render();for(const x of novos)await animCompra(l,x,novos.length>2);novos.forEach(x=>S.hide.delete(x.c.id));render();if(extra&&typeof aoDescartar==='function')await aoDescartar(l,extra);};
 // distribuição inicial: 5 cartas para cada lado saindo do baralho
 async function distribuir(){if(!S)return;const mh=S.hand.slice(),oh=S.oh.length;mh.forEach(c=>S.hide.add(c.id));S.oh=S.oh.slice();const ohc=S.oh.splice(0);render();
  for(let k=0;k<7;k++){if(mh[k]){S.hide.delete(mh[k].id);render();const el=$('#hand').children[k];if(el){el.style.visibility='hidden';await voo(retDeck(),R(el),COSTA,170);el.style.visibility='';cls(el,'flipin',380);}}
