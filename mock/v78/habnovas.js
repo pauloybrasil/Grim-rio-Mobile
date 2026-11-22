@@ -1,10 +1,15 @@
 // v78 (mockup): habilidades novas por planeta. Substitui as antigas dos 9 planetas já fechados.
 const HN={
- G:[{n:"Escudeiro",fx:"Ao entrar, uma carta sua ao lado ganha +1 de poder.",e:{sq:1}},
-    {n:"Carga",fx:"Ao entrar, o oponente perde 1 de vida para cada outra carta sua no campo (até 3).",e:{charge2:[1,3]}},
-    {n:"Muralha de Escudos",fx:"Enquanto estiver no campo, as suas cartas vizinhas vencem os empates.",e:{wall:1}},
-    {n:"Formação",fx:"Ganha +1 de poder para cada outra carta sua no campo.",e:{pack:1}},
-    {n:"Estandarte do Brasão",fx:"General. Enquanto estiver no campo, as suas outras cartas ganham +2 de poder.",e:{aura:2}}],
+ G:[{n:"Escudeiro",fx:"Ao entrar, a sua carta mais forte do campo ganha 1 cicatriz. Cada cicatriz vale +1 de poder para sempre.",e:{scarBest:1}},
+    {n:"Golpe de Honra",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada carta sua com cicatriz.",e:{honor:1}},
+    {n:"Veterano",fx:"Ganha 1 cicatriz cada vez que um ataque tira vida de você. Cada cicatriz vale +1 de poder para sempre.",e:{veteran:1}},
+    {n:"Campeão do Brasão",fx:"Ganha +1 de poder para cada cicatriz nas suas cartas do campo, contando as dele.",e:{champ:1}},
+    {n:"Estandarte do Brasão",fx:"General. Ao entrar, cada outra carta sua ganha 1 cicatriz. Enquanto estiver no campo, cada outra carta sua com cicatriz ganha +1 de poder.",e:{scarAll:1,scarAura:1}}],
+ F:[{n:"Filhote",fx:"Ao entrar, uma carta sua ao lado ganha +1 de poder.",e:{sq:1}},
+    {n:"Bote da Matilha",fx:"Ao entrar, o oponente perde 1 de vida para cada outra carta sua no campo (até 3).",e:{charge2:[1,3]}},
+    {n:"Cerco",fx:"Enquanto estiver no campo, as suas cartas vizinhas vencem os empates.",e:{wall:1}},
+    {n:"Totem da Matilha",fx:"Ganha +1 de poder para cada outra carta sua no campo.",e:{pack:1}},
+    {n:"Rugido da Matilha",fx:"General. Enquanto estiver no campo, as suas outras cartas ganham +2 de poder.",e:{aura:2}}],
  E:[{n:"Curandeira",fx:"Ao entrar, você ganha 2 de vida.",e:{heal:2}},
     {n:"Espinho da Seiva",fx:"Ao entrar, o oponente perde 2 de vida e você ganha 1.",e:{dmgLeader:2,heal:1}},
     {n:"Vigor",fx:"Ganha +2 de poder enquanto você tiver mais vida que o oponente.",e:{vigor:2}},
@@ -45,6 +50,6 @@ const HN={
     {n:"Cântico das Marés",fx:"Enquanto estiver no campo, as cartas devolvidas para a mão do oponente custam 1 de mana a mais para baixar de novo.",e:{chant:1}},
     {n:"Maré Crescente",fx:"Ganha +1 de poder para sempre a cada carta devolvida para a mão do oponente.",e:{tide:1}},
     {n:"Maremoto",fx:"General. No fim do dia em que entra, as cartas inimigas que lutaram contra as suas outras cartas e sobreviveram voltam para a mão. Enquanto estiver no campo, o oponente perde 1 de vida para cada carta que descartar.",e:{tsunami:1}}]};
-const HNP={G:['CGUE','ZBRA'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
+const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
 const NOVOS=[];
 Object.entries(HNP).forEach(([k,cs])=>cs.forEach(c=>{CHAB[c]=HN[k].map(h=>({n:h.n,tg:'',fx:h.fx,e:{...h.e}}));NOVOS.push(c);}));
