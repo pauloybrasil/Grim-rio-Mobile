@@ -25,6 +25,11 @@ const HN={
     {n:"Areia Movediça",fx:"Enquanto estiver no campo, a carta inimiga da frente perde 2 de poder.",e:{quick:2}},
     {n:"Senhor das Dunas",fx:"Ganha +1 de poder para cada carta inimiga enfraquecida no campo (com poder abaixo do número dela).",e:{dunes:1}},
     {n:"Tempestade de Areia",fx:"General. Enquanto estiver no campo, todas as cartas inimigas perdem 1 de poder.",e:{sandstorm:1}}],
+ R:[{n:"Brasa",fx:"Ao entrar, uma carta sua ao lado ganha Atropelar para sempre: quando derrota uma inimiga, o que sobrou do poder passa para o oponente.",e:{ember:1}},
+    {n:"Bola de Fogo",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada carta sua com Atropelar no campo.",e:{fireCount:1}},
+    {n:"Sopro de Fogo",fx:"Atropelar: quando derrota uma inimiga, o que sobrou do poder dela passa para o oponente.",e:{trample:1}},
+    {n:"Fúria de Aurex",fx:"Atropelar. Ganha +1 de poder para cada outra carta sua com Atropelar no campo.",e:{trample:1,fury:1}},
+    {n:"Dragão Ancestral",fx:"General. Enquanto estiver no campo, as suas outras cartas têm Atropelar e ganham +1 de poder.",e:{dragon:1,aura:1}}],
  E:[{n:"Curandeira",fx:"Ao entrar, você ganha 2 de vida.",e:{heal:2}},
     {n:"Espinho da Seiva",fx:"Ao entrar, o oponente perde 2 de vida e você ganha 1.",e:{dmgLeader:2,heal:1}},
     {n:"Vigor",fx:"Ganha +2 de poder enquanto você tiver mais vida que o oponente.",e:{vigor:2}},
@@ -65,6 +70,6 @@ const HN={
     {n:"Cântico das Marés",fx:"Enquanto estiver no campo, as cartas devolvidas para a mão do oponente custam 1 de mana a mais para baixar de novo.",e:{chant:1}},
     {n:"Maré Crescente",fx:"Ganha +1 de poder para sempre a cada carta devolvida para a mão do oponente.",e:{tide:1}},
     {n:"Maremoto",fx:"General. No fim do dia em que entra, as cartas inimigas que lutaram contra as suas outras cartas e sobreviveram voltam para a mão. Enquanto estiver no campo, o oponente perde 1 de vida para cada carta que descartar.",e:{tsunami:1}}]};
-const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],S:['CSAH','ZSAH'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
+const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],S:['CSAH','ZSAH'],R:['CDRA','ZDRA'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
 const NOVOS=[];
 Object.entries(HNP).forEach(([k,cs])=>cs.forEach(c=>{CHAB[c]=HN[k].map(h=>({n:h.n,tg:'',fx:h.fx,e:{...h.e}}));NOVOS.push(c);}));

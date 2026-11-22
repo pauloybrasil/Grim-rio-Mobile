@@ -1134,7 +1134,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['dano','gust ambush quick dunes sandstorm'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1182,6 +1182,7 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  if(e.bones)p+=Math.floor(CEM(l)/e.bones);
  {const ol=OL(l),k=FD(l).indexOf(c),fr=FD(ol)[k];if(fr&&!fr.novo&&EF(fr).quick)p-=EF(fr).quick;p-=TEM(ol,'sandstorm');if(c.deb&&c.deb.t===S.turn)p-=c.deb.n;}
  if(e.dunes&&!NODUNE)p+=e.dunes*fracas(OL(l));
+ if(e.fury)p+=e.fury*FD(l).filter(x=>x&&x!==c&&!x.novo&&atropela(x,l)).length;
  if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
  if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
@@ -1204,6 +1205,7 @@ async function cicatriz(l,i){const x=FD(l)[i];if(!x)return;x.cic=(x.cic||0)+1;lg
 async function esporo(l,pw,j){const F=FD(l);if(j===undefined||F[j])j=vazia(l);if(j>=0)await criarFicha(l,'CMIC',pw,'Esporo',j);else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;lg('Sem casa vazia: o Esporo se juntou a '+F[k].n);await buff(l,k,pw,'Esporo +'+pw);}
  for(let k=0;k<NL;k++){const x=F[k];if(x&&!x.novo&&EF(x).colony){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).colony,'Colônia +'+EF(x).colony);FONTE=f0;FC=f1;}}}
 let NODUNE=0;function fracas(l){NODUNE++;try{return FD(l).filter(x=>x&&!x.novo&&P(x,l)<x.v).length;}finally{NODUNE--;}}
+const atropela=(x,l)=>!!(EF(x).trample||x.atrop||TEM(l,'dragon',x));
 const valeAlma=x=>x.token?0:(x.v<=5?1:2);
 async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
 async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
@@ -1267,6 +1269,8 @@ async function entrar(c,l,i){
  if(e.scarAll){say('cicatriz em todas');for(let j=0;j<NL;j++)if(j!==i&&F[j])await cicatriz(l,j);src(c,l);}
  if(e.gust){let any=0;for(const j of [i-1,i,i+1]){const x=O[j];if(j<0||j>=NL||!x)continue;x.deb={t:S.turn,n:((x.deb&&x.deb.t===S.turn)?x.deb.n:0)+e.gust};pop(ol,j,'areia −'+e.gust);any=1;}say(any?'Vento do Deserto':'vento sem alvo');render();await w(350);}
  if(e.ambush){const n=1+fracas(ol);say('Emboscada: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.ember){const k=ladoForte(l,i);if(k>=0){F[k].atrop=1;say('Brasa: Atropelar na carta ao lado');pop(l,k,'Atropelar');lg(F[k].n+' ganhou Atropelar');await w(350);}else say('sem carta ao lado');}
+ if(e.fireCount){const n=1+F.filter(x=>x&&!x.novo&&atropela(x,l)).length;say('Bola de Fogo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
  if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
  if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
  if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
@@ -1387,6 +1391,7 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  // vencedores
  const ganhou=async(l,c,pc,po,matou,x)=>{const e=EF(c),ol=OL(l);if(FD(l)[i]!==c)return;src(c,l);
    if(e.spark){pop(l,i,'Faísca');await dano(ol,e.spark,R(slotEl(l,i)));}
+   if(matou&&!e.trample&&atropela(c,l)&&pc-po>0){pop(l,i,'Atropelar: '+(pc-po));lg(`${c.n} atropelou: ${pc-po} no oponente`);await dano(ol,pc-po,R(slotEl(l,i)));if(FD(l)[i]!==c)return;}
    if(matou){
      if(e.elem)await buff(l,i,e.elemWin||1,'venceu +'+(e.elemWin||1));
      if(e.corrupt)await alma(l,i,e.corrupt);else if(valeAlma(x)&&TEM(l,'soulLord',c))await alma(l,i,valeAlma(x));
