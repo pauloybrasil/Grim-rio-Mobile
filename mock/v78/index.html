@@ -1134,7 +1134,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1177,9 +1177,10 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  if(e.enemyHand)p+=Math.min(e.enemyHand[1],e.enemyHand[0]*HO.length);
  if(e.lowLife&&vida<=e.lowLife[0])p+=e.lowLife[1];
  if(e.lost)p+=e.lost*Math.floor(Math.max(0,VIDA-vida)/5);
- FD(l).forEach(x=>{if(!x||x===c||x.novo)return;const ex=EF(x);if(ex.aura)p+=ex.aura;if(ex.scarAura&&c.cic)p+=ex.scarAura;if(ex.elemAura&&e.elem)p+=ex.elemAura;});
+ FD(l).forEach(x=>{if(!x||x===c||x.novo)return;const ex=EF(x);if(ex.aura)p+=ex.aura;if(ex.scarAura&&c.cic)p+=ex.scarAura;if(ex.handAura)p+=Math.floor(HD(l).length/ex.handAura);if(ex.elemAura&&e.elem)p+=ex.elemAura;});
  if(e.vigor&&vida>VID(OL(l)))p+=e.vigor;
  if(e.bones)p+=Math.floor(CEM(l)/e.bones);
+ if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
  if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
 function carta(code,v){const C=CL[code],N=NAIPES[C.s],t=nivel(v),H=CHAB[code][t-1];
@@ -1198,6 +1199,8 @@ const TEM=(l,k,menos)=>FD(l).filter(x=>x&&x!==menos&&!x.novo&&EF(x)[k]).length;
 function ladoForte(l,i,filt){let k=-1;for(const j of [i-1,i+1]){const x=FD(l)[j];if(j<0||j>=NL||!x||x.novo||(filt&&!filt(x)))continue;if(k<0||P(x,l)>P(FD(l)[k],l))k=j;}return k;}
 async function alma(l,i,n){const x=FD(l)[i];if(!x)return;x.almas=(x.almas||0)+1;lg(`${x.n} ganhou uma alma (+${n})`);await buff(l,i,n,'alma +'+n);}
 async function cicatriz(l,i){const x=FD(l)[i];if(!x)return;x.cic=(x.cic||0)+1;lg(`${x.n} ganhou uma cicatriz (+1)`);await buff(l,i,1,'cicatriz +1');}
+async function esporo(l,pw,j){const F=FD(l);if(j===undefined||F[j])j=vazia(l);if(j>=0)await criarFicha(l,'CMIC',pw,'Esporo',j);else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;lg('Sem casa vazia: o Esporo se juntou a '+F[k].n);await buff(l,k,pw,'Esporo +'+pw);}
+ for(let k=0;k<NL;k++){const x=F[k];if(x&&!x.novo&&EF(x).colony){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).colony,'Colônia +'+EF(x).colony);FONTE=f0;FC=f1;}}}
 const valeAlma=x=>x.token?0:(x.v<=5?1:2);
 async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
 async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
@@ -1259,6 +1262,9 @@ async function entrar(c,l,i){
  if(e.scarBest){let k=-1;F.forEach((x,j)=>{if(x&&x!==c&&(k<0||P(x,l)>P(F[k],l)))k=j;});if(k<0)k=i;say('cicatriz na mais forte');await cicatriz(l,k);}
  if(e.honor){const n=1+F.filter(x=>x&&x.cic).length;say('Golpe de Honra: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
  if(e.scarAll){say('cicatriz em todas');for(let j=0;j<NL;j++)if(j!==i&&F[j])await cicatriz(l,j);src(c,l);}
+ if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
+ if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
+ if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
  if(e.sq){const k=ladoForte(l,i);if(k>=0){say('+'+e.sq+' na carta ao lado');await buff(l,k,e.sq,'+'+e.sq);}}
  if(e.charge2){const n=Math.min(e.charge2[1],F.filter(x=>x&&x!==c).length*e.charge2[0]);if(n){say('Carga: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}}
  if(e.healPer){const n=F.filter(x=>x&&x!==c).length*e.healPer;if(n){say('cura '+n);cura(l,n);await w(350);}}
@@ -1301,6 +1307,7 @@ async function morrer0(l,i,killer){src(null);
  render();lg(`${nome(c,l==='m')} caiu`);
  if(c._onda){delete c._onda;const kl=lado(killer),w0=EF(killer).wave;src(killer,kl);lg(`Onda: ${c.n} volta para a mão e o dono perde ${w0} de vida`);await paraMao(l,c);await dano(l,w0,R(slotEl(l,i)));src(c,l);}
  if(e.grave&&!c.token){let k=-1;S.cem.forEach((x,j)=>{if(x.id!==c.id&&x.lado===l&&!x.token&&x.v<=e.grave&&(k<0||x.v>S.cem[k].v))k=j;});if(k>=0&&HD(l).length<7){const x=S.cem.splice(k,1)[0];HD(l).push(carta(x.code,x.v));lg(`Coveiro: ${x.n} saiu do cemitério para a mão`);pop(l,i,'Coveiro: pega '+x.v);render();await w(350);}}
+ if(e.deathSpore&&!F[i]){await esporo(l,e.deathSpore,i);src(c,l);}
  if(e.deathBuffSide){const k=ladoForte(l,i);if(k>=0)await buff(l,k,e.deathBuffSide,'Reparo +'+e.deathBuffSide);}
  if(e.undertow&&killer&&!killer.cai){const kl=lado(killer);if(kl){const k=FD(kl).indexOf(killer);lg(`Correnteza: ${killer.n} volta para a mão`);await devolve(kl,k,'Correnteza');}}
  if(!c.token&&!F[i]){const lord=F.find(x=>x&&x!==c&&!x.novo&&EF(x).boneLord);if(lord){src(lord,l);await criarFicha(l,lord.code,1,'Esqueleto',i);src(c,l);}}
@@ -1423,7 +1430,7 @@ async function fimDoTurno(){
  for(const l of ['m','o'])FD(l).forEach(c=>{if(c)c.stun=false;});
 }
 function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaAura:0),0);}
-function compraExtra(l){return FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0;}
+function compraExtra(l){return (FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0)+TEM(l,'drawAura');}
 
 function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),odeck:((typeof baralhoOp==='function'&&baralhoOp())||baralhoDe(escOp())),guard:{m:0,o:0},prev:{m:0,o:0},truce:{m:0,o:0},curou:{m:0,o:0},lutou:{},hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
  for(let k=0;k<7;k++){S.hand.push(compra('m'));S.oh.push(compra('o'));}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);if(!(typeof HB!=='undefined'&&HB&&HB.viva)&&ESCOU){lg('Oponente joga com '+Object.values(ESCOU).map(c=>CL[c].name).join(', '));setTimeout(()=>toast('Oponente: '+Object.values(ESCOU).map(c=>CL[c].name).join(', ')),900);}render();setTimeout(banner,250);}

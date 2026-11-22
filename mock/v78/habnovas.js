@@ -10,6 +10,16 @@ const HN={
     {n:"Cerco",fx:"Enquanto estiver no campo, as suas cartas vizinhas vencem os empates.",e:{wall:1}},
     {n:"Totem da Matilha",fx:"Ganha +1 de poder para cada outra carta sua no campo.",e:{pack:1}},
     {n:"Rugido da Matilha",fx:"General. Enquanto estiver no campo, as suas outras cartas ganham +2 de poder.",e:{aura:2}}],
+ H:[{n:"Batedor",fx:"Ao entrar, você compra 1 carta.",e:{draw:1}},
+    {n:"Ataque Aéreo",fx:"Ao entrar, o oponente perde 1 de vida para cada 2 cartas na sua mão.",e:{airHand:2}},
+    {n:"Central de Comando",fx:"Enquanto estiver no campo, você compra 1 carta a mais no começo de cada dia.",e:{drawAura:1}},
+    {n:"Estrategista",fx:"Ganha +1 de poder para cada 2 cartas na sua mão.",e:{handPow:2}},
+    {n:"Ordem do General",fx:"General. Ao entrar, você compra 2 cartas. Enquanto estiver no campo, as suas outras cartas ganham +1 de poder para cada 3 cartas na sua mão.",e:{draw:2,handAura:3}}],
+ I:[{n:"Nuvem de Esporos",fx:"Ao entrar, cria um Esporo de poder 1 numa casa vazia sua. Sem casa vazia, o Esporo se junta à sua carta mais fraca e dá +1 a ela.",e:{spore:1}},
+    {n:"Esporo Tóxico",fx:"Ao entrar, o oponente perde 2 de vida e você cria um Esporo de poder 1.",e:{dmgLeader:2,spore:1}},
+    {n:"Esporo Primordial",fx:"Quando é derrotada, deixa um Esporo de poder 2 na mesma casa.",e:{deathSpore:2}},
+    {n:"Colônia",fx:"Ganha +1 de poder para sempre cada vez que nasce um Esporo seu.",e:{colony:1}},
+    {n:"Floração",fx:"General. Ao entrar, cria um Esporo em cada casa vazia sua e todos os seus Esporos ganham +2 de poder.",e:{bloom:2}}],
  E:[{n:"Curandeira",fx:"Ao entrar, você ganha 2 de vida.",e:{heal:2}},
     {n:"Espinho da Seiva",fx:"Ao entrar, o oponente perde 2 de vida e você ganha 1.",e:{dmgLeader:2,heal:1}},
     {n:"Vigor",fx:"Ganha +2 de poder enquanto você tiver mais vida que o oponente.",e:{vigor:2}},
@@ -50,6 +60,6 @@ const HN={
     {n:"Cântico das Marés",fx:"Enquanto estiver no campo, as cartas devolvidas para a mão do oponente custam 1 de mana a mais para baixar de novo.",e:{chant:1}},
     {n:"Maré Crescente",fx:"Ganha +1 de poder para sempre a cada carta devolvida para a mão do oponente.",e:{tide:1}},
     {n:"Maremoto",fx:"General. No fim do dia em que entra, as cartas inimigas que lutaram contra as suas outras cartas e sobreviveram voltam para a mão. Enquanto estiver no campo, o oponente perde 1 de vida para cada carta que descartar.",e:{tsunami:1}}]};
-const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
+const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
 const NOVOS=[];
 Object.entries(HNP).forEach(([k,cs])=>cs.forEach(c=>{CHAB[c]=HN[k].map(h=>({n:h.n,tg:'',fx:h.fx,e:{...h.e}}));NOVOS.push(c);}));
