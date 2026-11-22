@@ -1363,9 +1363,9 @@ async function morrer0(l,i,killer){src(null);
 async function bate(l,i){
  const c=FD(l)[i];if(!c)return;const e=EF(c),el=cardEl(l,i),ol=OL(l);
  src(null);if(c.stun){pop(l,i,'⚓ presa');await w(300);return;}
- if(e.barrier||(e.elem&&!TEM(l,'avatar',c))){src(c,l);pop(l,i,'barreira não ataca');await w(300);return;}
+ if(e.barrier){src(c,l);pop(l,i,'barreira não ataca');await w(300);return;}
  src(c,l);if(e.atkBonus)registrar();
- let d=P(c,l)+(e.atkBonus||0);if(d<=0)return;
+ let d=P(c,l)+(e.atkBonus||0);if(e.elem&&!TEM(l,'avatar',c))d=Math.floor(d/2);if(d<=0)return;
  {const v=TEM(ol,'veil');if(v){const g=Math.min(d,v);d-=g;S.prev[ol]+=g;lg(`Véu da Luz preveniu ${g} de dano`);const vj=FD(ol).findIndex(x=>x&&!x.novo&&EF(x).veil);if(vj>=0)pop(ol,vj,'Véu: −'+g);}}
  let feito=0;
  await investida(el,l==='m'?-28:28);
@@ -1452,7 +1452,7 @@ async function coluna(i){
 // ---------- fim do turno ----------
 async function fimDoTurno(){
  for(const l of ['m','o'])for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c)continue;const e=EF(c);src(c,l);
-   if(e.root&&S.curou[l])await buff(l,j,e.root,'Raiz +'+e.root);
+   if(e.root&&S.curou[l]>=2)await buff(l,j,e.root,'Raiz +'+e.root);
    if(e.faith&&S.prev[l]>0)await buff(l,j,e.faith,'Fé +'+e.faith);}
  for(const l of ['m','o'])for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||!EF(c).tsunami||c.entrou!==S.turn)continue;const ol=OL(l);src(c,l);let any=0;
    for(let k=0;k<NL;k++){const x=FD(ol)[k],r=S.lutou[k];if(k===j||!x||!r||r[ol]!==x.id)continue;if(!any){any=1;pop(l,j,'Maremoto');lg('Maremoto: as cartas que sobreviveram voltam para a mão');await w(350);}await devolve(ol,k,'Maremoto');}}
@@ -1556,7 +1556,7 @@ async function dano(lado,n,de){ // lado = líder que recebe ('m' ou 'o')
  cls(av,'hit',400);cls($(lado==='m'?'#mLife':'#oLife'),'dmg',500);num(ra.cx+34,ra.cy,n);burst(ra.cx,ra.cy,'#ff6b66',14);if(n>=4)quake();
  $('#mLife').classList.toggle('baixa',S.ml<=10);$('#oLife').classList.toggle('baixa',S.ol<=10);return n;
 }
-function cura(lado,n){if(n>0&&S.curou)S.curou[lado]=1;registrar();const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
+function cura(lado,n){if(n>0&&S.curou)S.curou[lado]=(S.curou[lado]||0)+n;registrar();const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
 
 // ---------- entrada de carta ----------
 async function baixar(lado,c,i,de,oculta){
