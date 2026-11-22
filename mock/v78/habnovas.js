@@ -20,6 +20,11 @@ const HN={
     {n:"Esporo Primordial",fx:"Quando é derrotada, deixa um Esporo de poder 2 na mesma casa.",e:{deathSpore:2}},
     {n:"Colônia",fx:"Ganha +1 de poder para sempre cada vez que nasce um Esporo seu.",e:{colony:1}},
     {n:"Floração",fx:"General. Ao entrar, cria um Esporo em cada casa vazia sua e todos os seus Esporos ganham +2 de poder.",e:{bloom:2}}],
+ S:[{n:"Vento do Deserto",fx:"Ao entrar, a carta inimiga da frente e as duas vizinhas dela perdem 1 de poder neste dia.",e:{gust:1}},
+    {n:"Emboscada",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada carta inimiga enfraquecida no campo (com poder abaixo do número dela).",e:{ambush:1}},
+    {n:"Areia Movediça",fx:"Enquanto estiver no campo, a carta inimiga da frente perde 2 de poder.",e:{quick:2}},
+    {n:"Senhor das Dunas",fx:"Ganha +1 de poder para cada carta inimiga enfraquecida no campo (com poder abaixo do número dela).",e:{dunes:1}},
+    {n:"Tempestade de Areia",fx:"General. Enquanto estiver no campo, todas as cartas inimigas perdem 1 de poder.",e:{sandstorm:1}}],
  E:[{n:"Curandeira",fx:"Ao entrar, você ganha 2 de vida.",e:{heal:2}},
     {n:"Espinho da Seiva",fx:"Ao entrar, o oponente perde 2 de vida e você ganha 1.",e:{dmgLeader:2,heal:1}},
     {n:"Vigor",fx:"Ganha +2 de poder enquanto você tiver mais vida que o oponente.",e:{vigor:2}},
@@ -30,7 +35,7 @@ const HN={
     {n:"Ceifador",fx:"A carta que ela derrota vai para o seu cemitério, não para o do oponente.",e:{reap:1}},
     {n:"Fome de Ossos",fx:"Ganha +1 de poder para cada 3 cartas no seu cemitério.",e:{bones:3}},
     {n:"Senhor do Ossário",fx:"General. Enquanto estiver no campo, as suas outras cartas ganham +1 de poder e cada uma que cair deixa um Esqueleto de poder 1 no lugar.",e:{aura:1,boneLord:1}}],
- D:[{n:"Sussurro",fx:"Ao entrar, a carta inimiga da frente perde 1 de poder (sem carta na frente, o oponente perde 1 de vida) e ela ganha uma alma: +1 no 2, +2 no 3.",e:{whisper:1}},
+ D:[{n:"Sussurro",fx:"Ao entrar, o oponente perde 1 de vida e ela ganha uma alma: +1 no 2, +2 no 3.",e:{whisper:1}},
     {n:"Pacto de Sangue",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada alma nas suas cartas do campo.",e:{pact:1}},
     {n:"Sedução",fx:"Quando tira vida do oponente, rouba a alma de uma carta da mão dele: +1 se a carta for de 2 a 5, +2 se for de 6 a 10.",e:{seduce:1}},
     {n:"Corromper",fx:"Toma a alma de cada carta que derrota: +2 de poder para sempre.",e:{corrupt:2}},
@@ -46,7 +51,7 @@ const HN={
     {n:"Sobrecarga",fx:"Ao entrar, consome a mana que sobrou no dia e ganha +1 de poder para cada mana consumida.",e:{spendMana:1}},
     {n:"Arquimago",fx:"General. Enquanto estiver no campo, as suas outras cartas custam 1 de mana a menos (mínimo 1).",e:{cheap:1}}],
  C:[{n:"Drone de Reparo",fx:"Quando é derrotada, uma carta sua ao lado ganha +2 de poder.",e:{deathBuffSide:2}},
-    {n:"Canhão de Pulso",fx:"Ao entrar, o oponente perde 2 de vida e a carta inimiga da frente perde 1 de poder.",e:{dmgLeader:2,dmgFront:1}},
+    {n:"Canhão de Pulso",fx:"Ao entrar, o oponente perde 2 de vida e uma carta sua ao lado ganha +1 de poder.",e:{dmgLeader:2,sq:1}},
     {n:"Reiniciar",fx:"Ao entrar, repete o efeito de entrada de uma carta sua ao lado.",e:{reboot:1}},
     {n:"Atualização",fx:"No fim de cada dia, ganha +1 de poder.",e:{grow:1}},
     {n:"Código-Fonte",fx:"General. Ao entrar, repete o efeito de entrada das suas outras cartas do campo (de 2 a 9).",e:{source:1}}],
@@ -60,6 +65,6 @@ const HN={
     {n:"Cântico das Marés",fx:"Enquanto estiver no campo, as cartas devolvidas para a mão do oponente custam 1 de mana a mais para baixar de novo.",e:{chant:1}},
     {n:"Maré Crescente",fx:"Ganha +1 de poder para sempre a cada carta devolvida para a mão do oponente.",e:{tide:1}},
     {n:"Maremoto",fx:"General. No fim do dia em que entra, as cartas inimigas que lutaram contra as suas outras cartas e sobreviveram voltam para a mão. Enquanto estiver no campo, o oponente perde 1 de vida para cada carta que descartar.",e:{tsunami:1}}]};
-const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
+const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],S:['CSAH','ZSAH'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
 const NOVOS=[];
 Object.entries(HNP).forEach(([k,cs])=>cs.forEach(c=>{CHAB[c]=HN[k].map(h=>({n:h.n,tg:'',fx:h.fx,e:{...h.e}}));NOVOS.push(c);}));
