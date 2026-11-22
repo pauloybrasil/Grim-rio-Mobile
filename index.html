@@ -928,6 +928,8 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 #hcena #hcLeg p::first-letter{font-size:54px}
 @media (max-height:720px){#hcena #hcLeg p{font-size:18px}#hcena #hcLeg p::first-letter{font-size:46px}.hc-im{max-height:60%}}
 </style>
+<style>.lbm{position:absolute;top:3px;right:3px;z-index:3;min-width:18px;padding:2px 3px;font:700 10px/1 system-ui,sans-serif;text-align:center;border-radius:3px;background:rgba(6,10,14,.82);pointer-events:none}.lbm.lp{color:#7dffa8;box-shadow:inset 0 0 0 1px #7dffa8}.lbm.ln{color:#ff8d8a;box-shadow:inset 0 0 0 1px #ff8d8a}</style>
+<style>#mana{position:relative}#mana .moe{position:absolute;left:0;top:-19px;display:flex;align-items:center;gap:4px;font:700 12px/1 system-ui,sans-serif;color:#ffd27a;white-space:nowrap}#mana .moe i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#e0a93a 60%,#8a5a12);box-shadow:0 0 0 1px #6b4410;clip-path:none}</style>
 </head>
 <body>
 <div class="stage">
@@ -994,7 +996,7 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
     </section>
     <section class="scr" id="escolha">
       <div class="pnh ph2"><span class="pemb"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path class="gly" d=""/></svg></span><div class="sh-tt"><small class="plnm"></small><h3>Suas classes</h3></div><button class="ico" id="nBack" aria-label="Fechar"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div><div class="pn-l ph2l"><i></i></div>
-      <p class="escs">1 classe por naipe. São 2 baralhos de 36 cartas misturados (72), usados pelos dois jogadores.</p>
+      <p class="escs">1 classe por naipe. São 2 baralhos de 36 cartas misturados (72). Cada jogador tem o seu. O ponto verde marca os planetas com as habilidades novas.</p>
       <div class="ngrid" id="nGrid"></div>
       <div class="escf"><div class="ninfo" id="nInfo"></div><button class="primary" id="nGo">COMEÇAR BATALHA</button></div>
     <div id="nhPop"></div></section>
@@ -1084,6 +1086,7 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="classes.js"></script>
 <script src="hab.js"></script>
+<script src="habnovas.js"></script>
 <script>
 const $=s=>document.querySelector(s);
 const SU={h:'♥',d:'♦',c:'♣',s:'♠'};
@@ -1102,7 +1105,8 @@ const NK={};Object.entries(NAIPES).forEach(([k,v])=>NK[v.k]=k);
 const nivel=v=>v<=3?1:v<=5?2:v<=7?3:v<=9?4:5;
 let ESC={};Object.keys(NAIPES).forEach(k=>ESC[k]=CLASSES.find(c=>c.s===k).code);try{const x=JSON.parse(localStorage.getItem('gm-classes'));if(x)Object.keys(ESC).forEach(k=>{if(x[k]&&CL[x[k]]&&CL[x[k]].s===k)ESC[k]=x[k];});}catch(e){}
 const BARALHOS=2;
-function baralho(){const d=[];for(let b=0;b<BARALHOS;b++)Object.values(ESC).forEach(code=>{for(let v=2;v<=10;v++)d.push(carta(code,v));});
+function baralho(){return baralhoDe(ESC);}
+function baralhoDe(E){const d=[];for(let b=0;b<BARALHOS;b++)Object.values(E).forEach(code=>{for(let v=2;v<=10;v++)d.push(carta(code,v));});
  for(let i=d.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[d[i],d[j]]=[d[j],d[i]];}return d;}
 function compra(l){const d=l==='o'&&S.odeck?S.odeck:S.deck;return d.length?d.pop():null;}
 let S,SPD=1;
@@ -1130,7 +1134,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami stealMana cannon loot compass captain'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1173,16 +1177,60 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  if(e.enemyHand)p+=Math.min(e.enemyHand[1],e.enemyHand[0]*HO.length);
  if(e.lowLife&&vida<=e.lowLife[0])p+=e.lowLife[1];
  if(e.lost)p+=e.lost*Math.floor(Math.max(0,VIDA-vida)/5);
+ FD(l).forEach(x=>{if(!x||x===c||x.novo)return;const ex=EF(x);if(ex.aura)p+=ex.aura;if(ex.scarAura&&c.cic)p+=ex.scarAura;if(ex.handAura)p+=Math.floor(HD(l).length/ex.handAura);if(ex.elemAura&&e.elem)p+=ex.elemAura;});
+ if(e.vigor&&vida>VID(OL(l)))p+=e.vigor;
+ if(e.bones)p+=Math.floor(CEM(l)/e.bones);
+ {const ol=OL(l),k=FD(l).indexOf(c),fr=FD(ol)[k];if(fr&&!fr.novo&&EF(fr).quick)p-=EF(fr).quick;p-=TEM(ol,'sandstorm');if(c.deb&&c.deb.t===S.turn)p-=c.deb.n;}
+ if(e.dunes&&!NODUNE)p+=e.dunes*fracas(OL(l));
+ if(e.fury)p+=e.fury*FD(l).filter(x=>x&&x!==c&&!x.novo&&atropela(x,l)).length;
+ if(e.scale)p+=Math.floor(MOE(l)/e.scale);
+ if(ehEsporo(c))p+=2*TEM(l,'bloomAura');
+ if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
+ if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
 function carta(code,v){const C=CL[code],N=NAIPES[C.s],t=nivel(v),H=CHAB[code][t-1];
  return {code,cls:C.name,pl:C.pl,s:N.k,v,pw:v,cost:t,e:{...H.e},e0:Object.keys(H.e),esp:v===10?1:0,tg:H.tg,hab:H.n,fx:H.fx,n:C.name+' · '+v,flav:C.cr[String(v)]||'',ai:v,id:Math.random()};}
 function ficha(code,pw,nm){const C=CL[code];return {code,cls:C.name,pl:C.pl,s:NAIPES[C.s].k,v:pw,pw,cost:0,e:{},tg:'',hab:'Ficha',fx:'Ficha criada por habilidade. Sem habilidade própria.',n:nm,flav:'',ai:2,token:1,id:Math.random()};}
 function cardHTML(c,extra){const l=lado(c),p=l?P(c,l):c.pw,cor=p>c.pw?'style="color:#7dffa8"':p<c.v&&l?'style="color:#ff8d8a"':'';
- return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn"></div>':''}</div>`;}
+ return `<div class="card ${c.s} ${c.esp?'esp':''} ${c.token?'tok':''} ${c.stun?'stun':''} ${extra||''}" style="--nc:${NCOR[c.s]};background-image:url(s/${c.code}.webp);background-size:1900% 100%;background-position:${(c.ai-2)/18*100}% 0"><i class="fr"></i><div class="n" ${cor}>${p}<b>${SU[c.s]}</b></div>${c.hab&&!c.token?`<div class="tg" title="${c.hab}">${ico(catDe(c.e))}</div><div class="hn">${c.hab}</div>`:''}${c.token?'':`<div class="pw" title="custo"><span>${c.cost}</span></div>`}${c.stun?'<div class="stn"></div>':''}${l&&LB(c,l)?`<div class="lbm ${LB(c,l)>0?'lp':'ln'}">${LB(c,l)>0?'+1':'−1'}</div>`:''}</div>`;}
 function maisFraca(F,ex){let k=-1;F.forEach((x,j)=>{if(x&&j!==ex&&(k<0||x.pw<F[k].pw))k=j;});return k;}
 function vazia(l){return FD(l).findIndex(x=>!x);}
 async function buff(l,j,n,txt){const x=FD(l)[j];if(!x||!n)return;registrar();if(n<0&&EF(x).ward){pop(l,j,'🔨 imune');await w(250);return;}{const d0=x.pw;x.pw=Math.max(0,x.pw+n);(x.hist=x.hist||[]).push({h:FONTE,n:x.pw-d0});}sfx(n>0?'up':'down',.8);render();cls(cardEl(l,j),n>0?'rise':'shake',600);if(txt)pop(l,j,txt);await w(380);if(P(x,l)<=0)await morrer(l,j,null);}
 async function criarFicha(l,code,pw,nm,j){registrar();if(j===undefined)j=vazia(l);if(j<0)return false;const f=ficha(code,pw,nm);FD(l)[j]=f;render();cls(cardEl(l,j),'rise',600);pop(l,j,nm+' '+pw);lg(`${nm} ${pw} entrou no campo ${l==='m'?'seu':'inimigo'}`);await w(380);return true;}
+// ===== v78: apoio das habilidades novas =====
+let REB=0,ESCOU=null;
+const CEM=l=>S.cem.filter(x=>x.lado===l&&!x.token).length;
+const TEM=(l,k,menos)=>FD(l).filter(x=>x&&x!==menos&&!x.novo&&EF(x)[k]).length;
+function ladoForte(l,i,filt){let k=-1;for(const j of [i-1,i+1]){const x=FD(l)[j];if(j<0||j>=NL||!x||x.novo||(filt&&!filt(x)))continue;if(k<0||P(x,l)>P(FD(l)[k],l))k=j;}return k;}
+async function alma(l,i,n){const x=FD(l)[i];if(!x)return;x.almas=(x.almas||0)+1;lg(`${x.n} ganhou uma alma (+${n})`);await buff(l,i,n,'alma +'+n);}
+async function cicatriz(l,i){const x=FD(l)[i];if(!x)return;x.cic=(x.cic||0)+1;lg(`${x.n} ganhou uma cicatriz (+1)`);await buff(l,i,1,'cicatriz +1');}
+async function esporo(l,pw,j){const F=FD(l);if(j===undefined||F[j])j=vazia(l);if(j>=0)await criarFicha(l,'CMIC',pw,'Esporo',j);else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;lg('Sem casa vazia: o Esporo se juntou a '+F[k].n);await buff(l,k,pw,'Esporo +'+pw);}
+ for(let k=0;k<NL;k++){const x=F[k];if(x&&!x.novo&&EF(x).colony){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).colony,'Colônia +'+EF(x).colony);FONTE=f0;FC=f1;}}}
+let NODUNE=0;function fracas(l){NODUNE++;try{return FD(l).filter(x=>x&&!x.novo&&P(x,l)<x.v).length;}finally{NODUNE--;}}
+const atropela=(x,l)=>!!(EF(x).trample||x.atrop||TEM(l,'dragon',x));
+const MOE=l=>(S.moedas&&S.moedas[l])||0;
+function moeda(l,n){if(!S.moedas)S.moedas={m:0,o:0};S.moedas[l]=Math.max(0,S.moedas[l]+n);lg(`${l==='m'?'Você':'Oponente'} ${n>0?'ganhou':'gastou'} ${Math.abs(n)} moeda${Math.abs(n)>1?'s':''} (tem ${S.moedas[l]})`);render();}
+async function rouboFeito(l){for(let k=0;k<NL;k++){const x=FD(l)[k];if(x&&!x.novo&&EF(x).compass){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).compass,'Bússola +'+EF(x).compass);FONTE=f0;FC=f1;}}}
+const ESPS=l=>FD(l).reduce((t,x)=>t+((x&&x.spo)||0),0);
+function fichaEsporo(n){const f=ficha('CMIC',Math.max(2,n),'Esporo');f.spo=n;f.fx='Carta Esporo. Recebe mais esporos e cresce +1 por esporo.';return f;}
+const ehEsporo=x=>!!(x&&x.token&&x.n==='Esporo');
+async function fusaoFeita(l){for(let k=0;k<NL;k++){const x=FD(l)[k];if(x&&EF(x).colonyFuse){x.pw+=EF(x).colonyFuse;render();pop(l,k,'Colônia +'+EF(x).colonyFuse);}}}
+async function ganhaEsporo(l,n){for(let q=0;q<(n||1);q++){const F=FD(l),j=vazia(l);if(j>=0){F[j]=ficha('CMIC',2,'Esporo');F[j].fx='Carta Esporo. Ao preparar, toque nela e depois em outra carta sua para fundir: o poder soma.';render();cls(cardEl(l,j),'rise',600);pop(l,j,'Esporo 2');lg(`Um Esporo nasceu no campo ${l==='m'?'seu':'inimigo'}`);await w(320);}else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;lg(`Sem casa vazia: o Esporo se fundiu em ${F[k].n}`);await buff(l,k,2,'fusão +2');await fusaoFeita(l);}}}
+function fundir(a,b){const A=S.mine[a],B=S.mine[b];if(!ehEsporo(A)||!B||a===b)return;if(A.stun||B.novo&&0){}B.pw+=A.pw;S.mine[a]=null;S.mov=-1;sfx('place');lg(`Fusão: o Esporo de poder ${A.pw} se juntou a ${B.n}`);render();pop('m',b,'fusão +'+A.pw);fusaoFeita('m');}
+function espMover(i,k){const F=S.mine,A=F[i],B=F[k];if(!A||!B||!A.spo)return;const n=A.spo;if(A.token)F[i]=null;else{A.spo=0;A.pw-=n;}B.spo=(B.spo||0)+n;B.pw+=n;S.espMov=S.turn;lg(`Você moveu ${n} esporo${n>1?'s':''} para ${B.n}`);render();}
+function espSoltar(i){const F=S.mine,A=F[i],j=vazia('m');if(!A||!A.spo||A.token||j<0)return;const n=A.spo;A.spo=0;A.pw-=n;F[j]=fichaEsporo(n);S.espMov=S.turn;lg(`Você soltou ${n} esporo${n>1?'s':''}: nasceu uma carta Esporo de poder ${F[j].pw}`);render();}
+function espEscolhe(i){return new Promise(res=>{const o=document.createElement('div');o.id='espSheet';o.style.cssText='position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:rgba(4,8,12,.9)';
+ o.innerHTML='<div style="font:600 17px/1.3 var(--ft,serif);color:var(--ts,#c8aa6e);text-align:center;letter-spacing:.04em">Mover esporos</div><div style="font-size:14px;line-height:1.4;color:#d8d2c2;text-align:center;max-width:280px">Toque na carta que vai receber os esporos.</div><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:300px">'+S.mine.map((c,k)=>c&&k!==i?`<div data-k="${k}" style="position:relative;flex:none;width:62px;height:84px;cursor:pointer">${cardHTML(c)}</div>`:'').join('')+'</div><button class="ghost" data-x="1" style="margin-top:6px">Cancelar</button>';
+ ($('#phone')||document.body).appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-x]')){o.remove();res(-1);return;}const m=e.target.closest('[data-k]');if(!m)return;o.remove();res(+m.dataset.k);});});}
+const valeAlma=x=>x.token?0:(x.v<=5?1:2);
+async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
+async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
+ const ol=OL(l);for(let k=0;k<NL;k++){const x=FD(ol)[k];if(x&&!x.novo&&EF(x).tide){const f0=FONTE,f1=FC;src(x,ol);await buff(ol,k,EF(x).tide,'Maré +'+EF(x).tide);FONTE=f0;FC=f1;}}
+ await descarteCheia(l);render();}
+async function devolve(l,j,txt){const F=FD(l),a=F[j];if(!a)return;pop(l,j,txt||'volta para a mão');cls(cardEl(l,j),'die',450);await w(420);F[j]=null;render();if(a.token)return;await paraMao(l,a);}
+function custos(){if(!S||(typeof ONL!=='undefined'&&ONL.guest))return;for(const l of ['m','o']){const d=TEM(l,'cheap'),ch=TEM(OL(l),'chant');HD(l).forEach(c=>{if(!c||!c.code)return;c.cost=Math.max(1,nivel(c.v)-d+(c.dev?ch:0));});}}
+function escOp(){ESCOU={};Object.keys(NAIPES).forEach(k=>{let c=ESCO[k];if(!c||!CL[c]){const ops=CLASSES.filter(x=>x.s===k&&NOVOS.includes(x.code)&&x.code[0]==='C');const p=ops.length?ops:CLASSES.filter(x=>x.s===k);c=p[Math.floor(Math.random()*p.length)].code;}ESCOU[k]=c;});return ESCOU;}
+let ESCO={},ESCQ='m';Object.keys(NAIPES).forEach(k=>ESCO[k]='');try{const x=JSON.parse(localStorage.getItem('gm-classes-op'));if(x)Object.keys(ESCO).forEach(k=>{if(x[k]&&CL[x[k]]&&CL[x[k]].s===k)ESCO[k]=x[k];});}catch(e){}
 // carta devolvida para uma mão cheia: o dono escolhe uma carta da mão para descartar (sem ganhar mana)
 function pedeDescarte(){return new Promise(res=>{const o=document.createElement('div');o.id='descSheet';o.style.cssText='position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:rgba(4,8,12,.9)';
  o.innerHTML='<div style="font:600 17px/1.3 var(--ft,serif);color:var(--ts,#c8aa6e);text-align:center;letter-spacing:.04em">Mão cheia</div><div style="font-size:14px;line-height:1.4;color:#d8d2c2;text-align:center;max-width:280px">Uma carta voltou para a sua mão. Toque na carta que vai para o cemitério.</div><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:300px">'+S.hand.map((c,i)=>`<div data-k="${i}" style="position:relative;flex:none;width:62px;height:84px;cursor:pointer">${cardHTML(c)}</div>`).join('')+'</div>';
@@ -1190,12 +1238,12 @@ function pedeDescarte(){return new Promise(res=>{const o=document.createElement(
 async function descarteCheia(l){const H=HD(l);while(H.length>MAOMAX){let k;
   if(l==='m'&&!(typeof ONL!=='undefined'&&ONL.guest))k=await pedeDescarte();
   else{k=0;H.forEach((c,i)=>{if(c.pw<H[k].pw)k=i;});}
-  const x=H.splice(k,1)[0];S.cem.unshift({...x,lado:l,desc:1});lg(`Mão cheia: ${l==='m'?'você descartou':'o oponente descartou'} ${x.n}`);render();await w(300);}}
+  const x=H.splice(k,1)[0];S.cem.unshift({...x,lado:l,desc:1});lg(`Mão cheia: ${l==='m'?'você descartou':'o oponente descartou'} ${x.n}`);render();await w(300);await aoDescartar(l,1);}}
 const MAOMAX=7;
 const comprasDoDia=d=>d<=3?1:d<=6?2:d<=10?3:4; // 1 carta do 1º ao 3º dia, 2 do 4º ao 6º, 3 do 7º ao 10º, 4 do 11º em diante // começa em 1; a cada dia ímpar que termina, +1
 async function comprar(l,n,inicio){let extra=0;for(let k=0;k<n;k++){const c=compra(l);if(!c)break;const H=HD(l);if(H.length<MAOMAX)H.push(c);else{S.cem.unshift({...c,lado:l,desc:1});extra++;}}
  if(extra){lg(`Mão cheia: ${l==='m'?'você':'oponente'} descartou ${extra} carta${extra>1?'s':''}`);if(l==='m')toast(`Mão cheia: ${extra} carta${extra>1?'s':''} para o cemitério`);}
- render();}
+ render();if(extra)await aoDescartar(l,extra);}
 async function tiraFrente(l,i,n,txt){const ol=OL(l),a=FD(ol)[i];if(!a)return;const el=cardEl(l,i),eb=cardEl(ol,i);if(el&&eb)await raio(R(el),R(eb));const antes=P(a,ol);await buff(ol,i,-n,txt||('−'+n));lg(`${txt||'−'+n}: ${a.n} ${antes} → ${Math.max(0,antes-n)}`);}
 // ---------- efeitos ao entrar ----------
 async function entrar(c,l,i){
@@ -1231,7 +1279,36 @@ async function entrar(c,l,i){
  if(e.deckFront&&O[i]&&P(O[i],ol)<=e.deckFront){const a=O[i];say(a.n+' vai para o fundo');cls(cardEl(ol,i),'die',450);await w(420);O[i]=null;if(!a.token)(ol==='o'&&S.odeck?S.odeck:S.deck).unshift(carta(a.code,a.v));render();}
  if(e.stealFront&&O[i]&&P(O[i],ol)<=e.stealFront){const j=vazia(l);if(j>=0){const a=O[i];O[i]=null;F[j]=a;a.stun=false;say(a.n+' muda de lado');render();cls(cardEl(l,j),'rise',600);await w(500);}}
  if(e.stealHand){if(HO.length){const k=Math.floor(Math.random()*HO.length),x=HO.splice(k,1)[0];if(H.length<7)H.push(x);say('rouba 1 carta');render();await w(400);}else{say('mão vazia: 2 no líder');await dano(ol,2,R(cardEl(l,i)));}}
- if(e.discard&&HO.length){const k=Math.floor(Math.random()*HO.length),x=HO.splice(k,1)[0];S.cem.unshift({...x,lado:ol});say('oponente descarta');render();await w(400);}
+ if(e.discard&&HO.length){const k=Math.floor(Math.random()*HO.length),x=HO.splice(k,1)[0];S.cem.unshift({...x,lado:ol});say('oponente descarta');render();await w(400);await aoDescartar(ol,1);}
+ if(e.scarBest){let k=-1;F.forEach((x,j)=>{if(x&&x!==c&&(k<0||P(x,l)>P(F[k],l)))k=j;});if(k<0)k=i;say('cicatriz na mais forte');await cicatriz(l,k);}
+ if(e.honor){const n=1+F.filter(x=>x&&x.cic).length;say('Golpe de Honra: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.scarAll){say('cicatriz em todas');for(let j=0;j<NL;j++)if(j!==i&&F[j])await cicatriz(l,j);src(c,l);}
+ if(e.gust){let any=0;for(const j of [i-1,i,i+1]){const x=O[j];if(j<0||j>=NL||!x)continue;x.deb={t:S.turn,n:((x.deb&&x.deb.t===S.turn)?x.deb.n:0)+e.gust};pop(ol,j,'areia −'+e.gust);any=1;}say(any?'Vento do Deserto':'vento sem alvo');render();await w(350);}
+ if(e.ambush){const n=1+fracas(ol);say('Emboscada: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.ember){const k=ladoForte(l,i);if(k>=0){F[k].atrop=1;say('Brasa: Atropelar na carta ao lado');pop(l,k,'Atropelar');lg(F[k].n+' ganhou Atropelar');await w(350);}else say('sem carta ao lado');}
+ if(e.fireCount){const n=1+F.filter(x=>x&&!x.novo&&atropela(x,l)).length;say('Bola de Fogo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.coins){moeda(l,e.coins);say('+'+e.coins+' moedas');await w(300);}
+ if(e.poison){const g=Math.min(e.poison,MOE(l));if(g)moeda(l,-g);say('Veneno: '+(1+g)+' no oponente');await dano(ol,1+g,R(cardEl(l,i)));}
+ if(e.stealMana){S.pend[l]=(S.pend[l]||0)+e.stealMana;S.pend[ol]=(S.pend[ol]||0)-e.stealMana;say('rouba '+e.stealMana+' de mana');lg(`${l==='m'?'Você roubou':'O oponente roubou'} ${e.stealMana} de mana para o próximo dia`);await w(300);await rouboFeito(l);src(c,l);}
+ if(e.cannon){const n=1+H.filter(x=>x&&x.roub).length+F.filter(x=>x&&x.roub).length;say('Tiro de Canhão: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.spore1){say('solta um esporo');await ganhaEsporo(l,e.spore1);src(c,l);}
+ if(e.toxic){const n=1+e.toxic*F.filter(ehEsporo).length;say('Esporo Tóxico: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.bloomN){const n=F.filter(x=>!x).length;if(n){say('Floração: '+n+' Esporo'+(n>1?'s':''));await ganhaEsporo(l,n);src(c,l);}else say('Floração: campo cheio');}
+ if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
+ if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
+ if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
+ if(e.sq){const k=ladoForte(l,i);if(k>=0){say('+'+e.sq+' na carta ao lado');await buff(l,k,e.sq,'+'+e.sq);}}
+ if(e.charge2){const n=Math.min(e.charge2[1],F.filter(x=>x&&x!==c).length*e.charge2[0]);if(n){say('Carga: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}}
+ if(e.healPer){const n=F.filter(x=>x&&x!==c).length*e.healPer;if(n){say('cura '+n);cura(l,n);await w(350);}}
+ if(e.graveHit){const n=Math.floor(CEM(l)/e.graveHit);if(n){say('Toque da Cova: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('cemitério ainda raso');}
+ if(e.whisper){say('Sussurro: 1 no oponente');await dano(ol,1,R(cardEl(l,i)));if(F[i]===c)await alma(l,i,c.v===2?1:2);}
+ if(e.pact){const n=1+F.reduce((t,x)=>t+((x&&x.almas)||0),0);say('Pacto: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.missile){const n=1+(l==='m'?S.mana:(S.omanaSobra||0));say('Míssil: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.ward2){S.guard[l]=(S.guard[l]||0)+e.ward2;say('previne os próximos '+e.ward2+' de dano');await w(300);}
+ if(e.truce){S.truce[l]=S.turn;say('Trégua: você não perde vida hoje');await w(350);}
+ if(e.tsunami)c.entrou=S.turn;
+ if(e.reboot&&!REB){const k=ladoForte(l,i,x=>!x.token&&!EF(x).reboot&&!EF(x).source);if(k>=0){say('repete '+F[k].hab);REB++;try{await entrar(F[k],l,k);}finally{REB--;}src(c,l);}}
+ if(e.source&&!REB){say('repete as entradas');REB++;try{for(let j=0;j<NL;j++){const x=F[j];if(j!==i&&x&&!x.token&&!x.novo&&x.v<10&&!EF(x).source)await entrar(x,l,j);}}finally{REB--;}src(c,l);}
  if(e.token)await criarFicha(l,c.code,e.token[0],e.token[1]);
  if(e.fillTokens){let j;while((j=vazia(l))>=0)await criarFicha(l,c.code,e.fillTokens[0],e.fillTokens[1],j);}
  if(e.sacGain||e.sacBlast){const k=maisFraca(F,i);if(k>=0){const v=F[k],g=P(v,l);say('sacrifica '+v.n);cls(cardEl(l,k),'die',450);await w(420);F[k]=null;if(!v.token)S.cem.unshift({...v,lado:l});render();
@@ -1256,8 +1333,20 @@ async function morrer0(l,i,killer){src(null);
  if(e.returnHalf&&!c.voltou){const p=Math.max(1,Math.ceil(c.v/2));F[i]={...c,pw:p,voltou:true,stun:false,id:Math.random()};render();cls(cardEl(l,i),'rise',600);pop(l,i,'☠ volta com '+p);lg(`☠ ${c.n} voltou com ${p} de poder`);await w(400);return;}
  F[i]=null;
  if(e.deathToHand&&!c.token&&HD(l).length<7){HD(l).push(carta(c.code,c.v));lg(`📖 ${c.n} voltou para a mão`);}
- else if(!c.token)S.cem.unshift({...c,lado:l});
- render();lg(`✝ ${nome(c,l==='m')} caiu`);
+ else if(!c.token){const kl=killer?lado(killer):null;
+   if(kl&&EF(killer).wave&&!killer.cai)c._onda=1;
+   else if(kl&&kl!==l&&!killer.cai&&(EF(killer).loot||TEM(kl,'captain',killer)))c._saque=kl;
+   else S.cem.unshift({...c,lado:(kl&&EF(killer).reap)?kl:l});}
+ render();lg(`${nome(c,l==='m')} caiu`);
+ if(c._onda){delete c._onda;const kl=lado(killer),w0=EF(killer).wave;src(killer,kl);lg(`Onda: ${c.n} volta para a mão e o dono perde ${w0} de vida`);await paraMao(l,c);await dano(l,w0,R(slotEl(l,i)));src(c,l);}
+ if(c._saque){const kl=c._saque;delete c._saque;const n=carta(c.code,c.v);n.roub=1;HD(kl).push(n);src(killer,kl);lg(`Saque: ${c.n} foi roubada para a mão ${kl==='m'?'sua':'do oponente'}`);pop(kl,FD(kl).indexOf(killer),'Saque');render();await w(350);await rouboFeito(kl);await descarteCheia(kl);src(c,l);}
+ if(e.grave&&!c.token){let k=-1;S.cem.forEach((x,j)=>{if(x.id!==c.id&&x.lado===l&&!x.token&&x.v<=e.grave&&(k<0||x.v>S.cem[k].v))k=j;});if(k>=0&&HD(l).length<7){const x=S.cem.splice(k,1)[0];HD(l).push(carta(x.code,x.v));lg(`Coveiro: ${x.n} saiu do cemitério para a mão`);pop(l,i,'Coveiro: pega '+x.v);render();await w(350);}}
+ if(c.spo&&!c.token&&!F[i]){F[i]=fichaEsporo(c.spo);render();cls(cardEl(l,i),'rise',600);pop(l,i,'Esporo '+F[i].pw);lg(`Os esporos de ${c.n} ficaram no campo`);await w(320);}
+ if(!c.token)for(let k=0;k<NL;k++){const x=F[k];if(x&&x!==c&&!x.novo&&EF(x).decomp){src(x,l);pop(l,k,'Decompositor');await ganhaEsporo(l,EF(x).decomp);src(c,l);}}
+ if(e.deathSpore&&!F[i]){await esporo(l,e.deathSpore,i);src(c,l);}
+ if(e.deathBuffSide){const k=ladoForte(l,i);if(k>=0)await buff(l,k,e.deathBuffSide,'Reparo +'+e.deathBuffSide);}
+ if(e.undertow&&killer&&!killer.cai){const kl=lado(killer);if(kl){const k=FD(kl).indexOf(killer);lg(`Correnteza: ${killer.n} volta para a mão`);await devolve(kl,k,'Correnteza');}}
+ if(!c.token&&!F[i]){const lord=F.find(x=>x&&x!==c&&!x.novo&&EF(x).boneLord);if(lord){src(lord,l);await criarFicha(l,lord.code,1,'Esqueleto',i);src(c,l);}}
  if(e.wreck&&killer){const kl=lado(killer);if(kl){const k=FD(kl).indexOf(killer);lg(`⚓ Naufrágio: ${killer.n} −${e.wreck}`);await buff(kl,k,-e.wreck,'⚓ −'+e.wreck);}}
  if(e.deathHeal){cura(l,e.deathHeal);lg(`🌱 +${e.deathHeal} de vida`);}
  if(e.deathHit)await dano(ol,e.deathHit,R(slotEl(l,i)));
@@ -1273,12 +1362,16 @@ async function morrer0(l,i,killer){src(null);
 async function bate(l,i){
  const c=FD(l)[i];if(!c)return;const e=EF(c),el=cardEl(l,i),ol=OL(l);
  src(null);if(c.stun){pop(l,i,'⚓ presa');await w(300);return;}
- if(e.barrier){src(c,l);pop(l,i,'🛡 barreira não ataca');await w(300);return;}
+ if(e.barrier||(e.elem&&!TEM(l,'avatar',c))){src(c,l);pop(l,i,'barreira não ataca');await w(300);return;}
  src(c,l);if(e.atkBonus)registrar();
- const d=P(c,l)+(e.atkBonus||0);if(d<=0)return;
+ let d=P(c,l)+(e.atkBonus||0);if(d<=0)return;
+ {const v=TEM(ol,'veil');if(v){const g=Math.min(d,v);d-=g;S.prev[ol]+=g;lg(`Véu da Luz preveniu ${g} de dano`);const vj=FD(ol).findIndex(x=>x&&!x.novo&&EF(x).veil);if(vj>=0)pop(ol,vj,'Véu: −'+g);}}
+ let feito=0;
  await investida(el,l==='m'?-28:28);
  lg(`→ ${nome(c,l==='m')} bateu ${d} no líder ${l==='m'?'inimigo':'seu'}`);
- {const f0=FONTE,f1=FC;FONTE=null;FC=null;guardaExp(`${ator(c,l)}, bateu ${d} no líder rival.`,i,'dano');await dano(ol,d,R(el));FONTE=f0;FC=f1;}
+ {const f0=FONTE,f1=FC;FONTE=null;FC=null;guardaExp(`${ator(c,l)}, bateu ${d} no líder rival.`,i,'dano');feito=await dano(ol,d,R(el));FONTE=f0;FC=f1;}
+ if(feito>0)for(let j=0;j<NL;j++){const x=FD(ol)[j];if(x&&!x.novo&&EF(x).veteran){const f0=FONTE,f1=FC;src(x,ol);await cicatriz(ol,j);FONTE=f0;FC=f1;}}
+ if(e.seduce&&feito>0&&HD(ol).length){const x=HD(ol)[Math.floor(Math.random()*HD(ol).length)];pop(l,i,'Sedução');await alma(l,i,valeAlma(x)||1);}
  
  if(e.doubleHit&&S.ml>0&&S.ol>0){pop(l,i,'⚔ de novo');await investida(el,l==='m'?-28:28);{const f1=FC;FC=null;await dano(ol,d,R(el));FC=f1;}}
  if(e.lifesteal){cura(l,d);pop(l,i,'🩸 +'+d);}
@@ -1287,7 +1380,9 @@ async function bate(l,i){
  await w(150);
 }
 async function luta(i,a,b){ // a = sua, b = inimiga
- const ea=EF(a),eb=EF(b);
+ const ea=EF(a),eb=EF(b);S.lutou[i]={m:a.id,o:b.id};
+ const wa=[i-1,i+1].some(j=>S.mine[j]&&!S.mine[j].novo&&EF(S.mine[j]).wall),wb=[i-1,i+1].some(j=>S.theirs[j]&&!S.theirs[j].novo&&EF(S.theirs[j]).wall);
+ const va=(ea.lshield||0)+(S.truce.m===S.turn&&!ea.truce?2:0),vb=(eb.lshield||0)+(S.truce.o===S.turn&&!eb.truce?2:0);
  src(null);
  const ra=R(cardEl('m',i)),rb=R(cardEl('o',i)),gap=(ra.y-(rb.y+rb.h))/2+8;
  src(a,'m');if(ea.corrode){await buff('o',i,-ea.corrode,'🧪 −'+ea.corrode);if(S.theirs[i]!==b)return;}
@@ -1311,15 +1406,22 @@ async function luta(i,a,b){ // a = sua, b = inimiga
  if((ea.mirage&&!a.mir)||(eb.mirage&&!b.mir)){const ql=(ea.mirage&&!a.mir)?'m':'o',qc=ql==='m'?a:b;qc.mir=1;src(qc,ql);pop(ql,i,'🏜 Miragem: ninguém cai');lg('🏜 Miragem');await w(400);await buff(ql,i,EF(qc).mirage,'🏜 +'+EF(qc).mirage);return;}
  let ma=pa<pb,mb=pb<pa;
  if(pa===pb){
-   if(ea.first&&!eb.first){mb=true;src(a,'m');pop('m',i,'⚡ primeiro golpe');}
-   else if(eb.first&&!ea.first){ma=true;src(b,'o');pop('o',i,'⚡ primeiro golpe');}
+   if((ea.first||wa)&&!(eb.first||wb)){mb=true;src(a,'m');pop('m',i,wa&&!ea.first?'Muralha: vence o empate':'primeiro golpe');}
+   else if((eb.first||wb)&&!(ea.first||wa)){ma=true;src(b,'o');pop('o',i,wb&&!eb.first?'Muralha: vence o empate':'primeiro golpe');}
    else{ma=!ea.armor;mb=!eb.armor;if(ea.armor){src(a,'m');pop('m',i,'🔨 Armadura');}if(eb.armor){src(b,'o');pop('o',i,'🔨 Armadura');}src(null);}
  }
- const perde=async(l,c,k)=>{if(EF(c).shield&&(c.esc||0)<EF(c).shield){src(c,l);c.esc=(c.esc||0)+1;c.pw=1;render();cls(cardEl(l,i),'rise',600);pop(l,i,'🛡 Escudo: fica com 1');lg(`🛡 ${c.n} sobreviveu`);await w(420);return false;}await morrer(l,i,k);return true;};
+ if(va&&pb>0){ma=pb-va>=pa;S.prev.m+=Math.min(va,pb);src(a,'m');pop('m',i,'previne '+Math.min(va,pb));lg(`${a.n} preveniu ${Math.min(va,pb)} do golpe`);}
+ if(vb&&pa>0){mb=pa-vb>=pb;S.prev.o+=Math.min(vb,pa);src(b,'o');pop('o',i,'previne '+Math.min(vb,pa));lg(`${b.n} preveniu ${Math.min(vb,pa)} do golpe`);}
+ a.cai=ma;b.cai=mb;
+ const perde=async(l,c,k)=>{if(EF(c).stone){const h=Math.floor(c.pw/2);if(h>=1){src(c,l);c.pw=h;c.cai=false;render();cls(cardEl(l,i),'rise',600);pop(l,i,'Pele de Pedra: fica com '+h);lg(`${c.n} não caiu: ficou com ${h} de poder`);await w(420);return false;}}if(EF(c).shield&&(c.esc||0)<EF(c).shield){src(c,l);c.esc=(c.esc||0)+1;c.pw=1;render();cls(cardEl(l,i),'rise',600);pop(l,i,'🛡 Escudo: fica com 1');lg(`🛡 ${c.n} sobreviveu`);await w(420);return false;}await morrer(l,i,k);return true;};
  const da=ma?await perde('m',a,b):false, db=mb?await perde('o',b,a):false;
  // vencedores
- const ganhou=async(l,c,pc,po,matou)=>{const e=EF(c),ol=OL(l);if(FD(l)[i]!==c)return;src(c,l);
+ const ganhou=async(l,c,pc,po,matou,x)=>{const e=EF(c),ol=OL(l);if(FD(l)[i]!==c)return;src(c,l);
+   if(e.spark){pop(l,i,'Faísca');await dano(ol,e.spark,R(slotEl(l,i)));}
+   if(matou&&!e.trample&&atropela(c,l)&&pc-po>0){pop(l,i,'Atropelar: '+(pc-po));lg(`${c.n} atropelou: ${pc-po} no oponente`);await dano(ol,pc-po,R(slotEl(l,i)));if(FD(l)[i]!==c)return;}
    if(matou){
+     if(e.elem)await buff(l,i,e.elemWin||1,'venceu +'+(e.elemWin||1));
+     if(e.corrupt)await alma(l,i,e.corrupt);else if(valeAlma(x)&&TEM(l,'soulLord',c))await alma(l,i,valeAlma(x));
      if(e.trample&&pc>po){const x=pc-po;pop(l,i,'➹ atropela '+x);await dano(ol,x,R(slotEl(l,i)));}
      if(e.sweep){for(const j of [i-1,i+1])if(j>=0&&j<NL&&FD(ol)[j])await buff(ol,j,-e.sweep,'⚔ −'+e.sweep);}
      if(e.reaper)await buff(l,i,e.reaper,'🏆 +'+e.reaper);
@@ -1330,7 +1432,7 @@ async function luta(i,a,b){ // a = sua, b = inimiga
    }
    if(e.growSurvive)await buff(l,i,e.growSurvive,'💢 +'+e.growSurvive);
  };
- await ganhou('m',a,pa,pb,db);await ganhou('o',b,pb,pa,da);
+ await ganhou('m',a,pa,pb,db,b);await ganhou('o',b,pb,pa,da,a);a.cai=b.cai=false;
  src(b,'o');if(eb.poison&&S.mine[i]===a)await buff('m',i,-eb.poison,'☣ −'+eb.poison);
  src(a,'m');if(ea.poison&&S.theirs[i]===b)await buff('o',i,-ea.poison,'☣ −'+ea.poison);
 }
@@ -1348,6 +1450,12 @@ async function coluna(i){
 }
 // ---------- fim do turno ----------
 async function fimDoTurno(){
+ for(const l of ['m','o'])for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c)continue;const e=EF(c);src(c,l);
+   if(e.root&&S.curou[l])await buff(l,j,e.root,'Raiz +'+e.root);
+   if(e.faith&&S.prev[l]>0)await buff(l,j,e.faith,'Fé +'+e.faith);}
+ for(const l of ['m','o'])for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||!EF(c).tsunami||c.entrou!==S.turn)continue;const ol=OL(l);src(c,l);let any=0;
+   for(let k=0;k<NL;k++){const x=FD(ol)[k],r=S.lutou[k];if(k===j||!x||!r||r[ol]!==x.id)continue;if(!any){any=1;pop(l,j,'Maremoto');lg('Maremoto: as cartas que sobreviveram voltam para a mão');await w(350);}await devolve(ol,k,'Maremoto');}}
+ src(null);S.curou={m:0,o:0};S.prev={m:0,o:0};S.guard={m:0,o:0};S.lutou={};
  for(const l of ['m','o'])for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c)continue;const e=EF(c);
    src(c,l);if(FD(l)[j]!==c)continue;
    if(e.grow)await buff(l,j,e.grow,'🔗 +'+e.grow);
@@ -1359,13 +1467,13 @@ async function fimDoTurno(){
  for(const l of ['m','o'])FD(l).forEach(c=>{if(c)c.stun=false;});
 }
 function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaAura:0),0);}
-function compraExtra(l){return FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0;}
+function compraExtra(l){return (FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0)+TEM(l,'drawAura');}
 
-function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),odeck:(typeof baralhoOp==='function'?baralhoOp():null),hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
- for(let k=0;k<7;k++){S.hand.push(compra('m'));S.oh.push(compra('o'));}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);render();setTimeout(banner,250);}
+function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),moedas:{m:0,o:0},odeck:((typeof baralhoOp==='function'&&baralhoOp())||baralhoDe(escOp())),guard:{m:0,o:0},prev:{m:0,o:0},truce:{m:0,o:0},curou:{m:0,o:0},lutou:{},hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
+ for(let k=0;k<7;k++){S.hand.push(compra('m'));S.oh.push(compra('o'));}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);if(!(typeof HB!=='undefined'&&HB&&HB.viva)&&ESCOU){lg('Oponente joga com '+Object.values(ESCOU).map(c=>CL[c].name).join(', '));setTimeout(()=>toast('Oponente: '+Object.values(ESCOU).map(c=>CL[c].name).join(', ')),900);}render();setTimeout(banner,250);}
 function lg(t,tit){S.log.unshift({t,tit});if(S.log.length>150)S.log.pop();}
 function nome(c,me){return c.n+(me?' (sua)':' (inimiga)');}
-function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
+function render(){custos();if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
  $('#mLife span').textContent=S.ml;$('#oLife span').textContent=S.ol;
  $('#oHand').innerHTML='<i></i>'.repeat(S.oh.length);
  $('#turn').textContent=(S.busy?'Batalha':ORD(S.turn,1))+' · baralho '+S.deck.length+' · compra '+comprasDoDia(S.turn+1);
@@ -1374,7 +1482,7 @@ function render(){if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
  const sc=S.sel>=0?S.hand[S.sel]:null,drag=!!DR;
  $('#mRow').innerHTML=S.mine.map((c,i)=>`<div class="slot ${!c&&(sc||drag||S.mov>=0)?'can':''} ${c&&(sc||drag)&&!S.trocou?'swap':''} ${S.lane===i?'lane':''} ${S.mov===i?'mv':''}" data-i="${i}" data-sy="${NKY[LN[i]].sym}" style="--lc:${NKY[LN[i]].cor}"><i class="sg s-${LN[i]}"><b>${NKY[LN[i]].sym}</b><small>${NKY[LN[i]].nome}</small></i>${c?cell(c):(S.mov>=0&&!sc&&!drag?`<u class="mvc ${Math.abs(S.mov-i)>S.mana?'no':''}"><b>${Math.abs(S.mov-i)}</b></u>`:'')}</div>`).join('');
  $('#hand').innerHTML=S.hand.map((c,i)=>`<div class="hc ${i===S.sel?'sel':''} ${c.cost>S.mana?'off':''}" data-i="${i}" style="${DR&&DR.i===i?'opacity:.25':''}${S.hide&&S.hide.has(c.id)?';visibility:hidden':''}">${cardHTML(c)}</div>`).join('');
- $('#mana').innerHTML=Array.from({length:Math.min(6,Math.max(S.max,S.mana))},(_,i)=>`<i class="${i<S.mana?'f':''}"></i>`).join('')+`<span>${S.mana}/${S.max}</span>`;
+ $('#mana').innerHTML=Array.from({length:Math.min(6,Math.max(S.max,S.mana))},(_,i)=>`<i class="${i<S.mana?'f':''}"></i>`).join('')+`<span>${S.mana}/${S.max}</span>`+(MOE('m')?`<b class="moe"><i></i>${MOE('m')}</b>`:'');
  $('#pass').disabled=S.busy;
  $('#cemN').textContent=S.cem.length||'';
  $('#hint').textContent=S.busy?'':(sc||drag)?(S.trocou?'Casa dourada para baixar · troca já usada neste turno':'Casa dourada para baixar · ⇄ para trocar (1 por turno)'):'Arraste uma carta até o campo · toque 2 vezes para ver';
@@ -1437,14 +1545,17 @@ function destravarVoz(frase){try{somCtx();}catch(e){}const el=$('#vozT');if(el)e
 
 // ---------- vida ----------
 async function dano(lado,n,de){ // lado = líder que recebe ('m' ou 'o')
- if(n<=0)return;registrar('dano');sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
+ if(n<=0)return 0;
+ if(S.truce&&S.truce[lado]===S.turn){S.prev[lado]+=n;lg(`Trégua Celestial preveniu ${n} de dano`);return 0;}
+ if(S.guard&&S.guard[lado]>0){const g=Math.min(n,S.guard[lado]);S.guard[lado]-=g;S.prev[lado]+=g;n-=g;lg(`Lança da Aurora preveniu ${g} de dano`);if(n<=0)return 0;}
+ registrar('dano');sfx('hit');const av=$(lado==='m'?'#mAv':'#oAv'),ra=R(av);
  if(de)await orb(de,ra);
  if(lado==='m')S.ml=Math.max(0,S.ml-n);else S.ol=Math.max(0,S.ol-n);
  $(lado==='m'?'#mLife span':'#oLife span').textContent=lado==='m'?S.ml:S.ol;
  cls(av,'hit',400);cls($(lado==='m'?'#mLife':'#oLife'),'dmg',500);num(ra.cx+34,ra.cy,n);burst(ra.cx,ra.cy,'#ff6b66',14);if(n>=4)quake();
- $('#mLife').classList.toggle('baixa',S.ml<=10);$('#oLife').classList.toggle('baixa',S.ol<=10);
+ $('#mLife').classList.toggle('baixa',S.ml<=10);$('#oLife').classList.toggle('baixa',S.ol<=10);return n;
 }
-function cura(lado,n){registrar();const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
+function cura(lado,n){if(n>0&&S.curou)S.curou[lado]=1;registrar();const g=Math.min(n,MAXV-(lado==='m'?S.ml:S.ol));if(g<=0)return;sfx('heal',.8);if(lado==='m')S.ml+=g;else S.ol+=g;const ra=R($(lado==='m'?'#mAv':'#oAv'));num(ra.cx+34,ra.cy,g,true);render();}
 
 // ---------- entrada de carta ----------
 async function baixar(lado,c,i,de,oculta){
@@ -1539,7 +1650,7 @@ function painel(q){
  $('#sheet').classList.remove('on');$('#dim').classList.remove('on');
  let t='',h='';
  if(q==='regras'){t='Regras';h=`<p class="lema">Derrube o líder inimigo de <b>${VIDA}</b> para <b>0</b>.</p>
- <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Os dois jogadores compram do mesmo baralho. A pilha ao lado do campo mostra quantas restam.</li></ul>
+ <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Cada jogador tem o próprio baralho, a própria compra e o próprio cemitério. Os dois podem escolher os mesmos planetas.</li></ul>
  <h4>Cartas</h4><ul><li>Número no canto: o <b>poder</b> (ataque e defesa).</li><li>Diamante azul: o <b>custo de mana</b>. 2 e 3 custam 1, 4 e 5 custam 2, 6 e 7 custam 3, 8 e 9 custam 4, o 10 custa 5.</li><li>Toda carta tem habilidade. Cada <b>planeta</b> tem 5 habilidades, uma por dupla de números e uma para o 10, e elas valem para as duas classes do planeta. São 80 no jogo e nenhuma se repete entre planetas.</li><li>Número verde: poder aumentado por habilidade. Vermelho: poder reduzido.</li></ul>
  <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por dia, sem limite.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>Cada jogador começa com <b>7 cartas</b>. No começo de cada dia, cada lado compra: <b>1 carta</b> do 1º ao 3º dia, <b>2</b> do 4º ao 6º, <b>3</b> do 7º ao 10º e <b>4</b> do 11º em diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério. Se uma carta do campo <b>volta</b> para uma mão cheia, o dono escolhe uma carta da mão para descartar.</li></ul>
  <h4>Mudar de campo</h4><ul><li>Enquanto prepara as cartas, toque numa carta sua que está no campo e depois numa casa vazia para movê-la.</li><li>Custa <b>1 de mana por casa</b> de distância: a casa ao lado custa 1, a seguinte custa 2.</li><li>Os efeitos de entrada não ativam de novo.</li></ul>
@@ -1582,7 +1693,8 @@ $('#pass').onclick=async()=>{
  if(S.ol<=0||S.ml<=0){await w(700);S.ol<=0&&S.ml<=0?fim(false,'Os dois líderes caíram juntos. Empate.'):S.ol<=0?fim(true,'O líder inimigo caiu no turno '+S.turn+'.'):fim(false,'Seu líder caiu no turno '+S.turn+'.');return;}
  // fim do turno
  const cres=[];
- S.turn++;S.max=S.turn;S.mana=S.max+(S.pend.m||0)+auraMana('m');S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
+ S.turn++;S.max=S.turn;S.mana=Math.max(0,S.max+(S.pend.m||0)+auraMana('m'));S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
+ for(const l of ['m','o']){const r=TEM(l,'route');if(r)moeda(l,r);for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||c.novo||!EF(c).kingShop||MOE(l)<2)continue;let k=-1;FD(l).forEach((x,q)=>{if(x&&x!==c&&(k<0||P(x,l)<P(FD(l)[k],l)))k=q;});if(k<0)continue;src(c,l);moeda(l,-2);await buff(l,k,EF(c).kingShop,'compra +'+EF(c).kingShop);src(null);}}
  {const n=comprasDoDia(S.turn);await comprar('m',n+compraExtra('m'),true);await comprar('o',n+compraExtra('o'),true);if(n>1)lg(`📚 Neste dia cada lado compra ${n}`);}
  if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.omanaExtra=0;}
  lg(ORD(S.turn),1);render();banner();
@@ -1592,25 +1704,32 @@ $('#pass').onclick=async()=>{
 </script>
 <script>
 // ---------- escolha de naipes ----------
-function abrirEscolha(){musica('calma');
+function abrirEscolha(){musica('calma');ESCQ='m';
  window.ABR=null;desenhaEsc();
  attEsc();show('escolha');
 }
-function desenhaEsc(){
- $('#nGrid').innerHTML=Object.entries(NAIPES).map(([k,N])=>{const c=CL[ESC[k]],on=ABR===k;
-  return `<section class="rs ${on?'on':''}" style="--nc:${N.cor}"><button class="rsh" data-ab="${k}"><i class="rsa" style="background-image:url(s/${c.code}.webp)"></i><span class="rsd"><span>${N.sym}</span></span><span class="rsx"><small>${N.nome}</small><b>${c.name}</b><em>${c.pl}</em></span></button>
-  ${on?`<div class="rsl">${CLASSES.filter(x=>x.s===k).map(x=>`<button class="rhx ${x.code===c.code?'on':''} ${typeof hTem==='function'&&!hTem(x.code)?'tr':''}" data-n="${k}" data-c="${x.code}" aria-label="${x.name}"><i style="background-image:url(s/${x.code}.webp)"></i><b>${x.name}</b></button>`).join('')}</div>
-  <button class="rver" data-c="${c.code}"><i></i>Ver as cartas de ${c.name}</button>`:''}</section>`}).join('');
- $('#nInfo').textContent='4 classes · 2 baralhos · 72 cartas';}
+function desenhaEsc(){const op=ESCQ==='o',E=op?ESCO:ESC;
+ const aba=(q,t)=>`<button class="escq" data-q="${q}" style="flex:1;padding:11px 6px;font:600 13px/1 var(--ft,inherit);letter-spacing:.06em;text-transform:uppercase;border:1px solid ${ESCQ===q?'var(--ts,#c8aa6e)':'rgba(200,170,110,.25)'};background:${ESCQ===q?'rgba(200,170,110,.16)':'transparent'};color:${ESCQ===q?'var(--ts,#c8aa6e)':'#9aa4a8'}">${t}</button>`;
+ $('#nGrid').innerHTML=`<div style="grid-column:1/-1;display:flex;gap:8px;margin-bottom:4px">${aba('m','Seu baralho')}${aba('o','Oponente')}</div>`+Object.entries(NAIPES).map(([k,N])=>{const c=CL[E[k]]||null,on=ABR===k,cod=c?c.code:CLASSES.find(x=>x.s===k).code;
+  return `<section class="rs ${on?'on':''}" style="--nc:${N.cor}"><button class="rsh" data-ab="${k}"><i class="rsa" style="background-image:url(s/${cod}.webp)${c?'':';filter:grayscale(1) brightness(.6)'}"></i><span class="rsd"><span>${N.sym}</span></span><span class="rsx"><small>${N.nome}</small><b>${c?c.name:'Aleatório'}</b><em>${c?c.pl:'sorteado entre os planetas novos'}</em></span></button>
+  ${on?`<div class="rsl">${op?`<button class="rhx ${c?'':'on'}" data-n="${k}" data-c="" aria-label="Aleatório"><i style="background-image:url(art/costa.webp)"></i><b>Aleatório</b></button>`:''}${CLASSES.filter(x=>x.s===k).map(x=>`<button class="rhx ${c&&x.code===c.code?'on':''} ${!op&&typeof hTem==='function'&&!hTem(x.code)?'tr':''}" data-n="${k}" data-c="${x.code}" aria-label="${x.name}"><i style="background-image:url(s/${x.code}.webp)"></i><b>${NOVOS.includes(x.code)?'<u style="display:inline-block;width:6px;height:6px;border-radius:50%;background:#7dffa8;margin-right:4px;vertical-align:middle"></u>':''}${x.name}</b></button>`).join('')}</div>
+  ${c?`<button class="rver" data-c="${c.code}"><i></i>Ver as cartas de ${c.name}</button>`:''}`:''}</section>`}).join('');
+ $('#nInfo').textContent=op?'Baralho do oponente · 72 cartas':'4 classes · 2 baralhos · 72 cartas';}
 function attEsc(){desenhaEsc();}
-$('#nGrid').addEventListener('click',e=>{const a=e.target.closest('.rsh');if(a){ABR=ABR===a.dataset.ab?null:a.dataset.ab;desenhaEsc();return;}const vc=e.target.closest('.rver');if(vc){galAbrir(vc.dataset.c,'escolha');return;}const b=e.target.closest('.rhx');if(!b)return;if(b.classList.contains('tr')){toast('Libere este baralho no modo História');return;}ESC[b.dataset.n]=b.dataset.c;desenhaEsc();});
+{const z0=abrirZoom;abrirZoom=function(c,i){z0(c,i);if(!c||!c.spo)return;const meu=S.mine.includes(c),pode=meu&&!S.busy&&!S.combate&&S.espMov!==S.turn&&!(typeof ONL!=='undefined'&&ONL.guest),k=S.mine.indexOf(c);
+ let h=`<span class="zf" style="display:block;margin-top:8px;color:#9fe3a8">Esporos nesta carta: ${c.spo}</span>`;
+ if(pode){const outras=S.mine.some((x,q)=>x&&q!==k);h+=`<span style="display:flex;gap:8px;margin-top:10px">${outras?'<button class="ghost" id="zEspM" style="flex:1">Mover</button>':''}${!c.token&&vazia('m')>=0?'<button class="ghost" id="zEspS" style="flex:1">Soltar</button>':''}</span>`;}
+ else if(meu&&S.espMov===S.turn)h+='<span class="zf" style="display:block;margin-top:6px;opacity:.7">Você já mexeu nos esporos neste dia.</span>';
+ $('#zp').insertAdjacentHTML('beforeend',h);
+ const m=$('#zEspM'),s2=$('#zEspS');if(m)m.onclick=async()=>{$('#zClose').click();const d=await espEscolhe(k);if(d>=0)espMover(k,d);};if(s2)s2.onclick=()=>{$('#zClose').click();espSoltar(k);};};}
+$('#nGrid').addEventListener('click',e=>{const q=e.target.closest('.escq');if(q){ESCQ=q.dataset.q;ABR=null;desenhaEsc();return;}const a=e.target.closest('.rsh');if(a){ABR=ABR===a.dataset.ab?null:a.dataset.ab;desenhaEsc();return;}const vc=e.target.closest('.rver');if(vc){galAbrir(vc.dataset.c,'escolha');return;}const b=e.target.closest('.rhx');if(!b)return;if(b.classList.contains('tr')){toast('Libere este baralho no modo História');return;}if(ESCQ==='o'){ESCO[b.dataset.n]=b.dataset.c;try{localStorage.setItem('gm-classes-op',JSON.stringify(ESCO));}catch(e){}}else ESC[b.dataset.n]=b.dataset.c;desenhaEsc();});
 // escolha de classes: segurar o dedo numa classe mostra os 5 poderes dela
 let NHT=0,NHS=false;
 function nhAbrir(b){const k=b.dataset.n,c=CL[b.dataset.c],N=NAIPES[k],o=$('#nhPop');o.style.setProperty('--nc',N.cor);
  o.innerHTML=`<div class="nhp"><div class="nhp-h"><i class="nhp-a" style="background-image:url(s/${c.code}.webp)"></i><div><small>${N.sym}\uFE0E ${N.nome} · ${c.pl}</small><b>${c.name}</b></div></div><div class="nhp-l">${CHAB[c.code].map((H,t)=>`<div class="nhr"><i>${FAIXA[t+1]}</i><div><b>${H.n}</b><p>${H.fx}</p></div></div>`).join('')}</div><em>Toque para fechar</em></div>`;
  o.classList.add('on');}
 function nhFechar(){$('#nhPop').classList.remove('on');}
-$('#nGrid').addEventListener('pointerdown',e=>{const b=e.target.closest('.rhx');if(!b)return;NHS=false;clearTimeout(NHT);NHT=setTimeout(()=>{NHS=true;nhAbrir(b);},320);});
+$('#nGrid').addEventListener('pointerdown',e=>{const b=e.target.closest('.rhx');if(!b||!b.dataset.c)return;NHS=false;clearTimeout(NHT);NHT=setTimeout(()=>{NHS=true;nhAbrir(b);},320);});
 ['pointerup','pointercancel','pointermove'].forEach(ev=>$('#nGrid').addEventListener(ev,e=>{if(ev==='pointermove'&&Math.abs(e.movementY)<6&&Math.abs(e.movementX)<6)return;if(!NHS)clearTimeout(NHT);}));
 $('#nGrid').addEventListener('click',e=>{if(NHS&&e.target.closest('.rhx')){e.stopImmediatePropagation();NHS=false;}},true);
 $('#nGrid').addEventListener('contextmenu',e=>{if(e.target.closest('.rhx'))e.preventDefault();});
