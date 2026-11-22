@@ -930,6 +930,7 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 @media (max-height:720px){#hcena #hcLeg p{font-size:18px}#hcena #hcLeg p::first-letter{font-size:46px}.hc-im{max-height:60%}}
 </style>
 <style>.lbm{position:absolute;top:3px;right:3px;z-index:3;min-width:18px;padding:2px 3px;font:700 10px/1 system-ui,sans-serif;text-align:center;border-radius:3px;background:rgba(6,10,14,.82);pointer-events:none}.lbm.lp{color:#7dffa8;box-shadow:inset 0 0 0 1px #7dffa8}.lbm.ln{color:#ff8d8a;box-shadow:inset 0 0 0 1px #ff8d8a}</style>
+<style>#mana{position:relative}#mana .moe{position:absolute;left:0;top:-19px;display:flex;align-items:center;gap:4px;font:700 12px/1 system-ui,sans-serif;color:#ffd27a;white-space:nowrap}#mana .moe i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#e0a93a 60%,#8a5a12);box-shadow:0 0 0 1px #6b4410;clip-path:none}</style>
 </head>
 <body>
 <div class="stage">
@@ -1134,7 +1135,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1183,6 +1184,7 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  {const ol=OL(l),k=FD(l).indexOf(c),fr=FD(ol)[k];if(fr&&!fr.novo&&EF(fr).quick)p-=EF(fr).quick;p-=TEM(ol,'sandstorm');if(c.deb&&c.deb.t===S.turn)p-=c.deb.n;}
  if(e.dunes&&!NODUNE)p+=e.dunes*fracas(OL(l));
  if(e.fury)p+=e.fury*FD(l).filter(x=>x&&x!==c&&!x.novo&&atropela(x,l)).length;
+ if(e.scale)p+=Math.floor(MOE(l)/e.scale);
  if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
  if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
@@ -1206,6 +1208,8 @@ async function esporo(l,pw,j){const F=FD(l);if(j===undefined||F[j])j=vazia(l);if
  for(let k=0;k<NL;k++){const x=F[k];if(x&&!x.novo&&EF(x).colony){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).colony,'Colônia +'+EF(x).colony);FONTE=f0;FC=f1;}}}
 let NODUNE=0;function fracas(l){NODUNE++;try{return FD(l).filter(x=>x&&!x.novo&&P(x,l)<x.v).length;}finally{NODUNE--;}}
 const atropela=(x,l)=>!!(EF(x).trample||x.atrop||TEM(l,'dragon',x));
+const MOE=l=>(S.moedas&&S.moedas[l])||0;
+function moeda(l,n){if(!S.moedas)S.moedas={m:0,o:0};S.moedas[l]=Math.max(0,S.moedas[l]+n);lg(`${l==='m'?'Você':'Oponente'} ${n>0?'ganhou':'gastou'} ${Math.abs(n)} moeda${Math.abs(n)>1?'s':''} (tem ${S.moedas[l]})`);render();}
 const valeAlma=x=>x.token?0:(x.v<=5?1:2);
 async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
 async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
@@ -1271,6 +1275,8 @@ async function entrar(c,l,i){
  if(e.ambush){const n=1+fracas(ol);say('Emboscada: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
  if(e.ember){const k=ladoForte(l,i);if(k>=0){F[k].atrop=1;say('Brasa: Atropelar na carta ao lado');pop(l,k,'Atropelar');lg(F[k].n+' ganhou Atropelar');await w(350);}else say('sem carta ao lado');}
  if(e.fireCount){const n=1+F.filter(x=>x&&!x.novo&&atropela(x,l)).length;say('Bola de Fogo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.coins){moeda(l,e.coins);say('+'+e.coins+' moedas');await w(300);}
+ if(e.poison){const g=Math.min(e.poison,MOE(l));if(g)moeda(l,-g);say('Veneno: '+(1+g)+' no oponente');await dano(ol,1+g,R(cardEl(l,i)));}
  if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
  if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
  if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
@@ -1442,7 +1448,7 @@ async function fimDoTurno(){
 function auraMana(l){return FD(l).reduce((t,c)=>t+(c&&EF(c).manaAura?EF(c).manaAura:0),0);}
 function compraExtra(l){return (FD(l).some(c=>c&&EF(c).lowDraw&&VID(l)<=EF(c).lowDraw)?1:0)+TEM(l,'drawAura');}
 
-function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),odeck:((typeof baralhoOp==='function'&&baralhoOp())||baralhoDe(escOp())),guard:{m:0,o:0},prev:{m:0,o:0},truce:{m:0,o:0},curou:{m:0,o:0},lutou:{},hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
+function nova(){S={turn:1,mana:1,max:1,ml:VIDA,ol:VIDA,deck:baralho(),moedas:{m:0,o:0},odeck:((typeof baralhoOp==='function'&&baralhoOp())||baralhoDe(escOp())),guard:{m:0,o:0},prev:{m:0,o:0},truce:{m:0,o:0},curou:{m:0,o:0},lutou:{},hand:[],oh:[],mine:Array(NL).fill(null),theirs:Array(NL).fill(null),sel:-1,busy:false,pend:{m:0,o:0},trocou:false,otrocou:false,cem:[],log:[],hide:new Set()};
  for(let k=0;k<7;k++){S.hand.push(compra('m'));S.oh.push(compra('o'));}S.mov=-1;lg(ORD(1)+' · '+Object.entries(ESC).map(([k,c])=>NAIPES[k].sym+' '+CL[c].name).join(' · '),1);if(!(typeof HB!=='undefined'&&HB&&HB.viva)&&ESCOU){lg('Oponente joga com '+Object.values(ESCOU).map(c=>CL[c].name).join(', '));setTimeout(()=>toast('Oponente: '+Object.values(ESCOU).map(c=>CL[c].name).join(', ')),900);}render();setTimeout(banner,250);}
 function lg(t,tit){S.log.unshift({t,tit});if(S.log.length>150)S.log.pop();}
 function nome(c,me){return c.n+(me?' (sua)':' (inimiga)');}
@@ -1455,7 +1461,7 @@ function render(){custos();if(typeof ONL!=='undefined'&&ONL.host)ONL.snap();
  const sc=S.sel>=0?S.hand[S.sel]:null,drag=!!DR;
  $('#mRow').innerHTML=S.mine.map((c,i)=>`<div class="slot ${!c&&(sc||drag||S.mov>=0)?'can':''} ${c&&(sc||drag)&&!S.trocou?'swap':''} ${S.lane===i?'lane':''} ${S.mov===i?'mv':''}" data-i="${i}" data-sy="${NKY[LN[i]].sym}" style="--lc:${NKY[LN[i]].cor}"><i class="sg s-${LN[i]}"><b>${NKY[LN[i]].sym}</b><small>${NKY[LN[i]].nome}</small></i>${c?cell(c):(S.mov>=0&&!sc&&!drag?`<u class="mvc ${Math.abs(S.mov-i)>S.mana?'no':''}"><b>${Math.abs(S.mov-i)}</b></u>`:'')}</div>`).join('');
  $('#hand').innerHTML=S.hand.map((c,i)=>`<div class="hc ${i===S.sel?'sel':''} ${c.cost>S.mana?'off':''}" data-i="${i}" style="${DR&&DR.i===i?'opacity:.25':''}${S.hide&&S.hide.has(c.id)?';visibility:hidden':''}">${cardHTML(c)}</div>`).join('');
- $('#mana').innerHTML=Array.from({length:Math.min(6,Math.max(S.max,S.mana))},(_,i)=>`<i class="${i<S.mana?'f':''}"></i>`).join('')+`<span>${S.mana}/${S.max}</span>`;
+ $('#mana').innerHTML=Array.from({length:Math.min(6,Math.max(S.max,S.mana))},(_,i)=>`<i class="${i<S.mana?'f':''}"></i>`).join('')+`<span>${S.mana}/${S.max}</span>`+(MOE('m')?`<b class="moe"><i></i>${MOE('m')}</b>`:'');
  $('#pass').disabled=S.busy;
  $('#cemN').textContent=S.cem.length||'';
  $('#hint').textContent=S.busy?'':(sc||drag)?(S.trocou?'Casa dourada para baixar · troca já usada neste turno':'Casa dourada para baixar · ⇄ para trocar (1 por turno)'):'Arraste uma carta até o campo · toque 2 vezes para ver';
@@ -1667,6 +1673,7 @@ $('#pass').onclick=async()=>{
  // fim do turno
  const cres=[];
  S.turn++;S.max=S.turn;S.mana=S.max+(S.pend.m||0)+auraMana('m');S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
+ for(const l of ['m','o']){const r=TEM(l,'route');if(r)moeda(l,r);for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||c.novo||!EF(c).kingShop||MOE(l)<2)continue;let k=-1;FD(l).forEach((x,q)=>{if(x&&x!==c&&(k<0||P(x,l)<P(FD(l)[k],l)))k=q;});if(k<0)continue;src(c,l);moeda(l,-2);await buff(l,k,EF(c).kingShop,'compra +'+EF(c).kingShop);src(null);}}
  {const n=comprasDoDia(S.turn);await comprar('m',n+compraExtra('m'),true);await comprar('o',n+compraExtra('o'),true);if(n>1)lg(`📚 Neste dia cada lado compra ${n}`);}
  if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.omanaExtra=0;}
  lg(ORD(S.turn),1);render();banner();
