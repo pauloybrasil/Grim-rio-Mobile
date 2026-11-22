@@ -15,11 +15,11 @@ const HN={
     {n:"Central de Comando",fx:"Enquanto estiver no campo, você compra 1 carta a mais no começo de cada dia.",e:{drawAura:1}},
     {n:"Estrategista",fx:"Ganha +1 de poder para cada 2 cartas na sua mão.",e:{handPow:2}},
     {n:"Ordem do General",fx:"General. Ao entrar, você compra 2 cartas. Enquanto estiver no campo, as suas outras cartas ganham +1 de poder para cada 3 cartas na sua mão.",e:{draw:2,handAura:3}}],
- I:[{n:"Nuvem de Esporos",fx:"Ao entrar, cria um Esporo de poder 1 numa casa vazia sua. Sem casa vazia, o Esporo se junta à sua carta mais fraca e dá +1 a ela.",e:{spore:1}},
-    {n:"Esporo Tóxico",fx:"Ao entrar, o oponente perde 2 de vida e você cria um Esporo de poder 1.",e:{dmgLeader:2,spore:1}},
-    {n:"Esporo Primordial",fx:"Quando é derrotada, deixa um Esporo de poder 2 na mesma casa.",e:{deathSpore:2}},
-    {n:"Colônia",fx:"Ganha +1 de poder para sempre cada vez que nasce um Esporo seu.",e:{colony:1}},
-    {n:"Floração",fx:"General. Ao entrar, cria um Esporo em cada casa vazia sua e todos os seus Esporos ganham +2 de poder.",e:{bloom:2}}],
+ I:[{n:"Nuvem de Esporos",fx:"Ao entrar, você ganha 1 esporo. O esporo vira uma carta Esporo de poder 2 numa casa vazia; sem casa vazia, gruda na sua carta mais fraca e dá +1.",e:{spore1:1}},
+    {n:"Esporo Tóxico",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada 2 esporos no seu campo.",e:{toxic:2}},
+    {n:"Decompositor",fx:"Enquanto estiver no campo, você ganha 1 esporo cada vez que uma carta sua cai.",e:{decomp:1}},
+    {n:"Colônia",fx:"Os esporos nela valem em dobro: +2 de poder cada.",e:{colonyDouble:1}},
+    {n:"Floração",fx:"General. Ao entrar, você ganha 1 esporo para cada outra carta sua. Enquanto estiver no campo, as suas cartas Esporo ganham +2 de poder.",e:{bloomN:1,bloomAura:2}}],
  S:[{n:"Vento do Deserto",fx:"Ao entrar, a carta inimiga da frente e as duas vizinhas dela perdem 1 de poder neste dia.",e:{gust:1}},
     {n:"Emboscada",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada carta inimiga enfraquecida no campo (com poder abaixo do número dela).",e:{ambush:1}},
     {n:"Areia Movediça",fx:"Enquanto estiver no campo, a carta inimiga da frente perde 2 de poder.",e:{quick:2}},
@@ -35,6 +35,11 @@ const HN={
     {n:"Rota Comercial",fx:"Enquanto estiver no campo, você ganha 1 moeda no começo de cada dia.",e:{route:1}},
     {n:"Balança de Ouro",fx:"Ganha +1 de poder para cada 2 moedas que você tem guardadas.",e:{scale:2}},
     {n:"Tesouro do Rei",fx:"General. Ao entrar, você ganha 3 moedas. Enquanto estiver no campo, no começo de cada dia você gasta 2 moedas e a sua outra carta mais fraca ganha +2 de poder para sempre.",e:{coins:3,kingShop:2}}],
+ P:[{n:"Abordagem",fx:"Ao entrar, rouba 1 de mana: no próximo dia o oponente tem 1 a menos e você 1 a mais.",e:{stealMana:1}},
+    {n:"Tiro de Canhão",fx:"Ao entrar, o oponente perde 1 de vida, mais 1 para cada carta roubada que você tem na mão ou no campo.",e:{cannon:1}},
+    {n:"Saque",fx:"Quando derrota uma carta, rouba ela: vai para a sua mão em vez do cemitério. Fichas não podem ser roubadas.",e:{loot:1}},
+    {n:"Bússola do Vazio",fx:"Ganha +1 de poder para sempre cada vez que você rouba mana ou carta.",e:{compass:1}},
+    {n:"Capitão da Corsária",fx:"General. Enquanto estiver no campo, as suas outras cartas também roubam as cartas que derrotam.",e:{captain:1}}],
  E:[{n:"Curandeira",fx:"Ao entrar, você ganha 2 de vida.",e:{heal:2}},
     {n:"Espinho da Seiva",fx:"Ao entrar, o oponente perde 2 de vida e você ganha 1.",e:{dmgLeader:2,heal:1}},
     {n:"Vigor",fx:"Ganha +2 de poder enquanto você tiver mais vida que o oponente.",e:{vigor:2}},
@@ -75,6 +80,6 @@ const HN={
     {n:"Cântico das Marés",fx:"Enquanto estiver no campo, as cartas devolvidas para a mão do oponente custam 1 de mana a mais para baixar de novo.",e:{chant:1}},
     {n:"Maré Crescente",fx:"Ganha +1 de poder para sempre a cada carta devolvida para a mão do oponente.",e:{tide:1}},
     {n:"Maremoto",fx:"General. No fim do dia em que entra, as cartas inimigas que lutaram contra as suas outras cartas e sobreviveram voltam para a mão. Enquanto estiver no campo, o oponente perde 1 de vida para cada carta que descartar.",e:{tsunami:1}}]};
-const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],S:['CSAH','ZSAH'],R:['CDRA','ZDRA'],T:['CMER','ZMER'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
+const HNP={G:['CGUE','ZBRA'],F:['CFER','ZFER'],H:['CHUM','ZTER'],S:['CSAH','ZSAH'],R:['CDRA','ZDRA'],T:['CMER','ZMER'],P:['CPIR','ZCOR'],I:['CMIC','ZMIC'],E:['CELF','ZVER'],N:['CNEC','ZOSS'],D:['CINF','ZINF'],L:['CELE','ZIGN'],M:['CMAG','ZARC'],C:['CCIB','ZNEX'],A:['CANJ','ZAUR'],O:['COCE','ZPEL']};
 const NOVOS=[];
 Object.entries(HNP).forEach(([k,cs])=>cs.forEach(c=>{CHAB[c]=HN[k].map(h=>({n:h.n,tg:'',fx:h.fx,e:{...h.e}}));NOVOS.push(c);}));

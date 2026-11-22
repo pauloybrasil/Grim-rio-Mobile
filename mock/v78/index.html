@@ -1135,7 +1135,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore deathSpore colony bloom'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami stealMana cannon loot compass captain'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore1 toxic decomp colonyDouble bloomN bloomAura'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1185,6 +1185,8 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  if(e.dunes&&!NODUNE)p+=e.dunes*fracas(OL(l));
  if(e.fury)p+=e.fury*FD(l).filter(x=>x&&x!==c&&!x.novo&&atropela(x,l)).length;
  if(e.scale)p+=Math.floor(MOE(l)/e.scale);
+ if(e.colonyDouble)p+=(c.spo||0);
+ if(c.token&&c.n==='Esporo')p+=2*TEM(l,'bloomAura');
  if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
  if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
@@ -1210,6 +1212,15 @@ let NODUNE=0;function fracas(l){NODUNE++;try{return FD(l).filter(x=>x&&!x.novo&&
 const atropela=(x,l)=>!!(EF(x).trample||x.atrop||TEM(l,'dragon',x));
 const MOE=l=>(S.moedas&&S.moedas[l])||0;
 function moeda(l,n){if(!S.moedas)S.moedas={m:0,o:0};S.moedas[l]=Math.max(0,S.moedas[l]+n);lg(`${l==='m'?'Você':'Oponente'} ${n>0?'ganhou':'gastou'} ${Math.abs(n)} moeda${Math.abs(n)>1?'s':''} (tem ${S.moedas[l]})`);render();}
+async function rouboFeito(l){for(let k=0;k<NL;k++){const x=FD(l)[k];if(x&&!x.novo&&EF(x).compass){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).compass,'Bússola +'+EF(x).compass);FONTE=f0;FC=f1;}}}
+const ESPS=l=>FD(l).reduce((t,x)=>t+((x&&x.spo)||0),0);
+function fichaEsporo(n){const f=ficha('CMIC',Math.max(2,n),'Esporo');f.spo=n;f.fx='Carta Esporo. Recebe mais esporos e cresce +1 por esporo.';return f;}
+async function ganhaEsporo(l,n){for(let q=0;q<(n||1);q++){const F=FD(l),j=vazia(l);if(j>=0){F[j]=fichaEsporo(1);render();cls(cardEl(l,j),'rise',600);pop(l,j,'Esporo 2');lg(`Um Esporo nasceu no campo ${l==='m'?'seu':'inimigo'}`);await w(320);}else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;F[k].spo=(F[k].spo||0)+1;lg(`Esporo grudou em ${F[k].n}`);await buff(l,k,1,'esporo +1');}}}
+function espMover(i,k){const F=S.mine,A=F[i],B=F[k];if(!A||!B||!A.spo)return;const n=A.spo;if(A.token)F[i]=null;else{A.spo=0;A.pw-=n;}B.spo=(B.spo||0)+n;B.pw+=n;S.espMov=S.turn;lg(`Você moveu ${n} esporo${n>1?'s':''} para ${B.n}`);render();}
+function espSoltar(i){const F=S.mine,A=F[i],j=vazia('m');if(!A||!A.spo||A.token||j<0)return;const n=A.spo;A.spo=0;A.pw-=n;F[j]=fichaEsporo(n);S.espMov=S.turn;lg(`Você soltou ${n} esporo${n>1?'s':''}: nasceu uma carta Esporo de poder ${F[j].pw}`);render();}
+function espEscolhe(i){return new Promise(res=>{const o=document.createElement('div');o.id='espSheet';o.style.cssText='position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:rgba(4,8,12,.9)';
+ o.innerHTML='<div style="font:600 17px/1.3 var(--ft,serif);color:var(--ts,#c8aa6e);text-align:center;letter-spacing:.04em">Mover esporos</div><div style="font-size:14px;line-height:1.4;color:#d8d2c2;text-align:center;max-width:280px">Toque na carta que vai receber os esporos.</div><div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;max-width:300px">'+S.mine.map((c,k)=>c&&k!==i?`<div data-k="${k}" style="position:relative;flex:none;width:62px;height:84px;cursor:pointer">${cardHTML(c)}</div>`:'').join('')+'</div><button class="ghost" data-x="1" style="margin-top:6px">Cancelar</button>';
+ ($('#phone')||document.body).appendChild(o);o.addEventListener('click',e=>{if(e.target.closest('[data-x]')){o.remove();res(-1);return;}const m=e.target.closest('[data-k]');if(!m)return;o.remove();res(+m.dataset.k);});});}
 const valeAlma=x=>x.token?0:(x.v<=5?1:2);
 async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
 async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
@@ -1277,6 +1288,11 @@ async function entrar(c,l,i){
  if(e.fireCount){const n=1+F.filter(x=>x&&!x.novo&&atropela(x,l)).length;say('Bola de Fogo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
  if(e.coins){moeda(l,e.coins);say('+'+e.coins+' moedas');await w(300);}
  if(e.poison){const g=Math.min(e.poison,MOE(l));if(g)moeda(l,-g);say('Veneno: '+(1+g)+' no oponente');await dano(ol,1+g,R(cardEl(l,i)));}
+ if(e.stealMana){S.pend[l]=(S.pend[l]||0)+e.stealMana;S.pend[ol]=(S.pend[ol]||0)-e.stealMana;say('rouba '+e.stealMana+' de mana');lg(`${l==='m'?'Você roubou':'O oponente roubou'} ${e.stealMana} de mana para o próximo dia`);await w(300);await rouboFeito(l);src(c,l);}
+ if(e.cannon){const n=1+H.filter(x=>x&&x.roub).length+F.filter(x=>x&&x.roub).length;say('Tiro de Canhão: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.spore1){say('solta um esporo');await ganhaEsporo(l,e.spore1);src(c,l);}
+ if(e.toxic){const n=1+Math.floor(ESPS(l)/e.toxic);say('Esporo Tóxico: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.bloomN){const n=F.filter(x=>x&&x!==c).length;if(n){say('Floração: '+n+' esporo'+(n>1?'s':''));await ganhaEsporo(l,n);src(c,l);}}
  if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
  if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
  if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
@@ -1318,10 +1334,14 @@ async function morrer0(l,i,killer){src(null);
  if(e.deathToHand&&!c.token&&HD(l).length<7){HD(l).push(carta(c.code,c.v));lg(`📖 ${c.n} voltou para a mão`);}
  else if(!c.token){const kl=killer?lado(killer):null;
    if(kl&&EF(killer).wave&&!killer.cai)c._onda=1;
+   else if(kl&&kl!==l&&!killer.cai&&(EF(killer).loot||TEM(kl,'captain',killer)))c._saque=kl;
    else S.cem.unshift({...c,lado:(kl&&EF(killer).reap)?kl:l});}
  render();lg(`${nome(c,l==='m')} caiu`);
  if(c._onda){delete c._onda;const kl=lado(killer),w0=EF(killer).wave;src(killer,kl);lg(`Onda: ${c.n} volta para a mão e o dono perde ${w0} de vida`);await paraMao(l,c);await dano(l,w0,R(slotEl(l,i)));src(c,l);}
+ if(c._saque){const kl=c._saque;delete c._saque;const n=carta(c.code,c.v);n.roub=1;HD(kl).push(n);src(killer,kl);lg(`Saque: ${c.n} foi roubada para a mão ${kl==='m'?'sua':'do oponente'}`);pop(kl,FD(kl).indexOf(killer),'Saque');render();await w(350);await rouboFeito(kl);await descarteCheia(kl);src(c,l);}
  if(e.grave&&!c.token){let k=-1;S.cem.forEach((x,j)=>{if(x.id!==c.id&&x.lado===l&&!x.token&&x.v<=e.grave&&(k<0||x.v>S.cem[k].v))k=j;});if(k>=0&&HD(l).length<7){const x=S.cem.splice(k,1)[0];HD(l).push(carta(x.code,x.v));lg(`Coveiro: ${x.n} saiu do cemitério para a mão`);pop(l,i,'Coveiro: pega '+x.v);render();await w(350);}}
+ if(c.spo&&!c.token&&!F[i]){F[i]=fichaEsporo(c.spo);render();cls(cardEl(l,i),'rise',600);pop(l,i,'Esporo '+F[i].pw);lg(`Os esporos de ${c.n} ficaram no campo`);await w(320);}
+ if(!c.token)for(let k=0;k<NL;k++){const x=F[k];if(x&&x!==c&&!x.novo&&EF(x).decomp){src(x,l);pop(l,k,'Decompositor');await ganhaEsporo(l,EF(x).decomp);src(c,l);}}
  if(e.deathSpore&&!F[i]){await esporo(l,e.deathSpore,i);src(c,l);}
  if(e.deathBuffSide){const k=ladoForte(l,i);if(k>=0)await buff(l,k,e.deathBuffSide,'Reparo +'+e.deathBuffSide);}
  if(e.undertow&&killer&&!killer.cai){const kl=lado(killer);if(kl){const k=FD(kl).indexOf(killer);lg(`Correnteza: ${killer.n} volta para a mão`);await devolve(kl,k,'Correnteza');}}
@@ -1672,7 +1692,7 @@ $('#pass').onclick=async()=>{
  if(S.ol<=0||S.ml<=0){await w(700);S.ol<=0&&S.ml<=0?fim(false,'Os dois líderes caíram juntos. Empate.'):S.ol<=0?fim(true,'O líder inimigo caiu no turno '+S.turn+'.'):fim(false,'Seu líder caiu no turno '+S.turn+'.');return;}
  // fim do turno
  const cres=[];
- S.turn++;S.max=S.turn;S.mana=S.max+(S.pend.m||0)+auraMana('m');S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
+ S.turn++;S.max=S.turn;S.mana=Math.max(0,S.max+(S.pend.m||0)+auraMana('m'));S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
  for(const l of ['m','o']){const r=TEM(l,'route');if(r)moeda(l,r);for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||c.novo||!EF(c).kingShop||MOE(l)<2)continue;let k=-1;FD(l).forEach((x,q)=>{if(x&&x!==c&&(k<0||P(x,l)<P(FD(l)[k],l)))k=q;});if(k<0)continue;src(c,l);moeda(l,-2);await buff(l,k,EF(c).kingShop,'compra +'+EF(c).kingShop);src(null);}}
  {const n=comprasDoDia(S.turn);await comprar('m',n+compraExtra('m'),true);await comprar('o',n+compraExtra('o'),true);if(n>1)lg(`📚 Neste dia cada lado compra ${n}`);}
  if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.omanaExtra=0;}
@@ -1695,6 +1715,12 @@ function desenhaEsc(){const op=ESCQ==='o',E=op?ESCO:ESC;
   ${c?`<button class="rver" data-c="${c.code}"><i></i>Ver as cartas de ${c.name}</button>`:''}`:''}</section>`}).join('');
  $('#nInfo').textContent=op?'Baralho do oponente · 72 cartas':'4 classes · 2 baralhos · 72 cartas';}
 function attEsc(){desenhaEsc();}
+{const z0=abrirZoom;abrirZoom=function(c,i){z0(c,i);if(!c||!c.spo)return;const meu=S.mine.includes(c),pode=meu&&!S.busy&&!S.combate&&S.espMov!==S.turn&&!(typeof ONL!=='undefined'&&ONL.guest),k=S.mine.indexOf(c);
+ let h=`<span class="zf" style="display:block;margin-top:8px;color:#9fe3a8">Esporos nesta carta: ${c.spo}</span>`;
+ if(pode){const outras=S.mine.some((x,q)=>x&&q!==k);h+=`<span style="display:flex;gap:8px;margin-top:10px">${outras?'<button class="ghost" id="zEspM" style="flex:1">Mover</button>':''}${!c.token&&vazia('m')>=0?'<button class="ghost" id="zEspS" style="flex:1">Soltar</button>':''}</span>`;}
+ else if(meu&&S.espMov===S.turn)h+='<span class="zf" style="display:block;margin-top:6px;opacity:.7">Você já mexeu nos esporos neste dia.</span>';
+ $('#zp').insertAdjacentHTML('beforeend',h);
+ const m=$('#zEspM'),s2=$('#zEspS');if(m)m.onclick=async()=>{$('#zClose').click();const d=await espEscolhe(k);if(d>=0)espMover(k,d);};if(s2)s2.onclick=()=>{$('#zClose').click();espSoltar(k);};};}
 $('#nGrid').addEventListener('click',e=>{const q=e.target.closest('.escq');if(q){ESCQ=q.dataset.q;ABR=null;desenhaEsc();return;}const a=e.target.closest('.rsh');if(a){ABR=ABR===a.dataset.ab?null:a.dataset.ab;desenhaEsc();return;}const vc=e.target.closest('.rver');if(vc){galAbrir(vc.dataset.c,'escolha');return;}const b=e.target.closest('.rhx');if(!b)return;if(b.classList.contains('tr')){toast('Libere este baralho no modo História');return;}if(ESCQ==='o'){ESCO[b.dataset.n]=b.dataset.c;try{localStorage.setItem('gm-classes-op',JSON.stringify(ESCO));}catch(e){}}else ESC[b.dataset.n]=b.dataset.c;desenhaEsc();});
 // escolha de classes: segurar o dedo numa classe mostra os 5 poderes dela
 let NHT=0,NHS=false;
