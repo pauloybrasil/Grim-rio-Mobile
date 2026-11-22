@@ -1135,7 +1135,7 @@ const ICP={cura:'<path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5
  batalha:'<path d="M4 20l10-10M14 4h6v6L10 20M4 14l6 6M17 17l3 3"/>',
  olho:'<path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/>',
  tempo:'<path d="M7 3h10M7 21h10M8 3c0 5 8 5 8 9s-8 4-8 9M16 3c0 5-8 5-8 9"/>'};
-const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami stealMana cannon loot compass captain'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore1 toxic decomp colonyDouble bloomN bloomAura'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
+const CATK=[['cura','heal deathHeal endHealPer lifesteal healPer root'],['escudo','veil ward2 lshield faith truce wall stone elem'],['morte','grave graveHit reap bones boneLord whisper pact seduce corrupt soulLord'],['roubo','undertow wave chant tide tsunami stealMana cannon loot compass captain'],['mana','missile cheap'],['buff','sq aura vigor deathBuffSide reboot source scarBest veteran champ scarAll'],['dano','honor airHand'],['compra','drawAura handPow handAura'],['mana','coins poison route scale kingShop'],['dano','gust ambush quick dunes sandstorm ember fireCount trample fury dragon'],['ficha','spore1 toxic decomp colonyFuse bloomN bloomAura'],['dano','charge2'],['prisao','stunFront stunTwo stunAll'],['voo','fly flyDouble bypass blockFly'],['escudo','shield giveShield armor ward giveArmor barrier'],
  ['ficha','token deathToken fillTokens endToken killToken buffTokens'],['mana','mana manaAura spendMana killMana hitMana toll'],['roubo','stealFront stealHand hitSteal discard bounceFront bounceAll deckFront'],
  ['veneno','poison infect endDebuffAll'],['morte','returnHalf deathToHand drain soulGrow souls sacGain'],['fogo','fireball dmgAll sweep deathBlast mines'],['dano','dmgFront voodoo corrode dmgLeader evilEye deathHit wreck killHit pay'],
  ['compra','draw killDraw lowDraw hand enemyHand'],['batalha','first giveFirst duel fightBonus atkBonus doubleHit trample charge'],['olho','mirage swapPow'],['tempo','grow endBuffAll'],['buff','']];
@@ -1185,8 +1185,7 @@ function P(c,l){if(!c)return 0;l=l||lado(c);let p=c.pw;const e=EF(c);if(!l)retur
  if(e.dunes&&!NODUNE)p+=e.dunes*fracas(OL(l));
  if(e.fury)p+=e.fury*FD(l).filter(x=>x&&x!==c&&!x.novo&&atropela(x,l)).length;
  if(e.scale)p+=Math.floor(MOE(l)/e.scale);
- if(e.colonyDouble)p+=(c.spo||0);
- if(c.token&&c.n==='Esporo')p+=2*TEM(l,'bloomAura');
+ if(ehEsporo(c))p+=2*TEM(l,'bloomAura');
  if(e.handPow)p+=Math.floor(HD(l).length/e.handPow);
  if(e.champ)p+=FD(l).reduce((t,x)=>t+((x&&x.cic)||0),0);
  return Math.max(0,p);}
@@ -1215,7 +1214,10 @@ function moeda(l,n){if(!S.moedas)S.moedas={m:0,o:0};S.moedas[l]=Math.max(0,S.moe
 async function rouboFeito(l){for(let k=0;k<NL;k++){const x=FD(l)[k];if(x&&!x.novo&&EF(x).compass){const f0=FONTE,f1=FC;src(x,l);await buff(l,k,EF(x).compass,'Bússola +'+EF(x).compass);FONTE=f0;FC=f1;}}}
 const ESPS=l=>FD(l).reduce((t,x)=>t+((x&&x.spo)||0),0);
 function fichaEsporo(n){const f=ficha('CMIC',Math.max(2,n),'Esporo');f.spo=n;f.fx='Carta Esporo. Recebe mais esporos e cresce +1 por esporo.';return f;}
-async function ganhaEsporo(l,n){for(let q=0;q<(n||1);q++){const F=FD(l),j=vazia(l);if(j>=0){F[j]=fichaEsporo(1);render();cls(cardEl(l,j),'rise',600);pop(l,j,'Esporo 2');lg(`Um Esporo nasceu no campo ${l==='m'?'seu':'inimigo'}`);await w(320);}else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;F[k].spo=(F[k].spo||0)+1;lg(`Esporo grudou em ${F[k].n}`);await buff(l,k,1,'esporo +1');}}}
+const ehEsporo=x=>!!(x&&x.token&&x.n==='Esporo');
+async function fusaoFeita(l){for(let k=0;k<NL;k++){const x=FD(l)[k];if(x&&EF(x).colonyFuse){x.pw+=EF(x).colonyFuse;render();pop(l,k,'Colônia +'+EF(x).colonyFuse);}}}
+async function ganhaEsporo(l,n){for(let q=0;q<(n||1);q++){const F=FD(l),j=vazia(l);if(j>=0){F[j]=ficha('CMIC',2,'Esporo');F[j].fx='Carta Esporo. Ao preparar, toque nela e depois em outra carta sua para fundir: o poder soma.';render();cls(cardEl(l,j),'rise',600);pop(l,j,'Esporo 2');lg(`Um Esporo nasceu no campo ${l==='m'?'seu':'inimigo'}`);await w(320);}else{let k=-1;F.forEach((x,i)=>{if(x&&(k<0||P(x,l)<P(F[k],l)))k=i;});if(k<0)return;lg(`Sem casa vazia: o Esporo se fundiu em ${F[k].n}`);await buff(l,k,2,'fusão +2');await fusaoFeita(l);}}}
+function fundir(a,b){const A=S.mine[a],B=S.mine[b];if(!ehEsporo(A)||!B||a===b)return;if(A.stun||B.novo&&0){}B.pw+=A.pw;S.mine[a]=null;S.mov=-1;sfx('place');lg(`Fusão: o Esporo de poder ${A.pw} se juntou a ${B.n}`);render();pop('m',b,'fusão +'+A.pw);fusaoFeita('m');}
 function espMover(i,k){const F=S.mine,A=F[i],B=F[k];if(!A||!B||!A.spo)return;const n=A.spo;if(A.token)F[i]=null;else{A.spo=0;A.pw-=n;}B.spo=(B.spo||0)+n;B.pw+=n;S.espMov=S.turn;lg(`Você moveu ${n} esporo${n>1?'s':''} para ${B.n}`);render();}
 function espSoltar(i){const F=S.mine,A=F[i],j=vazia('m');if(!A||!A.spo||A.token||j<0)return;const n=A.spo;A.spo=0;A.pw-=n;F[j]=fichaEsporo(n);S.espMov=S.turn;lg(`Você soltou ${n} esporo${n>1?'s':''}: nasceu uma carta Esporo de poder ${F[j].pw}`);render();}
 function espEscolhe(i){return new Promise(res=>{const o=document.createElement('div');o.id='espSheet';o.style.cssText='position:absolute;inset:0;z-index:90;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px;background:rgba(4,8,12,.9)';
@@ -1291,8 +1293,8 @@ async function entrar(c,l,i){
  if(e.stealMana){S.pend[l]=(S.pend[l]||0)+e.stealMana;S.pend[ol]=(S.pend[ol]||0)-e.stealMana;say('rouba '+e.stealMana+' de mana');lg(`${l==='m'?'Você roubou':'O oponente roubou'} ${e.stealMana} de mana para o próximo dia`);await w(300);await rouboFeito(l);src(c,l);}
  if(e.cannon){const n=1+H.filter(x=>x&&x.roub).length+F.filter(x=>x&&x.roub).length;say('Tiro de Canhão: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
  if(e.spore1){say('solta um esporo');await ganhaEsporo(l,e.spore1);src(c,l);}
- if(e.toxic){const n=1+Math.floor(ESPS(l)/e.toxic);say('Esporo Tóxico: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
- if(e.bloomN){const n=F.filter(x=>x&&x!==c).length;if(n){say('Floração: '+n+' esporo'+(n>1?'s':''));await ganhaEsporo(l,n);src(c,l);}}
+ if(e.toxic){const n=1+e.toxic*F.filter(ehEsporo).length;say('Esporo Tóxico: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}
+ if(e.bloomN){const n=F.filter(x=>!x).length;if(n){say('Floração: '+n+' Esporo'+(n>1?'s':''));await ganhaEsporo(l,n);src(c,l);}else say('Floração: campo cheio');}
  if(e.airHand){const n=Math.floor(H.length/e.airHand);if(n){say('Ataque Aéreo: '+n+' no oponente');await dano(ol,n,R(cardEl(l,i)));}else say('mão vazia: sem ataque');}
  if(e.spore){say('solta um Esporo');await esporo(l,e.spore);src(c,l);}
  if(e.bloom){say('Floração');let g=0;while(vazia(l)>=0&&g++<NL)await esporo(l,1);for(let j=0;j<NL;j++)if(F[j]&&F[j].token&&F[j].n==='Esporo')await buff(l,j,e.bloom,'+'+e.bloom);src(c,l);}
@@ -1622,8 +1624,9 @@ function duplo(q,i){const ag=Date.now(),ok=LF.q===q&&LF.i===i&&ag-LF.t<380;LF=ok
 $('#mRow').addEventListener('click',e=>{const s=e.target.closest('.slot');if(!s)return;const i=+s.dataset.i;
  if(S.sel>=0&&!S.busy){LF={};S.mov=-1;jogar(S.sel,i);return;}
   if(!S.busy&&S.mov>=0&&!S.mine[i]){moverCarta(S.mov,i);return;}
+  if(!S.busy&&S.mov>=0&&S.mov!==i&&S.mine[i]&&ehEsporo(S.mine[S.mov])){fundir(S.mov,i);return;}
   if(S.mine[i]){if(duplo('m',i)){S.mov=-1;render();abrirZoom(S.mine[i],-1);return;}
-   if(!S.busy&&!(typeof ONL!=='undefined'&&(ONL.host||ONL.guest))){S.mov=S.mov===i?-1:i;render();if(S.mov>=0)$('#hint').textContent='Mover: 1 de mana por casa';}}});
+   if(!S.busy&&!(typeof ONL!=='undefined'&&(ONL.host||ONL.guest))){S.mov=S.mov===i?-1:i;render();if(S.mov>=0)$('#hint').textContent=ehEsporo(S.mine[S.mov])?'Esporo: toque em outra carta sua para fundir':'Mover: 1 de mana por casa';}}});
 function moverCarta(a,b){const c=S.mine[a];if(!c){S.mov=-1;render();return;}const custo=Math.abs(a-b);if(c.stun){toast('Esta carta está presa e não pode mudar de campo');return;}
  if(S.mana<custo){toast('Falta '+(custo-S.mana)+' de mana para mover até lá');return;}
  S.mana-=custo;S.mine[b]=c;S.mine[a]=null;S.mov=-1;sfx('place');lg(`${c.n} mudou do campo ${a+1} para o campo ${b+1} (custou ${custo} de mana)`);render();}
@@ -1652,6 +1655,7 @@ function painel(q){
  <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Cada jogador tem o próprio baralho, a própria compra e o próprio cemitério. Os dois podem escolher os mesmos planetas.</li></ul>
  <h4>Cartas</h4><ul><li>Número no canto: o <b>poder</b> (ataque e defesa).</li><li>Diamante azul: o <b>custo de mana</b>. 2 e 3 custam 1, 4 e 5 custam 2, 6 e 7 custam 3, 8 e 9 custam 4, o 10 custa 5.</li><li>Toda carta tem habilidade. Cada <b>planeta</b> tem 5 habilidades, uma por dupla de números e uma para o 10, e elas valem para as duas classes do planeta. São 80 no jogo e nenhuma se repete entre planetas.</li><li>Número verde: poder aumentado por habilidade. Vermelho: poder reduzido.</li></ul>
  <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por dia, sem limite.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>Cada jogador começa com <b>7 cartas</b>. No começo de cada dia, cada lado compra: <b>1 carta</b> do 1º ao 3º dia, <b>2</b> do 4º ao 6º, <b>3</b> do 7º ao 10º e <b>4</b> do 11º em diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério. Se uma carta do campo <b>volta</b> para uma mão cheia, o dono escolhe uma carta da mão para descartar.</li></ul>
+ <h4>Fusão do Micélio</h4><ul><li>O Esporo é uma carta de poder 2. Enquanto prepara, toque numa carta Esporo e depois em outra carta sua: as duas se fundem e o poder soma.</li><li>Não custa mana. Só a carta Esporo pode ser fundida em outra.</li></ul>
  <h4>Mudar de campo</h4><ul><li>Enquanto prepara as cartas, toque numa carta sua que está no campo e depois numa casa vazia para movê-la.</li><li>Custa <b>1 de mana por casa</b> de distância: a casa ao lado custa 1, a seguinte custa 2.</li><li>Os efeitos de entrada não ativam de novo.</li></ul>
  <h4>Troca (⇄)</h4><ul><li>1 vez por turno, baixe em cima de uma carta sua. A nova paga a mana inteira; a que sai vai para o cemitério sem ativar efeito de morrer.</li></ul>
  <h4>Campos e rivalidade</h4><div class="rv4">${LN.map(k=>`<span style="--c:${NKY[k].cor}">${NKY[k].sym}\uFE0E<small>${NKY[k].nome}</small></span>`).join('')}</div><ul><li>São <b>4 campos de batalha</b>, um de cada naipe: Copas, Espadas, Ouros e Paus.</li><li>Carta no campo do <b>próprio naipe</b> ganha <b>+1</b> de poder.</li><li>Carta no campo do <b>naipe rival</b> perde <b>1</b> de poder.</li><li>Nos outros dois campos nada muda.</li></ul><div class="rvs">${[['h','s'],['d','c']].map(([x,y])=>`<div><span style="--c:${NKY[x].cor}">${NKY[x].sym}\uFE0E ${NKY[x].nome}</span><i>rivais</i><span style="--c:${NKY[y].cor}">${NKY[y].sym}\uFE0E ${NKY[y].nome}</span></div>`).join('')}</div>
