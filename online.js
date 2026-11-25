@@ -8,7 +8,7 @@ const ONL={on:false,host:false,guest:false,code:'',ch:null,plays:[],waiting:fals
  send(ev,data){if(!this.ch)return;try{this.ch.send(ev,data);}catch(e){}},
  snap(){if(!this.host||!S)return;clearTimeout(this.snapT);this.snapT=setTimeout(()=>{this.send('snap',{
    mine:S.mine,theirs:S.theirs,oh:S.oh,hn:S.hand.length,ml:S.ml,ol:S.ol,deck:S.deck.length,turn:S.turn,max:S.max,busy:!!S.busy&&!ONL.esperando,lane:S.lane,
-   gmana:S.gmana||S.max,cem:S.cem.slice(0,40),log:S.log.slice(0,40),ESC});},60);}};
+   gmana:S.gmana||S.max,cem:S.cem.slice(0,40),log:S.log.slice(0,40),moedas:S.moedas||null,ESC});},60);}};
 // troca a perspectiva das frases da narração (o que é "seu" para um é "do oponente" para o outro)
 function inverter(t){const P=[['(seu)','(do oponente)'],['líder inimigo','seu líder'],['Vida dele','Sua vida'],['Você revela','Oponente revela'],['Você vence a coluna','O oponente vence a coluna'],['Vitória! O líder inimigo caiu!','Derrota! Seu líder caiu!'],['sua carta lutou','a carta inimiga lutou'],['Seu líder está com','O líder inimigo está com'],['Sua carta','A carta inimiga']];
  let s=t;P.forEach(([a,b],k)=>{s=s.split(a).join('§A'+k+'§').split(b).join('§B'+k+'§');});P.forEach(([a,b],k)=>{s=s.split('§A'+k+'§').join(b).split('§B'+k+'§').join(a);});return s;}
@@ -17,7 +17,7 @@ function abrirCanal(code,papel,onMsg,onPresenca){
  if(/[?&]local=1/.test(location.search)){const bc=new BroadcastChannel('gm-mobile-'+code);bc.onmessage=e=>{const m=e.data;if(m.ev==='hello'){onPresenca(true);if(papel==='host')bc.postMessage({ev:'hello-ack'});}else if(m.ev==='hello-ack')onPresenca(true);else onMsg(m.ev,m.data);};
    setTimeout(()=>bc.postMessage({ev:'hello'}),100);return {send:(ev,data)=>bc.postMessage({ev,data:JSON.parse(JSON.stringify(data))})};}
  if(!window.supabase){toast('Sem conexão com o servidor online');return null;}
- const sb=window.__sb||(window.__sb=supabase.createClient(SB_URL,SB_KEY));
+ const sb=window.__sb||(window.__sb=supabase.createClient(SB_URL,SB_KEY,{realtime:{params:{eventsPerSecond:40}}}));
  const ch=sb.channel('gm-mobile-'+code,{config:{broadcast:{self:false},presence:{key:papel}}});
  ch.on('broadcast',{event:'msg'},({payload})=>onMsg(payload.ev,payload.data));
  ch.on('presence',{event:'sync'},()=>{const st=ch.presenceState();onPresenca(Object.keys(st).length>=2);});
@@ -28,9 +28,15 @@ function criarSala(){ONL.code=Math.random().toString(36).slice(2,6).toUpperCase(
 function esperarAmigo(){ $('#onCode').textContent=ONL.code;$('#onMsg').textContent='Mande este código para o seu amigo. Ele toca em Jogar online → Entrar e digita o código.';show('online');$('#onWait').hidden=false;$('#onJoin').hidden=true;
  ONL.ch=abrirCanal(ONL.code,'host',hostMsg,ok=>{if(ok&&!ONL.partner){ONL.partner=true;comecarOnline();}else if(!ok&&ONL.partner){toast('Seu amigo saiu da sala');}});}
 // cada jogador com o próprio baralho: o amigo manda as classes dele ao entrar
-function deckAmigo(){if(typeof baralhoDe!=='function'||!ONL.guestESC||!S||ONL.deckOk||S.turn!==1)return;const E=ONL.guestESC;if(!Object.keys(NAIPES).every(k=>E[k]&&CL[E[k]]&&CL[E[k]].s===k))return;ONL.deckOk=1;ESCOU=E;S.odeck=baralhoDe(E);S.oh=[];for(let k=0;k<7;k++)S.oh.push(S.odeck.pop());lg('Seu amigo joga com '+Object.values(E).map(c=>CL[c].name).join(', '));render();}
-function comecarOnline(){ONL.deckOk=0;nova();deckAmigo();S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
+function deckAmigo(){if(typeof baralhoDe!=='function'||!ONL.guestESC||!S||ONL.deckOk||S.turn!==1)return;const E=ONL.guestESC;if(!Object.keys(NAIPES).every(k=>E[k]&&CL[E[k]]&&CL[E[k]].s===k))return;ONL.deckOk=1;
+ if(typeof ESCOU!=='undefined'&&ESCOU&&Object.keys(E).every(k=>ESCOU[k]===E[k]))return; // o baralho dele já entrou no começo
+ ESCOU={...E};S.odeck=baralhoDe(E);
+ // troca as cartas da mão inicial no lugar (a distribuição animada usa os mesmos objetos)
+ (S.oh0||S.oh).forEach(c=>{if(c&&S.odeck.length)Object.assign(c,S.odeck.pop());});
+ lg('Seu amigo joga com '+Object.values(E).map(c=>CL[c].name).join(', '));render();}
+function comecarOnline(){ONL.deckOk=0;nova();deckAmigo();clearInterval(ONL.vivo);ONL.vivo=setInterval(()=>{if(ONL.on&&ONL.host&&ONL.partner&&S&&!S.busy)ONL.snap();},4000);S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
 function hostMsg(ev,d){if(ev==='plays'){ONL.guestPlays=d.plays||[];if(ONL.ready){const r=ONL.ready;ONL.ready=null;r();}else toast('Seu amigo já preparou as cartas');}
+ if(ev==='pede'){ONL.snap();}
  if(ev==='hello2'){if(d&&d.ESC){ONL.guestESC=d.ESC;if(ONL.partner)deckAmigo();}ONL.snap();}
  if(ev==='desiste')fim(true,'Seu amigo desistiu.');}
 async function aplicarJogadasAmigo(){ // entra no lugar do oponente do computador
@@ -42,11 +48,12 @@ async function aplicarJogadasAmigo(){ // entra no lugar do oponente do computado
 // ---------- amigo (convidado) ----------
 function entrarSala(){const code=($('#onIn').value||'').trim().toUpperCase();if(code.length<4){toast('Digite o código de 4 letras');return;}
  ONL.code=code;ONL.on=true;ONL.guest=true;ONL.host=false;ONL.meuESC={...ESC};$('#onMsg').textContent='Conectando à sala '+code+'…';
- ONL.ch=abrirCanal(code,'guest',guestMsg,ok=>{if(ok){$('#onMsg').textContent='Conectado! Esperando o anfitrião começar…';ONL.send('hello2',{ESC:ONL.meuESC});}});}
+ ONL.ch=abrirCanal(code,'guest',guestMsg,ok=>{if(ok){$('#onMsg').textContent='Conectado! Esperando o anfitrião começar…';ONL.send('hello2',{ESC:ONL.meuESC});ONL.send('pede',{});}});}
 function guestMsg(ev,d){
+ if(ev==='snap')ONL.ultSnap=Date.now();
  if(ev==='snap'&&typeof musica==='function')musica(d.busy?'batalha':'calma');
- if(ev==='start'){ESC=d.ESC;S=null;show('duelo');narrar('Você entrou na sala. Que comece o duelo.',false,true);}
- if(ev==='snap')aplicarSnap(d);
+ if(ev==='start'){ESC=d.ESC;S=null;ONL.lastTurn=0;ONL.ultSnap=0;show('duelo');ONL.send('pede',{});clearInterval(ONL.pedeT);ONL.pedeT=setInterval(()=>{if(ONL.on&&ONL.guest&&(!S||Date.now()-(ONL.ultSnap||0)>6000))ONL.send('pede',{});},2000);narrar('Você entrou na sala. Que comece o duelo.',false,true);}
+ if(ev==='snap'){try{aplicarSnap(d);}catch(e){console.error(e);toast('Erro ao receber a mesa: '+(e&&e.message||e));}}
  if(ev==='nar'){guardaExp(inverter(d.t));}
  if(ev==='exp'){guardaExp(inverter(d.t),d.col,d.tipo,d.mod);}
  if(ev==='fim'){fim(!d.v,d.tg);}
@@ -55,7 +62,7 @@ function aplicarSnap(d){
  const novoDia=!S||d.turn!==ONL.lastTurn;ESC=d.ESC||ESC;
  S=S||{sel:-1,hide:new Set(),pend:{m:0,o:0},log:[]};
  S.mine=d.theirs;S.theirs=d.mine;S.hand=d.oh;S.oh=Array(d.hn).fill(0);S.ml=d.ol;S.ol=d.ml;S.deck=Array(d.deck).fill(0);S.turn=d.turn;S.max=d.max;S.lane=d.lane;
- S.cem=(d.cem||[]).map(c=>({...c,lado:c.lado==='m'?'o':'m'}));S.log=(d.log||[]).map(l=>({...l,t:inverter(l.t)}));
+ S.moedas=d.moedas?{m:d.moedas.o||0,o:d.moedas.m||0}:{m:0,o:0};S.cem=(d.cem||[]).map(c=>({...c,lado:c.lado==='m'?'o':'m'}));S.log=(d.log||[]).map(l=>({...l,t:inverter(l.t)}));
  if(novoDia&&!d.busy){ONL.lastTurn=d.turn;ONL.plays=[];ONL.waiting=false;S.trocou=false;}
  if(ONL.waiting&&!d.busy&&!novoDia){}
  // reaplica as cartas que o amigo preparou e ainda não enviou
