@@ -1,0 +1,30 @@
+{
+ "name": "Grimório Mobile",
+ "short_name": "Grimório",
+ "description": "Duelo de cartas do universo do Grimório.",
+ "lang": "pt-BR",
+ "start_url": "./index.html",
+ "scope": "./",
+ "display": "standalone",
+ "orientation": "portrait",
+ "background_color": "#05090d",
+ "theme_color": "#05090d",
+ "icons": [
+  {
+   "src": "icone-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "icone-512.png",
+   "sizes": "512x512",
+   "type": "image/png"
+  },
+  {
+   "src": "icone-mask-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "maskable"
+  }
+ ]
+}
