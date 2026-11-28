@@ -8,7 +8,7 @@ const ONL={on:false,host:false,guest:false,code:'',ch:null,plays:[],waiting:fals
  send(ev,data){if(!this.ch)return;try{this.ch.send(ev,data);}catch(e){}},
  snap(){if(!this.host||!S)return;clearTimeout(this.snapT);this.snapT=setTimeout(()=>{this.send('snap',{
    mine:S.mine,theirs:S.theirs,oh:S.oh,hn:S.hand.length,ml:S.ml,ol:S.ol,deck:S.deck.length,turn:S.turn,max:S.max,busy:!!S.busy&&!ONL.esperando,lane:S.lane,
-   gmana:S.gmana||S.max,cem:S.cem.slice(0,40),log:S.log.slice(0,40),moedas:S.moedas||null,ESC});},60);}};
+   gmana:S.gmana||S.max,gtopo:S.gtopo||S.gmana||S.max,cem:S.cem.slice(0,40),log:S.log.slice(0,40),moedas:S.moedas||null,ESC});},60);}};
 // troca a perspectiva das frases da narração (o que é "seu" para um é "do oponente" para o outro)
 function inverter(t){const P=[['(seu)','(do oponente)'],['líder inimigo','seu líder'],['Vida dele','Sua vida'],['Você revela','Oponente revela'],['Você vence a coluna','O oponente vence a coluna'],['Vitória! O líder inimigo caiu!','Derrota! Seu líder caiu!'],['sua carta lutou','a carta inimiga lutou'],['Seu líder está com','O líder inimigo está com'],['Sua carta','A carta inimiga']];
  let s=t;P.forEach(([a,b],k)=>{s=s.split(a).join('§A'+k+'§').split(b).join('§B'+k+'§');});P.forEach(([a,b],k)=>{s=s.split('§A'+k+'§').join(b).split('§B'+k+'§').join(a);});return s;}
@@ -37,6 +37,7 @@ function deckAmigo(){if(typeof baralhoDe!=='function'||!ONL.guestESC||!S||ONL.de
 function comecarOnline(){ONL.deckOk=0;nova();deckAmigo();clearInterval(ONL.vivo);ONL.vivo=setInterval(()=>{if(ONL.on&&ONL.host&&ONL.partner&&S&&!S.busy)ONL.snap();},4000);S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
 function hostMsg(ev,d){if(ev==='plays'){ONL.guestPlays=d.plays||[];if(ONL.ready){const r=ONL.ready;ONL.ready=null;r();}else toast('Seu amigo já preparou as cartas');}
  if(ev==='pede'){ONL.snap();}
+ if(ev==='sacrifica'){const k=S.oh.findIndex(c=>c&&c.id===d.id),t=S.gtopo||S.gmana||S.max;if(k>=0&&!S.busy){const c=S.oh[k];if(c.cost<=t){S.oh.splice(k,1);S.cem.unshift({...c,lado:'o',sac:1});const g=Math.max(0,Math.min(c.cost,d.g|0));S.gmana=(S.gmana||0)+g;lg('Seu amigo sacrificou '+c.n+' e recuperou '+g+' de mana');}}render();ONL.snap();}
  if(ev==='compra'){const cc=typeof CUSTO_COMPRA!=='undefined'?CUSTO_COMPRA:1;if(!S.busy&&(S.gmana||0)>=cc&&S.oh.length<MAOMAX&&S.odeck&&S.odeck.length){const c=compra('o');if(c){S.gmana-=cc;S.oh.push(c);lg('Seu amigo comprou 1 carta com mana');}}render();ONL.snap();}
  if(ev==='hello2'){if(d&&d.ESC){ONL.guestESC=d.ESC;if(ONL.partner)deckAmigo();}ONL.snap();}
  if(ev==='desiste')fim(true,'Seu amigo desistiu.');}
@@ -68,6 +69,8 @@ function aplicarSnap(d){
  ONL.gastoCompra=0;
  if(ONL.waiting&&!d.busy&&!novoDia){}
  // reaplica as cartas que o amigo preparou e ainda não enviou
+ S.mtopo=d.gtopo||d.gmana||d.max;
+ {const sx=ONL.sacrif||[];if(sx.length){const vivos=sx.filter(id=>S.hand.some(c=>c&&c.id===id));S.hand=S.hand.filter(c=>!c||!sx.includes(c.id));ONL.sacrif=vivos;}}
  let gasto=0;for(const p of ONL.plays){const k=S.hand.findIndex(c=>c&&c.id===p.c.id);if(k>=0)S.hand.splice(k,1);S.mine[p.slot]={...p.c,novo:1};gasto+=p.c.cost;}
  S.mana=Math.max(0,(d.gmana||d.max)-gasto);S.busy=d.busy||ONL.waiting;
  if(!S.hide)S.hide=new Set();render();

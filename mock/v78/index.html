@@ -931,7 +931,9 @@ img.ahd{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacit
 </style>
 <style>.lbm{position:absolute;top:3px;right:3px;z-index:3;min-width:18px;padding:2px 3px;font:700 10px/1 system-ui,sans-serif;text-align:center;border-radius:3px;background:rgba(6,10,14,.82);pointer-events:none}.lbm.lp{color:#7dffa8;box-shadow:inset 0 0 0 1px #7dffa8}.lbm.ln{color:#ff8d8a;box-shadow:inset 0 0 0 1px #ff8d8a}</style>
 <style>#mana{position:relative}#mana .moe{position:absolute;left:0;top:-19px;display:flex;align-items:center;gap:4px;font:700 12px/1 system-ui,sans-serif;color:#ffd27a;white-space:nowrap}#mana .moe i{width:10px;height:10px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff3c4,#e0a93a 60%,#8a5a12);box-shadow:0 0 0 1px #6b4410;clip-path:none}</style>
-<style>.deckp{cursor:pointer}.deckp::before{content:;position:absolute;inset:-14px -10px -40px -18px}.cmpM{pointer-events:none;position:absolute;right:-6px;top:calc(50% + 30px);z-index:4;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:44px;padding:4px 4px 5px;border:1px solid var(--ts,#c8aa6e);border-radius:4px;background:rgba(8,14,20,.88);color:#f0e6d2;font:700 12px/1 Inter,sans-serif}.cmpM small{font:600 8px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7fc4ff}.cmpM.off{opacity:.35}</style>\n</head>
+<style>.deckp{cursor:pointer}.deckp::before{content:;position:absolute;inset:-14px -10px -40px -18px}.cmpM{pointer-events:none;position:absolute;right:-6px;top:calc(50% + 30px);z-index:4;display:flex;flex-direction:column;align-items:center;gap:1px;min-width:44px;padding:4px 4px 5px;border:1px solid var(--ts,#c8aa6e);border-radius:4px;background:rgba(8,14,20,.88);color:#f0e6d2;font:700 12px/1 Inter,sans-serif}.cmpM small{font:600 8px/1 Inter,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#7fc4ff}.cmpM.off{opacity:.35}</style>
+<style>.deckp.sac i{box-shadow:0 0 18px #7fc4ff!important;border-color:#7fc4ff!important}.deckp.sacOk{animation:sacOk .6s}@keyframes sacOk{50%{transform:translateY(-50%) rotate(-8deg) scale(1.25)}}.hc,.slot,.card{-webkit-touch-callout:none;-webkit-user-select:none;user-select:none}.zgi{position:absolute;z-index:5;width:36px;height:36px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:1px solid var(--ts,#c8aa6e);background:rgba(6,12,18,.92);color:var(--ts,#c8aa6e)}.zgp{position:absolute;z-index:6;left:50%;transform:translateX(-50%);width:min(300px,calc(100% - 28px));display:none;padding:12px 14px;border:1px solid var(--ts,#c8aa6e);border-radius:6px;background:rgba(6,12,18,.97);box-shadow:0 12px 40px rgba(0,0,0,.7)}.zgp.on{display:block}.zgp p{margin:0 0 8px;font:400 13px/1.45 Inter,sans-serif;color:#e6dfcf}.zgp p:last-child{margin:0}.zgp b{display:block;margin-bottom:2px;font:600 12px/1.2 Cinzel,serif;letter-spacing:.06em;color:var(--ts,#c8aa6e);text-transform:uppercase}</style>
+</head>
 <body>
 <div class="stage">
   <aside class="side">
@@ -1228,6 +1230,39 @@ async function comprarComMana(){if(!S||S.busy)return;if(S.mana<CUSTO_COMPRA){toa
  if(typeof ONL!=='undefined'&&ONL.guest){ONL.send('compra',{});S.mana-=CUSTO_COMPRA;ONL.gastoCompra=(ONL.gastoCompra||0)+CUSTO_COMPRA;render();return;}
  S.busy=true;S.mana-=CUSTO_COMPRA;try{await comprar('m',1);lg('Você comprou 1 carta com mana');}finally{S.busy=false;render();}}
 document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#deckP,#cmpM'))comprarComMana();});
+const TOPO=()=>S?(S.mtopo||S.max):0;
+async function sacrificar(i){if(!S||S.busy)return;const c=S.hand[i];if(!c)return;const t=TOPO();
+ if(c.cost>t){toast('Só dá para sacrificar carta de custo até '+t);render();return;}
+ if(S.mana>=t){toast('Sua mana já está cheia');render();return;}
+ const g=Math.min(c.cost,t-S.mana);S.hand.splice(i,1);S.mana+=g;S.sel=-1;
+ if(typeof ONL!=='undefined'&&ONL.guest){ONL.send('sacrifica',{id:c.id,g});ONL.sacrif=(ONL.sacrif||[]).concat(c.id);}
+ else S.cem.unshift({...c,lado:'m',sac:1});
+ sfx('place');lg(`Você sacrificou ${c.n} e recuperou ${g} de mana`);toast('+'+g+' de mana');render();
+ const dk=$('#deckP');if(dk){dk.classList.add('sacOk');setTimeout(()=>dk.classList.remove('sacOk'),600);}}
+let LPZ=0;
+document.addEventListener('click',e=>{if(Date.now()-LPZ<700&&!e.target.closest('#zoom')){e.stopPropagation();e.preventDefault();}},true);
+['#mRow','#oRow'].forEach(q=>{const el=$(q);if(!el)return;let tm=null,x0=0,y0=0;
+ el.addEventListener('pointerdown',e=>{const s=e.target.closest('.slot');if(!s||!S)return;const F=q==='#mRow'?S.mine:S.theirs,c=F[[...s.parentNode.children].indexOf(s)];if(!c||(q==='#oRow'&&c.novo))return;x0=e.clientX;y0=e.clientY;clearTimeout(tm);tm=setTimeout(()=>{LPZ=Date.now();abrirZoom(c,-1);},450);});
+ el.addEventListener('pointermove',e=>{if(tm&&Math.hypot(e.clientX-x0,e.clientY-y0)>12){clearTimeout(tm);tm=null;}});
+ ['pointerup','pointercancel','pointerleave'].forEach(v=>el.addEventListener(v,()=>{clearTimeout(tm);tm=null;}));});
+const GLOS=[[/\bGeneral\b/,'General','A carta 10 do planeta. O poder dela vale para as suas outras cartas.'],
+ [/\bBarreira/i,'Barreira','Ataca o oponente só com metade do poder. Com o Avatar dos Elementos no campo, as outras Elementais atacam com o poder inteiro.'],
+ [/cicatriz/i,'Cicatriz','Cada cicatriz vale +1 de poder para sempre.'],
+ [/esporo/i,'Esporo','Ficha de poder 1 que nasce numa casa vazia sua. Sem casa vazia, ele se junta à sua carta mais fraca e dá +1 a ela.'],
+ [/enfraquecida/i,'Enfraquecida','Carta com poder abaixo do número dela.'],
+ [/atropelar/i,'Atropelar','Quando derrota uma carta inimiga, o que sobrou do poder passa para o oponente. Um 7 que derrota um 4 tira 3 de vida.'],
+ [/moeda/i,'Moedas','Ficam guardadas até serem gastas. O total aparece em cima da sua mana.'],
+ [/\balma/i,'Alma','Cada alma dá poder para sempre à carta que a tem.'],
+ [/\brouba ela|\broubam as cartas|carta roubada/i,'Roubar','A carta roubada passa a ser sua: vai para a sua mão em vez do cemitério. Fichas não podem ser roubadas.'],
+ [/esqueleto/i,'Esqueleto','Ficha de poder 1 que fica no lugar da carta que caiu.']];
+function glossZoom(c){let b=document.getElementById('zGi'),p=document.getElementById('zGp');
+ if(!b){b=document.createElement('button');b.id='zGi';b.className='zgi';b.setAttribute('aria-label','O que significa');b.innerHTML='<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9.5"/><path d="M12 11v6"/><path d="M12 7.2v.1"/></svg>';
+  p=document.createElement('div');p.id='zGp';p.className='zgp';const z=$('#zoom');z.appendChild(b);z.appendChild(p);
+  b.addEventListener('click',e=>{e.stopPropagation();p.classList.toggle('on');});p.addEventListener('click',e=>{e.stopPropagation();p.classList.remove('on');});}
+ p.classList.remove('on');const tx=(c&&c.fx||'')+' '+(c&&c.hab||'');const L=GLOS.filter(g=>g[0].test(tx));
+ if(!L.length){b.style.display='none';return;}
+ p.innerHTML=L.map(g=>`<p><b>${g[1]}</b>${g[2]}</p>`).join('');b.style.display='';
+ requestAnimationFrame(()=>{const r=$('#zc').getBoundingClientRect(),z=$('#zoom').getBoundingClientRect();const x=Math.min(r.right+6,z.right-40)-z.left;b.style.left=x+'px';b.style.top=(r.top-z.top+4)+'px';p.style.top=(r.top-z.top+44)+'px';});}
 const valeAlma=x=>x.token?0:(x.v<=5?1:2);
 async function aoDescartar(l,n){if(!S||n<=0)return;const t=TEM(OL(l),'tsunami');if(t){lg(`Maremoto: ${l==='m'?'você perde':'o oponente perde'} ${t*n} de vida pelo descarte`);await dano(l,t*n,null);}}
 async function paraMao(l,a){const n=carta(a.code,a.v);n.dev=1;HD(l).push(n);lg(`${a.n} voltou para a mão ${l==='m'?'(sua)':'(do oponente)'}`);render();
@@ -1523,7 +1558,7 @@ function show(id){document.querySelectorAll('.scr').forEach(s=>s.classList.toggl
 function fecharTudo(){['#zoom','#sheet','#dim','#pn'].forEach(k=>$(k).classList.remove('on'));}
 let zi=-1,ZT=0;
 function abrirZoom(c,i){zi=i;{const l=lado(c),p=l?P(c,l):c.pw;calar();narrar(c.token?'Ficha. Sem habilidade própria.':`${c.fx}`,false,true);$('#leg').classList.remove('on');}$('#zc').innerHTML=cardHTML(c);$('#zn').textContent=c.n;$('#zcl').textContent=`${c.pl} · ${NAIPES[NK[c.s]].nome} · custo ${c.cost}`;$('#zoom').style.setProperty('--nc',NCOR[c.s]);$('#zp').innerHTML=`<span class="zl"><i></i></span><b class="zh"><span>${ico(catDe(c.e),18)}</span>${c.hab}</b><span class="zf">${c.fx}</span>${c.flav?`<em class="zv">${c.flav}</em>`:''}`;
- const pb=$('#zPlay');pb.style.display=i>=0?'':'none';pb.disabled=c.cost>S.mana;pb.textContent=c.cost>S.mana?'Falta '+(c.cost-S.mana)+' de mana':'Escolher casa';$('#zoom').classList.add('on');ZT=Date.now();}
+ const pb=$('#zPlay');pb.style.display=i>=0?'':'none';pb.disabled=c.cost>S.mana;pb.textContent=c.cost>S.mana?'Falta '+(c.cost-S.mana)+' de mana':'Escolher casa';$('#zoom').classList.add('on');ZT=Date.now();glossZoom(c);}
 function abrirMais(){$('#sheet').classList.add('on');$('#dim').classList.add('on');}
 
 
@@ -1592,16 +1627,18 @@ async function revelar(){
 // ---------- mão: toque, segurar e arrastar ----------
 let DR=null,pt=null,P0=null,held=false,LT={},LF={};
 const hand=$('#hand');
-hand.addEventListener('pointerdown',e=>{const h=e.target.closest('.hc');if(!h||S.busy)return;held=false;P0={x:e.clientX,y:e.clientY,i:+h.dataset.i,id:e.pointerId};});
+hand.addEventListener('pointerdown',e=>{const h=e.target.closest('.hc');if(!h||S.busy)return;held=false;P0={x:e.clientX,y:e.clientY,i:+h.dataset.i,id:e.pointerId};clearTimeout(pt);pt=setTimeout(()=>{if(!P0||DR)return;const i=P0.i;held=true;P0=null;LPZ=Date.now();abrirZoom(S.hand[i],i);},450);});
 addEventListener('pointermove',e=>{if(!P0||S.busy)return;
  if(!DR){if(Math.hypot(e.clientX-P0.x,e.clientY-P0.y)<14)return;clearTimeout(pt);const c=S.hand[P0.i];
-   if(c.cost>S.mana){toast('Falta '+(c.cost-S.mana)+' de mana');P0=null;return;}
+   if(c.cost>S.mana&&c.cost>TOPO()){toast('Falta '+(c.cost-S.mana)+' de mana');P0=null;return;}
    S.sel=-1;DR={i:P0.i,c};DR.g=add('dragg',0,0);DR.g.innerHTML=cardHTML(c);render();}
  const p=PH().getBoundingClientRect();DR.g.style.left=(e.clientX-p.left)+'px';DR.g.style.top=(e.clientY-p.top)+'px';
  const t=document.elementFromPoint(e.clientX,e.clientY),s=t&&t.closest('#mRow .slot');
- document.querySelectorAll('#mRow .slot').forEach(x=>x.classList.toggle('over',x===s));});
+ document.querySelectorAll('#mRow .slot').forEach(x=>x.classList.toggle('over',x===s&&DR.c.cost<=S.mana));{const dk=$('#deckP');if(dk)dk.classList.toggle('sac',!!(t&&t.closest('#deckP,#cmpM')));}});
 addEventListener('pointerup',async e=>{clearTimeout(pt);
- if(DR){const d=DR,t=document.elementFromPoint(e.clientX,e.clientY),s=t&&t.closest('#mRow .slot');const gr=R(d.g.firstElementChild);d.g.remove();DR=null;P0=null;
+ if(DR){const d=DR,t=document.elementFromPoint(e.clientX,e.clientY),s=t&&t.closest('#mRow .slot'),dk=t&&t.closest('#deckP,#cmpM');const gr=R(d.g.firstElementChild);d.g.remove();DR=null;P0=null;{const q=$('#deckP');if(q)q.classList.remove('sac');}
+   if(dk){await sacrificar(d.i);return;}
+   if(s&&d.c.cost>S.mana){toast('Falta '+(d.c.cost-S.mana)+' de mana');render();return;}
    if(s){await jogar(d.i,+s.dataset.i,gr);}else{render();}return;}
  if(P0&&!held){const i=P0.i,c=S.hand[i];P0=null;const ag=Date.now();
    if(LT.i===i&&ag-LT.t<380){const pv=LT.sel;LT={};S.sel=(pv===undefined?-1:pv);render();abrirZoom(c,i);return;}
@@ -1658,7 +1695,8 @@ function painel(q){
  <h4>Baralho</h4><ul><li>1 classe de cada naipe, escolhida antes da batalha. Cada classe põe 9 cartas, de poder 2 a 10: 36 cartas diferentes. A partida usa <b>2 baralhos</b> iguais misturados, então são <b>72 cartas</b> (cada carta aparece duas vezes).</li><li>Cada jogador tem o próprio baralho, a própria compra e o próprio cemitério. Os dois podem escolher os mesmos planetas.</li></ul>
  <h4>Cartas</h4><ul><li>Número no canto: o <b>poder</b> (ataque e defesa).</li><li>Diamante azul: o <b>custo de mana</b>. 2 e 3 custam 1, 4 e 5 custam 2, 6 e 7 custam 3, 8 e 9 custam 4, o 10 custa 5.</li><li>Toda carta tem habilidade. Cada <b>planeta</b> tem 5 habilidades, uma por dupla de números e uma para o 10, e elas valem para as duas classes do planeta. São 80 no jogo e nenhuma se repete entre planetas.</li><li>Número verde: poder aumentado por habilidade. Vermelho: poder reduzido.</li></ul>
  <h4>Turno</h4><ul><li>A mana começa em 1 e sobe 1 por dia, sem limite.</li><li>Arraste cartas da mão para o campo (ou toque na carta e depois na casa).</li><li>Cada um prepara as cartas <b>em segredo</b>: você vê só as suas (com o selo “oculta”) e o oponente não sabe em que casa você colocou. Ele também prepara as dele sem ver as suas.</li><li>Toque em <b>Batalha</b>: as cartas preparadas se revelam campo por campo (a sua primeiro, depois a dele), os efeitos de entrada ativam e começa o combate.</li><li>Cada jogador começa com <b>7 cartas</b>. No começo de cada dia, cada lado compra: <b>1 carta</b> do 1º ao 3º dia, <b>2</b> do 4º ao 6º, <b>3</b> do 7º ao 10º e <b>4</b> do 11º em diante.</li><li>A mão tem no máximo <b>7 cartas</b>. Cada carta comprada além disso vai para o cemitério. Se uma carta do campo <b>volta</b> para uma mão cheia, o dono escolhe uma carta da mão para descartar.</li></ul>
- <h4>Compra e troca</h4><ul><li>No começo de cada dia, a partir do 2º, cada lado compra 1 carta.</li><li>Depois dessa compra, quer mais? Toque no <b>Grimório</b> (o baralho ao lado da mesa): cada carta custa 1 de mana.</li><li>Dá para baixar uma carta em cima de outra sua para trocar, quantas vezes quiser enquanto tiver mana. A trocada vai para o cemitério.</li></ul>\n <h4>Mudar de campo</h4><ul><li>Enquanto prepara as cartas, toque numa carta sua que está no campo e depois numa casa vazia para movê-la.</li><li>Custa <b>1 de mana por casa</b> de distância: a casa ao lado custa 1, a seguinte custa 2.</li><li>Os efeitos de entrada não ativam de novo.</li></ul>
+ <h4>Compra e troca</h4><ul><li>No começo de cada dia, a partir do 2º, cada lado compra 1 carta.</li><li>Depois dessa compra, quer mais? Toque no <b>Grimório</b> (o baralho ao lado da mesa): cada carta custa 1 de mana.</li><li>Dá para baixar uma carta em cima de outra sua para trocar, quantas vezes quiser enquanto tiver mana. A trocada vai para o cemitério.</li><li><b>Recuperar mana</b>: arraste uma carta da mão até o Grimório para sacrificá-la. Você recupera a mana do custo dela, sem passar da mana do dia. Vale para cartas de custo até a mana do dia, mesmo sem mana agora para jogá-las.</li><li>Segure o dedo numa carta para ver o que ela faz. O <b>i</b> ao lado da imagem explica as palavras especiais.</li></ul>
+ <h4>Mudar de campo</h4><ul><li>Enquanto prepara as cartas, toque numa carta sua que está no campo e depois numa casa vazia para movê-la.</li><li>Custa <b>1 de mana por casa</b> de distância: a casa ao lado custa 1, a seguinte custa 2.</li><li>Os efeitos de entrada não ativam de novo.</li></ul>
  <h4>Troca (⇄)</h4><ul><li>1 vez por turno, baixe em cima de uma carta sua. A nova paga a mana inteira; a que sai vai para o cemitério sem ativar efeito de morrer.</li></ul>
  <h4>Campos e rivalidade</h4><div class="rv4">${LN.map(k=>`<span style="--c:${NKY[k].cor}">${NKY[k].sym}\uFE0E<small>${NKY[k].nome}</small></span>`).join('')}</div><ul><li>São <b>4 campos de batalha</b>, um de cada naipe: Copas, Espadas, Ouros e Paus.</li><li>Carta no campo do <b>próprio naipe</b> ganha <b>+1</b> de poder.</li><li>Carta no campo do <b>naipe rival</b> perde <b>1</b> de poder.</li><li>Nos outros dois campos nada muda.</li></ul><div class="rvs">${[['h','s'],['d','c']].map(([x,y])=>`<div><span style="--c:${NKY[x].cor}">${NKY[x].sym}\uFE0E ${NKY[x].nome}</span><i>rivais</i><span style="--c:${NKY[y].cor}">${NKY[y].sym}\uFE0E ${NKY[y].nome}</span></div>`).join('')}</div>
  <h4>Combate (campo por campo)</h4><ul><li>Frente a frente: o maior poder destrói o outro. Empate: as duas morrem.</li><li>Carta sozinha no campo bate no líder inimigo com o poder dela.</li><li>Toque na mesa para acelerar.</li></ul>
@@ -1700,10 +1738,10 @@ $('#pass').onclick=async()=>{
  if(S.ol<=0||S.ml<=0){await w(700);S.ol<=0&&S.ml<=0?fim(false,'Os dois líderes caíram juntos. Empate.'):S.ol<=0?fim(true,'O líder inimigo caiu no turno '+S.turn+'.'):fim(false,'Seu líder caiu no turno '+S.turn+'.');return;}
  // fim do turno
  const cres=[];
- S.turn++;S.max=S.turn;S.mana=Math.max(0,S.max+(S.pend.m||0)+auraMana('m'));S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
+ S.turn++;S.max=S.turn;S.mana=Math.max(0,S.max+(S.pend.m||0)+auraMana('m'));S.mtopo=S.mana;S.omanaExtra=(S.pend.o||0)+auraMana('o');S.pend={m:0,o:0};S.busy=false;SPD=1;S.trocou=false;S.otrocou=false;
  for(const l of ['m','o']){const r=TEM(l,'route');if(r)moeda(l,r);for(let j=0;j<NL;j++){const c=FD(l)[j];if(!c||c.novo||!EF(c).kingShop||MOE(l)<2)continue;let k=-1;FD(l).forEach((x,q)=>{if(x&&x!==c&&(k<0||P(x,l)<P(FD(l)[k],l)))k=q;});if(k<0)continue;src(c,l);moeda(l,-2);await buff(l,k,EF(c).kingShop,'compra +'+EF(c).kingShop);src(null);}}
  {const n=comprasDoDia(S.turn);await comprar('m',n+compraExtra('m'),true);await comprar('o',n+compraExtra('o'),true);if(n>1)lg(`📚 Neste dia cada lado compra ${n}`);}
- if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.omanaExtra=0;}
+ if(ONL.host){S.gmana=S.max+(S.omanaExtra||0);S.gtopo=S.gmana;S.omanaExtra=0;}
  lg(ORD(S.turn),1);render();banner();
  cres.forEach(([l,i])=>{cls(cardEl(l,i),'rise',600);pop(l,i,'⚙ +1 de poder');});
  const nh=hand.lastElementChild;if(nh)nh.animate([{transform:'translateY(60px) scale(.8)',opacity:0},{transform:'none',opacity:1}],{duration:300,easing:'ease-out'});
