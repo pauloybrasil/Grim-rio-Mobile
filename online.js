@@ -37,12 +37,13 @@ function deckAmigo(){if(typeof baralhoDe!=='function'||!ONL.guestESC||!S||ONL.de
 function comecarOnline(){ONL.deckOk=0;nova();deckAmigo();clearInterval(ONL.vivo);ONL.vivo=setInterval(()=>{if(ONL.on&&ONL.host&&ONL.partner&&S&&!S.busy)ONL.snap();},4000);S.gmana=S.max;show('duelo');ONL.send('start',{ESC});setTimeout(()=>ONL.snap(),300);narrar('Seu amigo entrou. Que comece o duelo.',false,true);}
 function hostMsg(ev,d){if(ev==='plays'){ONL.guestPlays=d.plays||[];if(ONL.ready){const r=ONL.ready;ONL.ready=null;r();}else toast('Seu amigo já preparou as cartas');}
  if(ev==='pede'){ONL.snap();}
+ if(ev==='compra'){const cc=typeof CUSTO_COMPRA!=='undefined'?CUSTO_COMPRA:1;if(!S.busy&&(S.gmana||0)>=cc&&S.oh.length<MAOMAX&&S.odeck&&S.odeck.length){const c=compra('o');if(c){S.gmana-=cc;S.oh.push(c);lg('Seu amigo comprou 1 carta com mana');}}render();ONL.snap();}
  if(ev==='hello2'){if(d&&d.ESC){ONL.guestESC=d.ESC;if(ONL.partner)deckAmigo();}ONL.snap();}
  if(ev==='desiste')fim(true,'Seu amigo desistiu.');}
 async function aplicarJogadasAmigo(){ // entra no lugar do oponente do computador
- let mana=S.gmana||S.max;const plays=ONL.guestPlays||[];ONL.guestPlays=null;let trocou=false;
+ let mana=S.gmana||S.max;const plays=ONL.guestPlays||[];ONL.guestPlays=null;
  for(const p of plays){const k=S.oh.findIndex(c=>c&&c.id===p.id);if(k<0)continue;const c=S.oh[k];if(c.cost>mana)continue;
-   if(S.theirs[p.slot]){if(trocou)continue;trocou=true;await sair('o',p.slot);}
+   if(S.theirs[p.slot])await sair('o',p.slot);
    S.oh.splice(k,1);mana-=c.cost;c.novo=1;S.theirs[p.slot]=c;}
  S.omanaSobra=mana;render();}
 // ---------- amigo (convidado) ----------
@@ -64,6 +65,7 @@ function aplicarSnap(d){
  S.mine=d.theirs;S.theirs=d.mine;S.hand=d.oh;S.oh=Array(d.hn).fill(0);S.ml=d.ol;S.ol=d.ml;S.deck=Array(d.deck).fill(0);S.turn=d.turn;S.max=d.max;S.lane=d.lane;
  S.moedas=d.moedas?{m:d.moedas.o||0,o:d.moedas.m||0}:{m:0,o:0};S.cem=(d.cem||[]).map(c=>({...c,lado:c.lado==='m'?'o':'m'}));S.log=(d.log||[]).map(l=>({...l,t:inverter(l.t)}));
  if(novoDia&&!d.busy){ONL.lastTurn=d.turn;ONL.plays=[];ONL.waiting=false;S.trocou=false;}
+ ONL.gastoCompra=0;
  if(ONL.waiting&&!d.busy&&!novoDia){}
  // reaplica as cartas que o amigo preparou e ainda não enviou
  let gasto=0;for(const p of ONL.plays){const k=S.hand.findIndex(c=>c&&c.id===p.c.id);if(k>=0)S.hand.splice(k,1);S.mine[p.slot]={...p.c,novo:1};gasto+=p.c.cost;}
@@ -71,6 +73,5 @@ function aplicarSnap(d){
  if(!S.hide)S.hide=new Set();render();
  $('#turn').textContent=ONL.waiting&&!d.busy?'Esperando o anfitrião · '+ORD(S.turn,1):$('#turn').textContent;}
 async function jogarConvidado(hi,slot){const c=S.hand[hi];if(!c||c.cost>S.mana||S.busy)return;
- if(S.mine[slot]){if(S.trocou){toast('Você já trocou uma carta neste dia');return;}S.trocou=true;}
  S.hand.splice(hi,1);S.mana-=c.cost;S.sel=-1;ONL.plays=ONL.plays.filter(p=>p.slot!==slot);ONL.plays.push({c,slot,id:c.id});S.mine[slot]={...c,novo:1};render();cls(cardEl('m',slot),'slam',400);}
 function batalhaConvidado(){if(S.busy)return;ONL.send('plays',{plays:ONL.plays.map(p=>({id:p.id,slot:p.slot}))});ONL.waiting=true;S.busy=true;render();$('#turn').textContent='Esperando o amigo resolver a batalha · '+ORD(S.turn,1);narrar('Cartas enviadas. Esperando a batalha.',false,true);}

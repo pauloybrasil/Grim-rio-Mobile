@@ -1,5 +1,5 @@
 // Grimório Mobile: jogo instalável e jogável sem internet
-const VERSAO='v92';
+const VERSAO='v93';
 const CORE=["./", "index.html", "manifest.webmanifest", "icone-192.png", "icone-512.png", "icone-mask-512.png", "icone-180.png", "audio/indice.json", "arthd.js", "classes.js", "hab.js", "habnovas.js", "hist.js", "login.js", "lore.js", "online.js", "som.js", "temas.js", "v62.js", "art/cen.webp", "art/costa.webp", "art/guerreiro2.webp", "art/necromante2.webp", "s/CANJ.webp", "s/CCIB.webp", "s/CDRA.webp", "s/CELE.webp", "s/CELF.webp", "s/CFER.webp", "s/CGUE.webp", "s/CHUM.webp", "s/CINF.webp", "s/CMAG.webp", "s/CMER.webp", "s/CMIC.webp", "s/CNEC.webp", "s/COCE.webp", "s/CPIR.webp", "s/CSAH.webp", "s/ZARC.webp", "s/ZAUR.webp", "s/ZBRA.webp", "s/ZCOR.webp", "s/ZDRA.webp", "s/ZFER.webp", "s/ZIGN.webp", "s/ZINF.webp", "s/ZMER.webp", "s/ZMIC.webp", "s/ZNEX.webp", "s/ZOSS.webp", "s/ZPEL.webp", "s/ZSAH.webp", "s/ZTER.webp", "s/ZVER.webp"];
 const C_JOGO='gm-jogo-'+VERSAO, C_EXTRA='gm-extra';
 self.addEventListener('install',e=>{e.waitUntil(caches.open(C_JOGO).then(c=>Promise.all(CORE.map(u=>c.add(new Request(u,{cache:'reload'})).catch(()=>null)))).then(()=>self.skipWaiting()));});
